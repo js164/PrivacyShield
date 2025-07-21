@@ -59,10 +59,6 @@ The **Privacy Assistance Tool** aims to empower users to better understand and m
 - Nirish Samant
 - Sunil Kumar
 
-## 📄 License
-
-This project is licensed under the MIT License.
-
 ## 📂 Repository Structure
 
 ```bash
@@ -73,3 +69,8 @@ This project is licensed under the MIT License.
 ├── tests/                # Unit and integration tests
 ├── .gitignore
 └── README.md             # Project overview
+```
+
+## 📄 License
+
+This project is licensed under the MIT License.
