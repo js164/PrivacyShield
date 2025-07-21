@@ -43,17 +43,6 @@ The **Privacy Assistance Tool** aims to empower users to better understand and m
 - **Database**: MongoDB
 - **APIs**: REST / GraphQL
 
-## 📂 Repository Structure
-
-```bash
-.
-├── backend/              # Backend codebase (APIs, logic)
-├── frontend/             # Frontend source files (UI)
-├── docs/                 # Documentation & reports
-├── tests/                # Unit and integration tests
-├── .gitignore
-└── README.md             # Project overview
-
 ## 📅 Timeline
 
 | Phase                 | Timeline       |
@@ -73,3 +62,14 @@ The **Privacy Assistance Tool** aims to empower users to better understand and m
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+## 📂 Repository Structure
+
+```bash
+.
+├── backend/              # Backend codebase (APIs, logic)
+├── frontend/             # Frontend source files (UI)
+├── docs/                 # Documentation & reports
+├── tests/                # Unit and integration tests
+├── .gitignore
+└── README.md             # Project overview
