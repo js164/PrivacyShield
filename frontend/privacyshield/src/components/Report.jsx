@@ -41,8 +41,6 @@ const PrivacyReport = () => {
   // Sample data - in real app this would come from props or context
   const [reportData, setReportData] = useState({
     score: 65,
-    questionsAnswered: 22,
-    totalQuestions: 25,
     riskLevel: "Moderate Risk"
   });
 
@@ -85,31 +83,73 @@ const PrivacyReport = () => {
   const getPrivacyCategories = () => [
     {
       title: "Digital Identity & Authentication",
-      suggestion: "Use strong, unique passwords and enable two-factor authentication on all your important accounts. Consider using a reputable password manager to generate and store complex passwords securely."
+      score: 72,
+      suggestions: [
+        "Use strong, unique passwords for all accounts",
+        "Enable two-factor authentication on important services",
+        "Consider using a reputable password manager",
+        "Regularly update passwords and security questions"
+      ]
     },
     {
       title: "Data Collection & Control",
-      suggestion: "Review and adjust privacy settings on all platforms. Limit data sharing with third parties and regularly audit what information companies have collected about you."
+      score: 58,
+      suggestions: [
+        "Review and adjust privacy settings on all platforms",
+        "Limit data sharing with third-party applications",
+        "Regularly audit what information companies collect",
+        "Use privacy-focused alternatives when possible"
+      ]
     },
     {
       title: "Location & Physical Safety",
-      suggestion: "Disable location tracking for unnecessary apps. Use airplane mode in sensitive locations and consider using a VPN to mask your IP address and location."
+      score: 45,
+      suggestions: [
+        "Disable location tracking for unnecessary apps",
+        "Use airplane mode in sensitive locations",
+        "Consider using a VPN to mask your IP address",
+        "Review location history and delete old data"
+      ]
     },
     {
       title: "Social & Reputation Management",
-      suggestion: "Regularly audit your social media profiles and posts. Set up Google alerts for your name and consider using privacy-focused social platforms for sensitive communications."
+      score: 63,
+      suggestions: [
+        "Regularly audit your social media profiles and posts",
+        "Set up Google alerts for your name",
+        "Use privacy-focused social platforms for sensitive communications",
+        "Review tagged photos and mentions regularly"
+      ]
     },
     {
       title: "Surveillance & Tracking",
-      suggestion: "Use ad blockers, disable tracking cookies, and consider browsers like Firefox or Brave. Enable 'Do Not Track' settings and use private browsing modes when needed."
+      score: 51,
+      suggestions: [
+        "Use ad blockers and privacy extensions",
+        "Disable tracking cookies in browser settings",
+        "Consider browsers like Firefox or Brave",
+        "Enable 'Do Not Track' settings where available"
+      ]
     },
     {
       title: "Transparency & Corporate Trust",
-      suggestion: "Read privacy policies of services you use. Choose services from companies with strong privacy commitments and avoid platforms with poor transparency records."
+      score: 69,
+      suggestions: [
+        "Read privacy policies of services you use",
+        "Choose services from privacy-committed companies",
+        "Avoid platforms with poor transparency records",
+        "Research company data handling practices"
+      ]
     },
     {
       title: "Legal & Advanced Privacy",
-      suggestion: "Stay informed about privacy laws in your jurisdiction. Consider using encrypted messaging apps like Signal and learn about your data rights under GDPR or similar regulations."
+      score: 74,
+      suggestions: [
+        "Stay informed about privacy laws in your jurisdiction",
+        "Use encrypted messaging apps like Signal",
+        "Learn about your data rights under GDPR",
+        "Consider using Tor browser for sensitive browsing"
+      ]
     }
   ];
 
@@ -145,39 +185,44 @@ const PrivacyReport = () => {
         </div>
 
         {/* Score Display */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-8 text-white text-center mb-8 shadow-lg">
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4">Your Privacy Score</h2>
-          <div className="text-5xl sm:text-6xl font-bold mb-2">{reportData.score}</div>
-          <p className="text-blue-100 text-lg">out of 100</p>
-          
-          {/* Progress Ring Visual */}
-          <div className="flex justify-center mt-6">
-            <div className="relative w-24 h-24 sm:w-32 sm:h-32">
-              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  stroke="rgba(255,255,255,0.2)"
-                  strokeWidth="8"
-                  fill="transparent"
-                />
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  stroke="white"
-                  strokeWidth="8"
-                  fill="transparent"
-                  strokeDasharray={`${2 * Math.PI * 40}`}
-                  strokeDashoffset={`${2 * Math.PI * 40 * (1 - reportData.score / 100)}`}
-                  className="transition-all duration-1000 ease-out"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-white font-semibold text-sm sm:text-base">
-                  {reportData.score}%
-                </span>
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-8 text-white mb-8 shadow-lg">
+          <div className="flex items-center justify-center">
+            {/* Left side - Score */}
+            <div className="flex-1 text-center">
+              <h2 className="text-xl sm:text-2xl font-semibold mb-4">Your Privacy Score</h2>
+              <div className="text-5xl sm:text-6xl font-bold mb-2">{reportData.score}</div>
+              <p className="text-blue-100 text-lg">out of 100</p>
+            </div>
+            
+            {/* Right side - Progress Ring */}
+            <div className="flex-1 flex justify-center">
+              <div className="relative w-24 h-24 sm:w-32 sm:h-32">
+                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    stroke="rgba(255,255,255,0.2)"
+                    strokeWidth="8"
+                    fill="transparent"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    stroke="white"
+                    strokeWidth="8"
+                    fill="transparent"
+                    strokeDasharray={`${2 * Math.PI * 40}`}
+                    strokeDashoffset={`${2 * Math.PI * 40 * (1 - reportData.score / 100)}`}
+                    className="transition-all duration-1000 ease-out"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm sm:text-base">
+                    {reportData.score}%
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -185,13 +230,13 @@ const PrivacyReport = () => {
 
         {/* Risk Level Card */}
         <div className={`${riskDetails.bgColor} ${riskDetails.borderColor} border-l-4 rounded-xl p-6 mb-8 shadow-sm`}>
-          <div className="flex items-center mb-4">
+          <div className="flex items-center mb-4 gap-4">
             <RiskIcon className={`w-8 h-8 ${riskDetails.color} mr-3`} />
             <div>
               <h3 className="text-xl font-bold text-blue-900">Risk Assessment</h3>
               <p className={`text-lg font-semibold ${riskDetails.color}`}>
                 {riskDetails.level}
-              </p>
+              </p>  
             </div>
           </div>
         </div>
@@ -202,15 +247,58 @@ const PrivacyReport = () => {
             Personalized Recommendations
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-6">
             {privacyCategories.map((category, index) => (
               <div key={index} className="bg-white rounded-xl p-6 shadow-md border border-blue-100 hover:shadow-lg transition-shadow duration-200">
-                <h4 className="text-lg font-bold text-blue-900 mb-3">
-                  {category.title}
-                </h4>
-                <p className="text-blue-700 leading-relaxed text-sm">
-                  {category.suggestion}
-                </p>
+                <div className="flex justify-between items-start mb-4">
+                  {/* Title and Content */}
+                  <div className="flex-1 pr-4">
+                    <h4 className="text-lg font-bold text-blue-900 mb-3">
+                      {category.title}
+                    </h4>
+                    <ul className="space-y-2">
+                      {category.suggestions.map((suggestion, suggestionIndex) => (
+                        <li key={suggestionIndex} className="flex items-start text-blue-700 text-sm">
+                          <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                          <span className="leading-relaxed">{suggestion}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Score and Mini Chart */}
+                  <div className="flex-shrink-0 flex flex-col items-center">
+                    <div className="relative w-16 h-16 mb-2">
+                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 42 42">
+                        <circle
+                          cx="21"
+                          cy="21"
+                          r="15.5"
+                          stroke="#e5e7eb"
+                          strokeWidth="3"
+                          fill="transparent"
+                        />
+                        <circle
+                          cx="21"
+                          cy="21"
+                          r="15.5"
+                          stroke={category.score >= 70 ? "#10b981" : category.score >= 50 ? "#f59e0b" : "#ef4444"}
+                          strokeWidth="3"
+                          fill="transparent"
+                          strokeDasharray={`${2 * Math.PI * 15.5}`}
+                          strokeDashoffset={`${2 * Math.PI * 15.5 * (1 - category.score / 100)}`}
+                          className="transition-all duration-1000 ease-out"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className={`font-bold text-sm ${category.score >= 70 ? 'text-green-600' : category.score >= 50 ? 'text-yellow-600' : 'text-red-600'}`}>
+                          {category.score}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-blue-600 font-medium -ml-2">Category Score</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
