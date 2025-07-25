@@ -3,13 +3,13 @@ import React from "react";
 const cards = [
   {
     title: "Assessment Privacy Concerns",
-    value: "5",
+    value: "23",
     description: "Comprehensive evaluation across Digital Identity, Data Control, Location Privacy, Online Behavior, and Security Practices",
     icon: "📊",
   },
   {
     title: "Assessment Time",
-    value: "8-12 min",
+    value: "5-10 min",
     description: "Quick but thorough evaluation of your privacy practices with instant feedback and personalized recommendations",
     icon: "⏱️",
   },

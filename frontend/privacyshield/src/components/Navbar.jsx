@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import logo from "../Images/logo.svg";
 
+
+/*
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -19,7 +22,7 @@ const Navbar = () => {
           <Link to="/">Privacy Shield</Link>
         </div>
 
-        {/* Desktop Menu */}
+        {/* Desktop Menu *//*}
         <div className="hidden md:flex space-x-6">
           {navItems.map((item) => (
             <Link
@@ -32,7 +35,7 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Button *//*}
         <div className="md:hidden">
           <button onClick={toggleMenu}>
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -40,7 +43,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Items */}
+      {/* Mobile Menu Items *//*}
       {isOpen && (
         <div className="md:hidden px-4 pb-4 bg-white">
           {navItems.map((item) => (
@@ -58,5 +61,21 @@ const Navbar = () => {
     </nav>
   );
 };
+*/
 
-export default Navbar;
+export default function Navbar() {
+  return (
+    <nav className="bg-green-200 flex justify-between items-center px-6 py-4 shadow-md bg-white">
+      <a href="/" className="flex items-center space-x-2">
+        <img src={logo} alt="logo" className="w-6 h-6" />
+        <span className="text-lg font-bold text-purple-700" href="/">Privacy Shield</span>
+      </a>
+      <div className="space-x-6 text-sm font-medium text-purple-600">
+        <a href="/about" className="hover:underline\">About Us</a>
+        <a href="/assessment" className="hover:underline\">Take Privacy Assessment</a>
+      </div>
+    </nav>
+  );
+}
+
+//export default Navbar;
