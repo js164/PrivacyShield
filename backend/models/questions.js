@@ -9,6 +9,10 @@ const QuestionSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    questionOrder: {
+        type: Number,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now

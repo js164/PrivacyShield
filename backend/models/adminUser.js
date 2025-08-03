@@ -9,12 +9,6 @@ const AdminUser= new mongoose.Schema({
         type:String,
         require:true,
     },
-    verificationToken:{
-        type: String,
-    },
-    verificationTokenExpiresAt:{
-        type : Date
-    },
     createdAt:{
         type: Date,
         default:Date.now
