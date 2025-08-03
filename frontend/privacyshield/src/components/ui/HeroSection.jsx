@@ -1,5 +1,6 @@
 import React from "react";
-import logo from "../Images/logo.svg";
+import logo from '../../public/Images/logo.svg'
+import { Link } from "react-router-dom";
 
 export default function HeroSection() {
   return (
@@ -7,9 +8,9 @@ export default function HeroSection() {
       <div className="flex flex-col items-center">
         <img src={logo} alt="shield logo" className="w-14 h-14 mb-4" />
         <h1 className="text-4xl font-bold text-gray-900 mb-4">Privacy Shield</h1>
-        <button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-full shadow-md transition-all">
+        <Link to='/assesment' className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-full shadow-md transition-all">
           Take Privacy Assessment
-        </button>
+        </Link>
       </div>
     </section>
   );

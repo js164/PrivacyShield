@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import logo from "../Images/logo.svg";
+import logo from '../../public/Images/logo.svg'
 
 
 /*
