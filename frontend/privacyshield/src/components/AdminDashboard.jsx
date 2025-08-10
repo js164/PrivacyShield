@@ -7,6 +7,7 @@ import AddQuestionModal from './ui/AddQuestionModal';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import axios from 'axios';
 import getAllQuestions from './ui/getAllQuestions';
+import Navbar from './ui/Navbar';
 
 const CATEGORIES = {
     DC: "Data Collection", LC: "Loss of Control", UDU: "Unauthorized Data Use", ST: "Surveillance & Tracking", DR: "Data Retention", ESH: "Emotional/Social Harm", MIC: "Mistrust in Companies", SB: "Security Breaches", RD: "Reputation Damage", PD: "Physical Danger", DIT: "Digital Identity Theft", SE: "Social Engineering", GLR: "Geo-location Risks", ODU: "Opacity of Data Use", MPOT: "Managing Privacy Over Time", LRPG: "Legal vs. Real Protection Gap", PA: "Purpose Ambiguity", DSTP: "Data Sale to Third Parties", LT: "Lack of Transparency", CD: "Correctness of Data", APS: "Anonymity for Personal Safety", CE: "Criminal Exploitation"
@@ -39,7 +40,7 @@ export default function AdminDashboard() {
     // --- Local State Handlers ---
     const handleAddQuestion = (questionData) => {
 
-        questionData['questionOrder'] = questions.length + 1    
+        questionData['questionOrder'] = questions.length + 1
         console.log(questionData);
 
         axios.post('/question/add', questionData).then(response => {
@@ -108,14 +109,15 @@ export default function AdminDashboard() {
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <div className="min-h-screen bg-gray-100 text-gray-800 font-sans p-4 sm:p-6 lg:p-8">
+            <Navbar />
+            {/* <div className="min-h-screen bg-gray-100 text-gray-800 font-sans p-4 sm:p-6 lg:p-8">
                 <div className="max-w-7xl mx-auto">
                     <header className="mb-8 p-6 bg-white rounded-xl shadow-md border border-gray-200">
                         <h1 className="text-4xl font-bold text-blue-600">PrivacyShield</h1>
                         <p className="text-lg text-gray-500 mt-1">Admin Dashboard</p>
-                    </header>
+                    </header> */}
 
-                    <div className="mb-8">
+            {/* <div className="mb-8">
                         <button
                             onClick={() => setAddQuestionModalOpen(true)}
                             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 shadow-md flex items-center justify-center gap-2"
@@ -147,6 +149,57 @@ export default function AdminDashboard() {
                                 <p className="text-gray-500">No questions yet. Add one above to get started!</p>
                             </div>
                         )}
+                    </main> */}
+
+            <div className="min-h-screen bg-gray-100 text-gray-800 font-sans p-4 sm:p-6 lg:p-8">
+                <div className="max-w-7xl mx-auto">
+                    <header className="mb-8 p-6 bg-white rounded-xl shadow-md border border-gray-200">
+                        <h1 className="text-4xl font-bold text-blue-600">PrivacyShield</h1>
+                        <p className="text-lg text-gray-500 mt-1">Admin Dashboard</p>
+                    </header>
+
+                    <div className="mb-8">
+                        <button
+                            onClick={() => setAddQuestionModalOpen(true)}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 shadow-md flex items-center justify-center gap-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Add New Question
+                        </button>
+                    </div>
+
+                    <AddQuestionModal
+                        isOpen={isAddQuestionModalOpen}
+                        onClose={() => setAddQuestionModalOpen(false)}
+                        onConfirm={handleAddQuestion}
+                    />
+
+                    <main className="space-y-12">
+                        {/* --- Section 1 --- */}
+                        <section className="p-6 bg-white rounded-xl shadow-md border border-gray-200">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-2xl font-bold text-gray-700">Section 1</h2>
+                            </div>
+                            <div className="space-y-6">
+                                {questions && questions.filter((val, j) => val.section == 1).map((question, index) => (
+                                    <QuestionCard key={question._id} index={index} question={question} onDelete={handleDeleteQuestion} onUpdate={handleUpdateQuestion} moveQuestion={(dragIndex, hoverIndex) => moveQuestion(dragIndex, hoverIndex, 1)} />
+                                ))}
+                                {questions && questions.filter((val, j) => val.section == 1).length === 0 && <div className="text-center py-10 bg-gray-50 rounded-xl border border-gray-200"><p className="text-gray-500">No questions in this section.</p></div>}
+                            </div>
+                        </section>
+
+                        {/* --- Section 2 --- */}
+                        <section className="p-6 bg-white rounded-xl shadow-md border border-gray-200">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-2xl font-bold text-gray-700">Section 2</h2>
+                            </div>
+                            <div className="space-y-6">
+                                {questions && questions.filter((val, j) => val.section == 2).map((question, index) => (
+                                    <QuestionCard key={question._id} index={index} question={question} onDelete={handleDeleteQuestion} onUpdate={handleUpdateQuestion} moveQuestion={(dragIndex, hoverIndex) => moveQuestion(dragIndex, hoverIndex, 2)} />
+                                ))}
+                                {questions && questions.filter((val, j) => val.section == 2).length === 0 && <div className="text-center py-10 bg-gray-50 rounded-xl border border-gray-200"><p className="text-gray-500">No questions in this section.</p></div>}
+                            </div>
+                        </section>
                     </main>
                 </div>
             </div>

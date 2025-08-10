@@ -18,6 +18,8 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
     useEffect(() => { if (isOpen) { setQuestionData({ text: '', options: [{ text: '', scores: getInitialScores() }] }); setError(''); } }, [isOpen]);
 
     const handleTextChange = (e) => setQuestionData({ ...questionData, text: e.target.value });
+    const handleTypeChange = (e) => setQuestionData({ ...questionData, type: e.target.value });
+    const handleSetChange = (e) => setQuestionData({ ...questionData, set: parseInt(e.target.value, 10) });
     const handleOptionChange = (index, updatedOption) => { const newOptions = [...questionData.options]; newOptions[index] = updatedOption; setQuestionData({ ...questionData, options: newOptions }); };
     const handleAddOption = () => setQuestionData({ ...questionData, options: [...questionData.options, { text: '', scores: getInitialScores() }] });
     const handleRemoveOption = (index) => setQuestionData({ ...questionData, options: questionData.options.filter((_, i) => i !== index) });
@@ -25,22 +27,23 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
     function transformQuestionData(questionData) {
         console.log(questionData);
         return {
-          text: questionData.text,
-          multiChoice: false,
-          options: questionData.options.map(option => ({
-            text: option.text,
-            scores: Object.entries(option.scores)
-              .filter(([_, score]) => score !== 0) // Optional: remove zero-score entries
-              .map(([code, score]) => ({ code, score }))
-          }))
+            text: questionData.text,
+            multiChoice: questionData.type == 'multiple',
+            section: questionData.set,
+            options: questionData.options.map(option => ({
+                text: option.text,
+                scores: Object.entries(option.scores)
+                    .filter(([_, score]) => score !== 0) // Optional: remove zero-score entries
+                    .map(([code, score]) => ({ code, score }))
+            }))
         };
-      }
-    
+    }
+
     const handleConfirm = () => {
         if (!questionData.text.trim()) { setError("Question text cannot be empty."); return; }
         const validOptions = questionData.options.filter(opt => opt.text.trim() !== '');
         if (validOptions.length === 0) { setError("Please add and fill out at least one option."); return; }
-        const data =transformQuestionData(questionData)
+        const data = transformQuestionData(questionData)
         console.log(data);
         onConfirm(data);
     };
@@ -51,6 +54,20 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
                 <h3 className="text-2xl font-bold text-gray-900">Add New Question</h3>
             </div>
             <div className="p-6 space-y-4 overflow-y-auto">
+                <div>
+                    <label className="text-sm font-bold text-gray-600 mb-2 block">Section</label>
+                    <select value={questionData.set} onChange={handleSetChange} className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                        <option value={1}>Section 1</option>
+                        <option value={2}>Section 2</option>
+                    </select>
+                </div>
+                <div>
+                    <label className="text-sm font-bold text-gray-600 mb-2 block">Question Type</label>
+                    <select value={questionData.type} onChange={handleTypeChange} className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                        <option value="signle">Single Choice (Radio Buttons)</option>
+                        <option value="multiple">Multiple Choice (Checkboxes)</option>
+                    </select>
+                </div>
                 <div>
                     <label className="text-sm font-bold text-gray-600 mb-2 block">Question Text</label>
                     <input type="text" value={questionData.text} onChange={handleTextChange} placeholder="Enter the full question" className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition" />

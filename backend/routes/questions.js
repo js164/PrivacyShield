@@ -156,7 +156,7 @@ router.get('/questions', async (req, res) => {
  */
 router.post('/add', async (req, res) => {
     console.log(req.body.options[0].scores);
-    const { text, multiChoice, questionOrder, options } = req.body;
+    const { text, multiChoice, questionOrder, options , section } = req.body;
 
     if (!text || typeof questionOrder !== 'number' || !options || !Array.isArray(options) || options.length === 0) {
         return res.status(400).json({ message: 'Request body must include text, questionOrder, and a non-empty options array.' });
@@ -166,7 +166,7 @@ router.post('/add', async (req, res) => {
     session.startTransaction();
 
     try {
-        const question = new questionSchema({ text, multiChoice, questionOrder });
+        const question = new questionSchema({ text, multiChoice, questionOrder, section });
         const savedQuestion = await question.save({ session });
 
         await addOptionsForQuestion(savedQuestion._id, options, session);
@@ -268,7 +268,7 @@ router.put('/options/:optionId/scores', async (req, res) => {
  */
 router.put('/questions/:questionId', async (req, res) => {
     const { questionId } = req.params;
-    const { text, multiChoice } = req.body;
+    const { text, multiChoice, section } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(questionId)) {
         return res.status(400).json({ message: 'Invalid question ID format.' });
@@ -277,7 +277,7 @@ router.put('/questions/:questionId', async (req, res) => {
     try {
         const updatedQuestion = await questionSchema.findByIdAndUpdate(
             questionId,
-            { $set: { text, multiChoice } },
+            { $set: { text, multiChoice, section } },
             { new: true, runValidators: true } // Return the updated doc and run schema validators
         );
 
