@@ -25,6 +25,7 @@ app.use(session({
 
 app.use('/',require('./routes/assesment'))
 app.use('/question',require('./routes/questions'))
+app.use('/assesment',require('./routes/assesment'))
 
 port=process.env.PORT || 8000
 const connectDB=require('./db')
