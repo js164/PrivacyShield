@@ -153,19 +153,16 @@ export default function AdminDashboard() {
 
             <div className="min-h-screen bg-gray-100 text-gray-800 font-sans p-4 sm:p-6 lg:p-8">
                 <div className="max-w-7xl mx-auto">
-                    <header className="mb-8 p-6 bg-white rounded-xl shadow-md border border-gray-200">
-                        <h1 className="text-4xl font-bold text-blue-600">PrivacyShield</h1>
-                        <p className="text-lg text-gray-500 mt-1">Admin Dashboard</p>
+                    <header className="mb-8 p-6 bg-white rounded-xl shadow-md">
+                    <h1 className="text-4xl font-display font-bold text-dark-blue">PrivacyShield</h1>
+                    <p className="text-lg text-neutral-gray mt-1">Admin Dashboard</p>
                     </header>
 
                     <div className="mb-8">
-                        <button
-                            onClick={() => setAddQuestionModalOpen(true)}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 shadow-md flex items-center justify-center gap-2"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                            Add New Question
-                        </button>
+
+                        <button onClick={() => setAddQuestionModalOpen(true)}
+                        className="w-full bg-primary-blue hover:bg-dark-blue text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 shadow-md flex items-center justify-center gap-2"
+                        ></button>
                     </div>
 
                     <AddQuestionModal
