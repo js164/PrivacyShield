@@ -8,6 +8,8 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import axios from 'axios';
 import getAllQuestions from './ui/getAllQuestions';
 import Navbar from './ui/Navbar';
+import { BarChart3, Settings, Shield, Users } from 'lucide-react';
+import StatsCard from './StatsCard';
 
 const CATEGORIES = {
     DC: "Data Collection", LC: "Loss of Control", UDU: "Unauthorized Data Use", ST: "Surveillance & Tracking", DR: "Data Retention", ESH: "Emotional/Social Harm", MIC: "Mistrust in Companies", SB: "Security Breaches", RD: "Reputation Damage", PD: "Physical Danger", DIT: "Digital Identity Theft", SE: "Social Engineering", GLR: "Geo-location Risks", ODU: "Opacity of Data Use", MPOT: "Managing Privacy Over Time", LRPG: "Legal vs. Real Protection Gap", PA: "Purpose Ambiguity", DSTP: "Data Sale to Third Parties", LT: "Lack of Transparency", CD: "Correctness of Data", APS: "Anonymity for Personal Safety", CE: "Criminal Exploitation"
@@ -153,10 +155,70 @@ export default function AdminDashboard() {
 
             <div className="min-h-screen bg-gray-100 text-gray-800 font-sans p-4 sm:p-6 lg:p-8">
                 <div className="max-w-7xl mx-auto">
-                    <header className="mb-8 p-6 bg-white rounded-xl shadow-md border border-gray-200">
+                    {/* <header className="mb-8 p-6 bg-white rounded-xl shadow-md border border-gray-200">
                         <h1 className="text-4xl font-bold text-blue-600">PrivacyShield</h1>
                         <p className="text-lg text-gray-500 mt-1">Admin Dashboard</p>
+                    </header> */}
+
+                    {/* <header className="card-gradient p-8 animate-slide-up">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                                <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-glow rounded-xl flex items-center justify-center shadow-glow">
+                                    <Shield className="w-6 h-6 text-white" />
+                                </div>
+                                <div>
+                                    <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+                                        PrivacyShield
+                                    </h1>
+                                    <p className="text-muted-foreground text-lg mt-1">Privacy Assessment Admin Dashboard</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                <button className="btn-ghost p-3">
+                                    <Settings className="w-5 h-5" />
+                                </button>
+                            </div>
+                        </div>
+                    </header> */}
+
+
+                    <header className="mb-8 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <div className="bg-blue-600 p-3 rounded-full text-white">
+                                <Shield className="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                                <h1 className="text-2xl font-bold text-blue-600 ">PrivacyShield</h1>
+                                <p className="text-sm text-slate-500 dark:text-slate-400">Privacy Assessment Admin Dashboard</p>
+                            </div>
+                        </div>
                     </header>
+
+
+                    {/* Statistics Section */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-slide-up mb-8">
+                        <StatsCard
+                            icon={BarChart3}
+                            title="Total Questions"
+                            value={questions ? questions.length : 0}
+                            description="Active assessment questions"
+                            color="bg-blue-500"
+                        />
+                        <StatsCard
+                            icon={Users}
+                            title="Privacy Categories"
+                            value={Object.keys(CATEGORIES).length}
+                            description="Risk assessment areas"
+                            color="bg-green-500"
+                        />
+                        <StatsCard
+                            icon={Shield}
+                            title="Assessment Options"
+                            value={questions ? questions.reduce((acc, q) => acc + q.options.length, 0) : 0}
+                            description="Total response choices"
+                            color="bg-orange-500"
+                        />
+                    </div>
 
                     <div className="mb-8">
                         <button
@@ -174,33 +236,29 @@ export default function AdminDashboard() {
                         onConfirm={handleAddQuestion}
                     />
 
-                    <main className="space-y-12">
-                        {/* --- Section 1 --- */}
-                        <section className="p-6 bg-white rounded-xl shadow-md border border-gray-200">
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-2xl font-bold text-gray-700">Section 1</h2>
-                            </div>
-                            <div className="space-y-6">
-                                {questions && questions.filter((val, j) => val.section == 1).map((question, index) => (
-                                    <QuestionCard key={question._id} index={index} question={question} onDelete={handleDeleteQuestion} onUpdate={handleUpdateQuestion} moveQuestion={(dragIndex, hoverIndex) => moveQuestion(dragIndex, hoverIndex, 1)} />
-                                ))}
-                                {questions && questions.filter((val, j) => val.section == 1).length === 0 && <div className="text-center py-10 bg-gray-50 rounded-xl border border-gray-200"><p className="text-gray-500">No questions in this section.</p></div>}
-                            </div>
-                        </section>
-
-                        {/* --- Section 2 --- */}
-                        <section className="p-6 bg-white rounded-xl shadow-md border border-gray-200">
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-2xl font-bold text-gray-700">Section 2</h2>
-                            </div>
-                            <div className="space-y-6">
-                                {questions && questions.filter((val, j) => val.section == 2).map((question, index) => (
-                                    <QuestionCard key={question._id} index={index} question={question} onDelete={handleDeleteQuestion} onUpdate={handleUpdateQuestion} moveQuestion={(dragIndex, hoverIndex) => moveQuestion(dragIndex, hoverIndex, 2)} />
-                                ))}
-                                {questions && questions.filter((val, j) => val.section == 2).length === 0 && <div className="text-center py-10 bg-gray-50 rounded-xl border border-gray-200"><p className="text-gray-500">No questions in this section.</p></div>}
-                            </div>
-                        </section>
+                    <main className="p-6 bg-white rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-bold text-slate-700">Assessment Questions</h2>
+                            <span className="text-sm font-medium bg-blue-100 text-blue-800  px-3 py-1 rounded-full">{questions && questions.length} Questions</span>
+                        </div>
+                        <div className="space-y-4">
+                            {questions && questions.map((question, index) => (
+                                <QuestionCard key={question.id} index={index} question={question} onDelete={handleDeleteQuestion} onUpdate={handleUpdateQuestion} />
+                            ))}
+                            {questions && questions.length === 0 && <div className="text-center py-10 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700"><p className="text-slate-500 dark:text-slate-400">No questions yet. Add one above.</p></div>}
+                        </div>
                     </main>
+
+                    {/* <main className="space-y-12">
+                            <div className="space-y-6">
+                            {questions && questions.map((question, index) => (
+                                    <QuestionCard key={question._id} index={index} question={question} onDelete={handleDeleteQuestion} onUpdate={handleUpdateQuestion} moveQuestion={(dragIndex, hoverIndex) => moveQuestion(dragIndex, hoverIndex, 1)} />
+                            ))}
+                            {questions && questions.length === 0 && !isLoading && (
+                                <div className="text-center py-10 bg-gray-50 rounded-xl border border-gray-200"><p className="text-gray-500">No questions yet. Add one above to get started!</p></div>
+                            )}
+                            </div>
+                    </main> */}
                 </div>
             </div>
         </DndProvider>
