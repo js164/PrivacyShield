@@ -7,7 +7,7 @@ import AddQuestionModal from './ui/AddQuestionModal';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import axios from 'axios';
 import getAllQuestions from './ui/getAllQuestions';
-import Navbar from './ui/Navbar';
+import { Navbar } from './ui/Navbar';
 
 const CATEGORIES = {
     DC: "Data Collection", LC: "Loss of Control", UDU: "Unauthorized Data Use", ST: "Surveillance & Tracking", DR: "Data Retention", ESH: "Emotional/Social Harm", MIC: "Mistrust in Companies", SB: "Security Breaches", RD: "Reputation Damage", PD: "Physical Danger", DIT: "Digital Identity Theft", SE: "Social Engineering", GLR: "Geo-location Risks", ODU: "Opacity of Data Use", MPOT: "Managing Privacy Over Time", LRPG: "Legal vs. Real Protection Gap", PA: "Purpose Ambiguity", DSTP: "Data Sale to Third Parties", LT: "Lack of Transparency", CD: "Correctness of Data", APS: "Anonymity for Personal Safety", CE: "Criminal Exploitation"

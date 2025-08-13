@@ -4,13 +4,13 @@ import Assesment from "./components/Assesment"
 import Report from "./components/Report"
 import AdminDashboard from "./components/AdminDashboard"
 import axios from 'axios';
-import Navbar from "./components/ui/Navbar"; // Import the Navbar
+import { Navbar } from "./components/ui/Navbar"; // Import the Navbar
 
 function App() {
 
   return (
     <>
-      <Navbar /> {/* Keep the Navbar outside the padded div */}
+      {/*<Navbar /> */}{/* Keep the Navbar outside the padded div */}
       {/* Add this div with padding-top */}
       <div> 
         <Routes>
