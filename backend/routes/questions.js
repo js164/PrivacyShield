@@ -57,11 +57,11 @@ const addOptionsForQuestion = async (questionId, optionsData, session = null) =>
     }
 
     const optionPromises = optionsData.map(async (opt) => {
-        if (!opt.text || !opt.scores) {
-            throw new Error("Invalid option data. Each option must have 'text' and a 'scores' array.");
+        if (!opt.text || !opt.scores || !opt.suggestion) {
+            throw new Error("Invalid option data. Each option must have 'text' , 'suggestion'  and a 'scores' array.");
         }
 
-        const newOption = new optionsSchema({ questionId, text: opt.text });
+        const newOption = new optionsSchema({ questionId, text: opt.text , suggestion: opt.suggestion });
         const savedOption = await newOption.save({ session });
 
         // Use the upsert function to add the scores for the new option.
@@ -83,8 +83,6 @@ const addOptionsForQuestion = async (questionId, optionsData, session = null) =>
 router.get('/questions', async (req, res) => {
     try {
         const questions = await questionSchema.aggregate([
-            // Stage 1: Sort questions by their intended order
-            { $sort: { questionOrder: 1 } },
             // Stage 2: For each question, perform a lookup to find its options
             {
                 $lookup: {
@@ -130,7 +128,8 @@ router.get('/questions', async (req, res) => {
                             $project: {
                                 _id: 1,
                                 text: 1,
-                                scores: 1
+                                scores: 1,
+                                suggestion: 1
                             }
                         }
                     ],
@@ -152,21 +151,21 @@ router.get('/questions', async (req, res) => {
 /**
  * @route   POST /questions
  * @desc    Add a new question with its options and scores.
- * @body    { text, multiChoice, questionOrder, options: [{ text, scores: [{ code, score }] }] }
+ * @body    { text, multiChoice, options: [{ text, scores: [{ code, score }] }] }
  */
 router.post('/add', async (req, res) => {
     console.log(req.body.options[0].scores);
-    const { text, multiChoice, questionOrder, options , section } = req.body;
+    const { text, multiChoice, options , category } = req.body;
 
-    if (!text || typeof questionOrder !== 'number' || !options || !Array.isArray(options) || options.length === 0) {
-        return res.status(400).json({ message: 'Request body must include text, questionOrder, and a non-empty options array.' });
+    if (!text || !options || !Array.isArray(options) || options.length === 0) {
+        return res.status(400).json({ message: 'Request body must include text and a non-empty options array.' });
     }
 
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-        const question = new questionSchema({ text, multiChoice, questionOrder, section });
+        const question = new questionSchema({ text, multiChoice, category });
         const savedQuestion = await question.save({ session });
 
         await addOptionsForQuestion(savedQuestion._id, options, session);
@@ -268,7 +267,7 @@ router.put('/options/:optionId/scores', async (req, res) => {
  */
 router.put('/questions/:questionId', async (req, res) => {
     const { questionId } = req.params;
-    const { text, multiChoice, section } = req.body;
+    const { text, multiChoice, category } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(questionId)) {
         return res.status(400).json({ message: 'Invalid question ID format.' });
@@ -277,7 +276,7 @@ router.put('/questions/:questionId', async (req, res) => {
     try {
         const updatedQuestion = await questionSchema.findByIdAndUpdate(
             questionId,
-            { $set: { text, multiChoice, section } },
+            { $set: { text, multiChoice, category } },
             { new: true, runValidators: true } // Return the updated doc and run schema validators
         );
 
@@ -297,7 +296,7 @@ router.put('/questions/:questionId', async (req, res) => {
  * @desc    Delete a question and all its associated options and scores.
  * @param   {string} questionId - The ID of the question to delete.
  */
-router.delete('/questions/:questionId', async (req, res) => {
+router.delete('/question/:questionId', async (req, res) => {
     const { questionId } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(questionId)) {
