@@ -57,11 +57,11 @@ const addOptionsForQuestion = async (questionId, optionsData, session = null) =>
     }
 
     const optionPromises = optionsData.map(async (opt) => {
-        if (!opt.text || !opt.scores) {
-            throw new Error("Invalid option data. Each option must have 'text' and a 'scores' array.");
+        if (!opt.text || !opt.scores || !opt.suggestion) {
+            throw new Error("Invalid option data. Each option must have 'text' , 'suggestion'  and a 'scores' array.");
         }
 
-        const newOption = new optionsSchema({ questionId, text: opt.text });
+        const newOption = new optionsSchema({ questionId, text: opt.text , suggestion: opt.suggestion });
         const savedOption = await newOption.save({ session });
 
         // Use the upsert function to add the scores for the new option.
@@ -128,7 +128,8 @@ router.get('/questions', async (req, res) => {
                             $project: {
                                 _id: 1,
                                 text: 1,
-                                scores: 1
+                                scores: 1,
+                                suggestion: 1
                             }
                         }
                     ],

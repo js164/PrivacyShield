@@ -22,15 +22,15 @@ const ItemType = 'QUESTION';
 const getInitialScores = () => Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: 0 }), {});
 
 export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
-    const [questionData, setQuestionData] = useState({ text: '', options: [{ text: '', scores: getInitialScores() }] });
+    const [questionData, setQuestionData] = useState({ text: '', options: [{ text: '', scores: getInitialScores(), suggestion: '' }] });
     const [error, setError] = useState('');
 
-    useEffect(() => { if (isOpen) { setQuestionData({ text: '', options: [{ text: '', scores: getInitialScores() }] }); setError(''); } }, [isOpen]);
+    useEffect(() => { if (isOpen) { setQuestionData({ text: '', options: [{ text: '', scores: getInitialScores(), suggestion: '' }] }); setError(''); } }, [isOpen]);
 
     const handleTextChange = (e) => setQuestionData({ ...questionData, text: e.target.value });
     const handleTypeChange = (e) => setQuestionData({ ...questionData, type: e.target.value });
     const handleOptionChange = (index, updatedOption) => { const newOptions = [...questionData.options]; newOptions[index] = updatedOption; setQuestionData({ ...questionData, options: newOptions }); };
-    const handleAddOption = () => setQuestionData({ ...questionData, options: [...questionData.options, { text: '', scores: getInitialScores() }] });
+    const handleAddOption = () => setQuestionData({ ...questionData, options: [...questionData.options, { text: '', scores: getInitialScores(), suggestion: '' }] });
     const handleRemoveOption = (index) => setQuestionData({ ...questionData, options: questionData.options.filter((_, i) => i !== index) });
     const handleCategoryChange = (e) => setQuestionData({ ...questionData, category: e.target.value });
 
@@ -43,6 +43,7 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
             category: questionData.category,
             options: questionData.options.map(option => ({
                 text: option.text,
+                suggestion: option.suggestion,
                 scores: Object.entries(option.scores)
                     .filter(([_, score]) => score !== 0) // Optional: remove zero-score entries
                     .map(([code, score]) => ({ code, score }))
@@ -51,6 +52,7 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
     }
 
     const handleConfirm = () => {
+        console.log(questionData);
         if (!questionData.text.trim()) { setError("Question text cannot be empty."); return; }
         const validOptions = questionData.options.filter(opt => opt.text.trim() !== '');
         if (validOptions.length === 0) { setError("Please add and fill out at least one option."); return; }

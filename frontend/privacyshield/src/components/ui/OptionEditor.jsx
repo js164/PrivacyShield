@@ -21,6 +21,13 @@ export default function OptionEditor({ option, optionIndex, onDelete }) {
                     <button onClick={onDelete} className="text-slate-400 hover:text-red-500 p-1 rounded-full hover:bg-slate-100"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
                 </div>
             </div>
+            {option.suggestion && (
+                 <div className="px-4 pb-3">
+                    <p className="text-xs italic text-slate-500 bg-slate-100 p-2 rounded-md">
+                        <span className="font-bold not-italic">Suggestion:</span> {option.suggestion}
+                    </p>
+                </div>
+            )}
             {isScoresVisible && (option.scores.length > 0 ? (
                 <div className="p-4 border-t border-slate-200 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-4">
                     {option.scores.map((value,key) => (

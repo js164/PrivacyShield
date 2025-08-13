@@ -10,6 +10,7 @@ import getAllQuestions from './ui/getAllQuestions';
 import Navbar from './ui/Navbar';
 import { BarChart3, Settings, Shield, Users } from 'lucide-react';
 import StatsCard from './StatsCard';
+import InitialQuestionCard from './ui/InitialQuestionCard';
 
 const CATEGORIES = {
     DC: "Data Collection", LC: "Loss of Control", UDU: "Unauthorized Data Use", ST: "Surveillance & Tracking", DR: "Data Retention", ESH: "Emotional/Social Harm", MIC: "Mistrust in Companies", SB: "Security Breaches", RD: "Reputation Damage", PD: "Physical Danger", DIT: "Digital Identity Theft", SE: "Social Engineering", GLR: "Geo-location Risks", ODU: "Opacity of Data Use", MPOT: "Managing Privacy Over Time", LRPG: "Legal vs. Real Protection Gap", PA: "Purpose Ambiguity", DSTP: "Data Sale to Third Parties", LT: "Lack of Transparency", CD: "Correctness of Data", APS: "Anonymity for Personal Safety", CE: "Criminal Exploitation"
@@ -17,6 +18,22 @@ const CATEGORIES = {
 
 const ItemType = 'QUESTION';
 const getInitialScores = () => Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: 0 }), {});
+
+
+const INITIAL_QUESTION = {
+    id: 'q0',
+    text: 'When it comes to your privacy and safety online, which of these concerns you the most? (Select all that apply)',
+    type: 'multiple',
+    options: [
+        { id: 'q0_opt1', text: 'Someone stealing or misusing my online accounts and passwords', category: 'DIA' },
+        { id: 'q0_opt2', text: 'Companies collecting and sharing my personal data without my control', category: 'DCC' },
+        { id: 'q0_opt3', text: 'Apps or services tracking my physical location and movements', category: 'LPS' },
+        { id: 'q0_opt4', text: 'People judging me or damaging my reputation based on my online activity', category: 'SRM' },
+        { id: 'q0_opt5', text: 'Being monitored or watched online or offline without my knowledge', category: 'ST' },
+        { id: 'q0_opt6', text: 'I don’t trust companies to be honest or clear about how they use my personal data', category: 'TCT' },
+        { id: 'q0_opt7', text: 'Privacy laws and rules not protecting me well enough', category: 'LAP' },
+    ]
+};
 
 
 export default function AdminDashboard() {
@@ -46,18 +63,18 @@ export default function AdminDashboard() {
 
         axios.post('/question/add', questionData).then(response => {
             console.log(response);
-            if (response.status == 200) {
-
-                const newQuestion = {
-                    id: response.data.data._id,
-                    text: response.data.data.text,
-                    category: response.data.data.category,
-                    options: questionData.options.map((opt, index) => ({
-                        ...opt,
-                        id: `opt_${Date.now()}_${index}`,
-                    }))
-                }
-                setQuestions(prev => [...prev, newQuestion].sort((a, b) => a.order - b.order));
+            if (response.status == 200 || response.status == 201) {
+                console.log("successsss");
+                // const newQuestion = {
+                //     id: response.data.data._id,
+                //     text: response.data.data.text,
+                //     category: response.data.data.category,
+                //     options: questionData.options.map((opt, index) => ({
+                //         ...opt,
+                //         id: `opt_${Date.now()}_${index}`,
+                //     }))
+                // }
+                setQuestions(prev => [...prev, questionData].sort((a, b) => a.order - b.order));
 
             };
 
@@ -224,6 +241,8 @@ export default function AdminDashboard() {
                             color="bg-orange-500"
                         />
                     </div>
+
+                    <InitialQuestionCard question={INITIAL_QUESTION} />
 
                     <div className="mb-8">
                         <button

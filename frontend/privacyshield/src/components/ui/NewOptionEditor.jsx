@@ -9,6 +9,7 @@ const CATEGORIES = {
 export default function NewOptionEditor({ index, option, onOptionChange, onRemove }) {
     const [isScoresVisible, setIsScoresVisible] = useState(false);
     const handleTextChange = (e) => onOptionChange(index, { ...option, text: e.target.value });
+    const handleSuggestionChange = (e) => onOptionChange(index, { ...option, suggestion: e.target.value });
     const handleScoreChange = (category, value) => onOptionChange(index, { ...option, scores: { ...option.scores, [category]: parseInt(value, 10) || 0 } });
 
     return (
@@ -17,6 +18,9 @@ export default function NewOptionEditor({ index, option, onOptionChange, onRemov
                 <input type="text" value={option.text} onChange={handleTextChange} placeholder={`Option ${index + 1} Text`} className="flex-grow bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" />
                 <button onClick={() => setIsScoresVisible(!isScoresVisible)} className="text-sm text-yellow-600 hover:text-yellow-800 whitespace-nowrap">{isScoresVisible ? 'Hide Scores' : 'Edit Scores'}</button>
                 <button onClick={() => onRemove(index)} className="p-2 text-red-500 hover:text-red-700 hover:bg-slate-200 rounded-full transition"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            </div>
+            <div className="mt-3">
+                 <input type="text" value={option.suggestion} onChange={handleSuggestionChange} placeholder="Suggestion" className="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 placeholder-slate-400  focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" />
             </div>
             {isScoresVisible && (
                 <div className="mt-4 pt-4 border-t border-slate-300 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-4">
