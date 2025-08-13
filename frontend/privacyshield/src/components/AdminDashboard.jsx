@@ -7,10 +7,11 @@ import AddQuestionModal from './ui/AddQuestionModal';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import axios from 'axios';
 import getAllQuestions from './ui/getAllQuestions';
-import Navbar from './ui/Navbar';
+
 import { BarChart3, Settings, Shield, Users } from 'lucide-react';
 import StatsCard from './StatsCard';
 import InitialQuestionCard from './ui/InitialQuestionCard';
+import { Navbar } from './ui/Navbar';
 
 const CATEGORIES = {
     DC: "Data Collection", LC: "Loss of Control", UDU: "Unauthorized Data Use", ST: "Surveillance & Tracking", DR: "Data Retention", ESH: "Emotional/Social Harm", MIC: "Mistrust in Companies", SB: "Security Breaches", RD: "Reputation Damage", PD: "Physical Danger", DIT: "Digital Identity Theft", SE: "Social Engineering", GLR: "Geo-location Risks", ODU: "Opacity of Data Use", MPOT: "Managing Privacy Over Time", LRPG: "Legal vs. Real Protection Gap", PA: "Purpose Ambiguity", DSTP: "Data Sale to Third Parties", LT: "Lack of Transparency", CD: "Correctness of Data", APS: "Anonymity for Personal Safety", CE: "Criminal Exploitation"
@@ -83,12 +84,12 @@ export default function AdminDashboard() {
     }
 
     const handleDeleteQuestion = (id) => {
-        axios.delete('/question/question/'+id).then(response => {
+        axios.delete('/question/question/' + id).then(response => {
             console.log(response);
             if (response.status == 200) {
                 setQuestions(prev => prev.filter(q => q._id !== id));
-                }
             }
+        }
         )
     };
 

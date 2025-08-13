@@ -1,17 +1,27 @@
 import React from "react";
-import logo from '../../public/Images/logo.svg'
 import { Link } from "react-router-dom";
 
 export default function HeroSection() {
   return (
-    <section className="text-center py-16 px-4 bg-white">
-      <div className="flex flex-col items-center">
-        <img src={logo} alt="shield logo" className="w-14 h-14 mb-4" />
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Privacy Shield</h1>
-        <Link to='/assesment' className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-full shadow-md transition-all">
-          Take Privacy Assessment
-        </Link>
-      </div>
+    <section className="bg-light-blue">
+        <div className="max-w-4xl mx-auto text-center py-24 px-4 sm:py-32">
+            {/* Add 'font-display' to the heading */}
+            <h1 className="text-4xl font-display font-extrabold text-dark-blue sm:text-5xl md:text-6xl">
+                Understand and Control Your Digital Privacy
+            </h1>
+            {/* Add 'font-sans' to the paragraph */}
+            <p className="mt-6 max-w-2xl mx-auto text-lg text-neutral-gray font-sans">
+                Take our quick assessment to get a personalized privacy score and actionable recommendations to protect your digital life.
+            </p>
+            <div className="mt-8">
+                <Link 
+                    to='/assesment' 
+                    className="inline-block bg-primary-blue hover:bg-dark-blue text-white font-semibold px-8 py-3 rounded-full shadow-lg"
+                >
+                    Start Your Privacy Assessment
+                </Link>
+            </div>
+        </div>
     </section>
   );
 }

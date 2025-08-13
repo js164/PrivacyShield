@@ -1,7 +1,7 @@
 import React from 'react'
-import Navbar from './ui/Navbar'
 import HeroSection from './ui/HeroSection'
 import InfoCards from './ui/InfoCards'
+import { Navbar } from './ui/Navbar'
 
 export default function HomePage() {
   return (
@@ -12,3 +12,5 @@ export default function HomePage() {
     </>
   )
 }
+
+

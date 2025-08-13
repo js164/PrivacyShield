@@ -1,81 +1,63 @@
-import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../../public/Images/logo.svg'
+import logo from '../../public/Images/log.jpg'; // Your logo path
 
-
-/*
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleMenu = () => setIsOpen(!isOpen);
-
-  const navItems = [
-    { label: 'About Us', path: '/about' },
-    { label: 'Take Survey', path: '/assessment' },
-  ];
-
+export function Navbar() {
   return (
-    <nav className="bg-white shadow-md fixed w-full z-10">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="text-2xl font-bold text-blue-600">
-          <Link to="/">Privacy Shield</Link>
-        </div>
-
-        {/* Desktop Menu *//*}
-        <div className="hidden md:flex space-x-6">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              to={item.path}
-              className="text-blue-600 hover:text-red-600 transition"
-            >
-              {item.label}
+    <header className="bg-white sticky top-0 z-50 border-b border-gray-200">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo and Title */}
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center gap-3">
+              <img className="h-12 w-auto" src={logo} alt="PrivacyShield" />
+              <span className="text-2xl font-display font-bold text-dark-blue">
+                PrivacyShield
+              </span>
             </Link>
-          ))}
-        </div>
+          </div>
 
-        {/* Mobile Menu Button *//*}
-        <div className="md:hidden">
-          <button onClick={toggleMenu}>
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu Items *//*}
-      {isOpen && (
-        <div className="md:hidden px-4 pb-4 bg-white">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              to={item.path}
-              onClick={() => setIsOpen(false)} // Close menu on click
-              className="block py-2 text-blue-600 hover:text-red-600"
+          {/* Navigation Links and Buttons */}
+          <div className="space-x-4 flex items-center">
+            <Link 
+              to="/about" 
+              // --- CHANGE IS HERE ---
+              // This now looks like a simple text link, but gets a background on hover.
+              className="py-2 px-4 rounded-lg text-base font-medium 
+                         text-neutral-gray 
+                         hover:bg-gray-100 transition-colors"
             >
-              {item.label}
+              About Us
             </Link>
-          ))}
+            <Link
+              to="/assesment"
+              className="inline-block bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-dark-blue transition-colors shadow"
+            >
+              Take Assessment
+            </Link>
+          </div>
         </div>
-      )}
-    </nav>
-  );
-};
-*/
-
-export default function Navbar() {
-  return (
-    <nav className="bg-green-200 flex justify-between items-center px-6 py-4 shadow-md bg-white">
-      <a href="/" className="flex items-center space-x-2">
-        <img src={logo} alt="logo" className="w-6 h-6" />
-        <span className="text-lg font-bold text-purple-700" href="/">Privacy Shield</span>
-      </a>
-      <div className="space-x-6 text-sm font-medium text-purple-600">
-        <a href="/about" className="hover:underline\">About Us</a>
-        <a href="/assessment" className="hover:underline\">Take Privacy Assessment</a>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }
 
-//export default Navbar;
+export function Navbar_Questions() {
+  return (
+    <header className="bg-white sticky top-0 z-50 border-b border-gray-200">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center h-20">
+          {/* Logo and Title */}
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center gap-3">
+              <img className="h-12 w-auto" src={logo} alt="PrivacyShield" />
+              <span className="text-2xl font-display font-bold text-dark-blue">
+                PrivacyShield
+              </span>
+            </Link>
+          </div>
+        </div>
+      </nav>
+    </header>
+  );
+}
