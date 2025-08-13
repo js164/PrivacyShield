@@ -9,13 +9,8 @@ const QuestionSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    questionOrder: {
-        type: Number,
-        required: true
-    },
-    section: {
-        type: Number,
-        required: true
+    category: {
+        type: String
     },
     createdAt: {
         type: Date,

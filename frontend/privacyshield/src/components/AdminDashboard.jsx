@@ -42,7 +42,6 @@ export default function AdminDashboard() {
     // --- Local State Handlers ---
     const handleAddQuestion = (questionData) => {
 
-        questionData['questionOrder'] = questions.length + 1
         console.log(questionData);
 
         axios.post('/question/add', questionData).then(response => {
@@ -52,7 +51,7 @@ export default function AdminDashboard() {
                 const newQuestion = {
                     id: response.data.data._id,
                     text: response.data.data.text,
-                    order: response.data.data.questionOrder,
+                    category: response.data.data.category,
                     options: questionData.options.map((opt, index) => ({
                         ...opt,
                         id: `opt_${Date.now()}_${index}`,
@@ -67,7 +66,13 @@ export default function AdminDashboard() {
     }
 
     const handleDeleteQuestion = (id) => {
-        setQuestions(prev => prev.filter(q => q.id !== id));
+        axios.delete('/question/question/'+id).then(response => {
+            console.log(response);
+            if (response.status == 200) {
+                setQuestions(prev => prev.filter(q => q._id !== id));
+                }
+            }
+        )
     };
 
     const handleUpdateQuestion = (id, updatedData) => {
@@ -236,7 +241,7 @@ export default function AdminDashboard() {
                         onConfirm={handleAddQuestion}
                     />
 
-                    <main className="p-6 bg-white rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+                    <main className="p-6 bg-white rounded-2xl shadow-lg border border-slate-200">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-bold text-slate-700">Assessment Questions</h2>
                             <span className="text-sm font-medium bg-blue-100 text-blue-800  px-3 py-1 rounded-full">{questions && questions.length} Questions</span>
@@ -245,7 +250,7 @@ export default function AdminDashboard() {
                             {questions && questions.map((question, index) => (
                                 <QuestionCard key={question.id} index={index} question={question} onDelete={handleDeleteQuestion} onUpdate={handleUpdateQuestion} />
                             ))}
-                            {questions && questions.length === 0 && <div className="text-center py-10 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700"><p className="text-slate-500 dark:text-slate-400">No questions yet. Add one above.</p></div>}
+                            {questions && questions.length === 0 && <div className="text-center py-10 bg-slate-50 rounded-xl border border-slate-200"><p className="text-slate-500">No questions yet. Add one above.</p></div>}
                         </div>
                     </main>
 

@@ -8,6 +8,16 @@ const CATEGORIES = {
     DC: "Data Collection", LC: "Loss of Control", UDU: "Unauthorized Data Use", ST: "Surveillance & Tracking", DR: "Data Retention", ESH: "Emotional/Social Harm", MIC: "Mistrust in Companies", SB: "Security Breaches", RD: "Reputation Damage", PD: "Physical Danger", DIT: "Digital Identity Theft", SE: "Social Engineering", GLR: "Geo-location Risks", ODU: "Opacity of Data Use", MPOT: "Managing Privacy Over Time", LRPG: "Legal vs. Real Protection Gap", PA: "Purpose Ambiguity", DSTP: "Data Sale to Third Parties", LT: "Lack of Transparency", CD: "Correctness of Data", APS: "Anonymity for Personal Safety", CE: "Criminal Exploitation"
 };
 
+const QUESTION_CATEGORIES = {
+    'DIA': 'Digital Identity & Authentication',
+    'DCC': 'Data Collection & Control',
+    'LPS': 'Location & Physical Safety',
+    'SRM': 'Social & Reputation Management',
+    'ST': 'Surveillance & Tracking',
+    'TCT': 'Transparency & Corporate Trust',
+    'LAP': 'Legal & Advanced Privacy'
+};
+
 const ItemType = 'QUESTION';
 const getInitialScores = () => Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: 0 }), {});
 
@@ -22,6 +32,7 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
     const handleOptionChange = (index, updatedOption) => { const newOptions = [...questionData.options]; newOptions[index] = updatedOption; setQuestionData({ ...questionData, options: newOptions }); };
     const handleAddOption = () => setQuestionData({ ...questionData, options: [...questionData.options, { text: '', scores: getInitialScores() }] });
     const handleRemoveOption = (index) => setQuestionData({ ...questionData, options: questionData.options.filter((_, i) => i !== index) });
+    const handleCategoryChange = (e) => setQuestionData({ ...questionData, category: e.target.value });
 
     function transformQuestionData(questionData) {
         console.log(questionData);
@@ -29,6 +40,7 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
             text: questionData.text,
             multiChoice: questionData.type == 'multiple',
             section: questionData.set,
+            category: questionData.category,
             options: questionData.options.map(option => ({
                 text: option.text,
                 scores: Object.entries(option.scores)
@@ -53,6 +65,14 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
                 <h3 className="text-2xl font-bold text-gray-900">Add New Question</h3>
             </div>
             <div className="p-6 space-y-4 overflow-y-auto">
+            <div>
+                    <label className="text-sm font-bold text-slate-600 mb-2 block">Question Category</label>
+                    <select value={questionData.category} onChange={handleCategoryChange} className="w-full bg-slate-50 border border-slate-300 rounded-lg px-4 py-3 text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+                        {Object.entries(QUESTION_CATEGORIES).map(([key, name]) => (
+                            <option key={key} value={key}>{name}</option>
+                        ))}
+                    </select>
+                </div>
                 <div>
                     <label className="text-sm font-bold text-gray-600 mb-2 block">Question Type</label>
                     <select value={questionData.type} onChange={handleTypeChange} className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
