@@ -30,7 +30,7 @@ export default function NewOptionEditor({ optionIndex, option, onOptionChange, o
                                 <span className="text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span>
                                 <div className="absolute bottom-full left-1/2 z-10 -translate-x-1/2 mb-2 w-max max-w-xs px-3 py-1.5 bg-slate-900 text-white text-xs rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 pointer-events-none">{name}<svg className="absolute text-slate-900 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon className="fill-current" points="0,0 127.5,127.5 255,0"/></svg></div>
                             </div>
-                            <input id={`${option.id}-${key}`} type="number" value={localScores[key] || 0} onChange={(e) => handleScoreChange(key, e.target.value)} onBlur={() => handleScoreBlur(key)} className="w-20 bg-white border border-slate-300 rounded-md px-2 py-1 text-center text-slate-800  focus:ring-1 focus:ring-indigo-500 focus:outline-none" />
+                            <input id={`${option.id}-${key}`} type="number" value={option.scores[key] || 0} onChange={(e) => handleScoreChange(key, e.target.value)} className="w-20 bg-white border border-slate-300 rounded-md px-2 py-1 text-center text-slate-800  focus:ring-1 focus:ring-indigo-500 focus:outline-none" />
                         </div>
                     ))}
                 </div>
