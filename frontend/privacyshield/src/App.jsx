@@ -2,9 +2,9 @@ import { Route, Routes } from "react-router-dom"
 import HomePage from "./components/HomePage"
 import Assesment from "./components/Assesment"
 import Report from "./components/Report"
-import AdminDashboard from "./components/AdminDashboard"
 import axios from 'axios';
 import { Navbar } from "./components/ui/Navbar"; // Import the Navbar
+import AdminDashboard from "./components/AdminDashboard/AdminDashboard";
 
 function App() {
 

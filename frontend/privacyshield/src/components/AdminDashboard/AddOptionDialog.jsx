@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect } from 'react';
 import { useState } from 'react';
-import Modal from './Modal';
+import Modal from '../ui/Modal';
 
 export default function AddOptionDialog({ isOpen, onClose, onConfirm }) {
     const [text, setText] = useState('');

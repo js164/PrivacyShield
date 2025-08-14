@@ -1,36 +1,25 @@
 import React from 'react'
 import { useEffect } from 'react';
 import { useState } from 'react';
-import Modal from './Modal';
+import Modal from '../ui/Modal';
 import NewOptionEditor from './NewOptionEditor';
+import { CATEGORIES } from '../config/Categories';
+import { QUESTION_CATEGORIES } from '../config/QuestionCategory';
 
-const CATEGORIES = {
-    DC: "Data Collection", LC: "Loss of Control", UDU: "Unauthorized Data Use", ST: "Surveillance & Tracking", DR: "Data Retention", ESH: "Emotional/Social Harm", MIC: "Mistrust in Companies", SB: "Security Breaches", RD: "Reputation Damage", PD: "Physical Danger", DIT: "Digital Identity Theft", SE: "Social Engineering", GLR: "Geo-location Risks", ODU: "Opacity of Data Use", MPOT: "Managing Privacy Over Time", LRPG: "Legal vs. Real Protection Gap", PA: "Purpose Ambiguity", DSTP: "Data Sale to Third Parties", LT: "Lack of Transparency", CD: "Correctness of Data", APS: "Anonymity for Personal Safety", CE: "Criminal Exploitation"
-};
-
-const QUESTION_CATEGORIES = {
-    'DIA': 'Digital Identity & Authentication',
-    'DCC': 'Data Collection & Control',
-    'LPS': 'Location & Physical Safety',
-    'SRM': 'Social & Reputation Management',
-    'ST': 'Surveillance & Tracking',
-    'TCT': 'Transparency & Corporate Trust',
-    'LAP': 'Legal & Advanced Privacy'
-};
 
 const ItemType = 'QUESTION';
 const getInitialScores = () => Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: 0 }), {});
 
 export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
-    const [questionData, setQuestionData] = useState({ text: '', options: [{ text: '', scores: getInitialScores(), suggestion: '' }] });
+    const [questionData, setQuestionData] = useState({ text: '', category: 'DIA', multiChoice: 'false', options: [{ text: '', scores: getInitialScores(), suggestion: '', suggestion_category: 'area_of_concern' }] });
     const [error, setError] = useState('');
 
-    useEffect(() => { if (isOpen) { setQuestionData({ text: '', options: [{ text: '', scores: getInitialScores(), suggestion: '' }] }); setError(''); } }, [isOpen]);
+    useEffect(() => { if (isOpen) { setQuestionData({ text: '', category: 'DIA', multiChoice: 'false', options: [{ text: '', scores: getInitialScores(), suggestion: '', suggestion_category: 'area_of_concern' }] }); setError(''); } }, [isOpen]);
 
     const handleTextChange = (e) => setQuestionData({ ...questionData, text: e.target.value });
     const handleTypeChange = (e) => setQuestionData({ ...questionData, type: e.target.value });
     const handleOptionChange = (index, updatedOption) => { const newOptions = [...questionData.options]; newOptions[index] = updatedOption; setQuestionData({ ...questionData, options: newOptions }); };
-    const handleAddOption = () => setQuestionData({ ...questionData, options: [...questionData.options, { text: '', scores: getInitialScores(), suggestion: '' }] });
+    const handleAddOption = () => setQuestionData({ ...questionData, options: [...questionData.options, { text: '', scores: getInitialScores(), suggestion: '',  suggestion_category: 'area_of_concern' }] });
     const handleRemoveOption = (index) => setQuestionData({ ...questionData, options: questionData.options.filter((_, i) => i !== index) });
     const handleCategoryChange = (e) => setQuestionData({ ...questionData, category: e.target.value });
 
@@ -39,11 +28,11 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
         return {
             text: questionData.text,
             multiChoice: questionData.type == 'multiple',
-            section: questionData.set,
             category: questionData.category,
             options: questionData.options.map(option => ({
                 text: option.text,
                 suggestion: option.suggestion,
+                suggestion_category: option.suggestion_category,
                 scores: Object.entries(option.scores)
                     .filter(([_, score]) => score !== 0) // Optional: remove zero-score entries
                     .map(([code, score]) => ({ code, score }))
@@ -67,7 +56,7 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
                 <h3 className="text-2xl font-bold text-gray-900">Add New Question</h3>
             </div>
             <div className="p-6 space-y-4 overflow-y-auto">
-            <div>
+                <div>
                     <label className="text-sm font-bold text-slate-600 mb-2 block">Question Category</label>
                     <select value={questionData.category} onChange={handleCategoryChange} className="w-full bg-slate-50 border border-slate-300 rounded-lg px-4 py-3 text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
                         {Object.entries(QUESTION_CATEGORIES).map(([key, name]) => (
