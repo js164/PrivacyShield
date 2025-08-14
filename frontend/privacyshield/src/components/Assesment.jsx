@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import SurveyQuestion from "./ui/QuestionDisplay";
 import { Navbar_Questions } from './ui/Navbar';
 import Toast from "./ui/QuestionSuggestion";
+import ContinueModal from './ui/Dialog';
 
 export default function Assesment() {
   const [api_data, setAPIData] = useState([]);
@@ -14,6 +15,7 @@ export default function Assesment() {
   const [user_selected_option, setSelectedOption] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
+  const [showModal, setShowModal] = useState(true);
 
   // Fetch questions from API
   useEffect(() => {
@@ -127,11 +129,16 @@ export default function Assesment() {
 
     const handleFinish = (selectedIndex) => {
     try {
+      setShowModal(false);
+      var time_delay = 500;
+      if (typeof selectedIndex == 'number'){
       setSelectedOption(selectedIndex);
       setShowToast(true);
+      time_delay = 3000;
+      }
                 setTimeout(() => {
       window.location.href = "/report";
-    }, 3000); // delay in milliseconds (2000 = 2s)
+    }, time_delay); // delay in milliseconds (2000 = 2s)
     } catch (err) {
       console.error("Error submitting survey:", err);
     }
@@ -146,6 +153,13 @@ export default function Assesment() {
       duration={3000}
       onClose={() => setShowToast(false)}
     />
+
+<ContinueModal
+  show={(currentQuestion === api_data.length-1) && showModal}
+  onContinue={() => setShowModal(false)}
+  onStop={handleFinish}
+/>
+
     <SurveyQuestion
       title="Privacy Tools Survey"
       progress={(currentQuestion + 1) / api_data.length * 100}
