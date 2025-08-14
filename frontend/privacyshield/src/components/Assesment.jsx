@@ -10,6 +10,8 @@ export default function Assesment() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [options, setOptions] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+  const [user_selected_option, setSelectedOption] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
 
@@ -37,6 +39,16 @@ export default function Assesment() {
 
       setOptions(newOptions);
 
+      const newSuggestions = [];
+
+      for (let i = 0; i < data[currentQuestion].options.length; i++) {
+
+        newSuggestions.push(data[currentQuestion].options[i].suggestion)
+
+      }
+
+      setSuggestions(newSuggestions);
+
       } catch (err) {
         console.error("Error fetching questions:", err);
       } finally {
@@ -49,6 +61,10 @@ export default function Assesment() {
 
   const handleNext = (selectedIndex) => {
 
+    console.log(selectedIndex)
+    console.log(api_data)
+
+    setSelectedOption(selectedIndex);
     setShowToast(true); // Show toast
 
     const question_no = currentQuestion + 1
@@ -64,6 +80,17 @@ export default function Assesment() {
       }
 
       setOptions(newOptions);
+
+      const newSuggestions = [];
+
+      for (let i = 0; i < api_data[currentQuestion].options.length; i++) {
+
+        newSuggestions.push(api_data[currentQuestion].options[i].suggestion)
+
+      }
+
+      setSuggestions(newSuggestions);
+
       setCurrentQuestion(question_no);
 
   };
@@ -83,14 +110,28 @@ export default function Assesment() {
       }
 
       setOptions(newOptions);
+
+      const newSuggestions = [];
+
+      for (let i = 0; i < api_data[currentQuestion].options.length; i++) {
+
+        newSuggestions.push(api_data[currentQuestion].options[i].suggestion)
+
+      }
+
+      setSuggestions(newSuggestions);
+
       setCurrentQuestion(question_no);
 
   };
 
-    const handleFinish = async () => {
+    const handleFinish = (selectedIndex) => {
     try {
+      setSelectedOption(selectedIndex);
       setShowToast(true);
+                setTimeout(() => {
       window.location.href = "/report";
+    }, 3000); // delay in milliseconds (2000 = 2s)
     } catch (err) {
       console.error("Error submitting survey:", err);
     }
@@ -100,9 +141,9 @@ export default function Assesment() {
     <>
     <Navbar_Questions />
     <Toast
-      message={questions}
+      message={suggestions[user_selected_option]}
       show={showToast}
-      duration={2000}
+      duration={3000}
       onClose={() => setShowToast(false)}
     />
     <SurveyQuestion
