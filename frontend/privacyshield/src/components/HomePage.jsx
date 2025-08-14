@@ -1,8 +1,16 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import HeroSection from './ui/HeroSection'
+import InfoCards from './ui/InfoCards'
+import { Navbar } from './ui/Navbar'
 
 export default function HomePage() {
   return (
-    <Link to="/assesment">Start Assesment</Link>
+    <>
+      <Navbar />
+      <HeroSection />
+      <InfoCards />
+    </>
   )
 }
+
+

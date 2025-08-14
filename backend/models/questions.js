@@ -9,6 +9,9 @@ const QuestionSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    category: {
+        type: String
+    },
     createdAt: {
         type: Date,
         default: Date.now
