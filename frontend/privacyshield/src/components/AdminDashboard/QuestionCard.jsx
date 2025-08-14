@@ -1,30 +1,21 @@
 import React from 'react'
 import { useRef } from 'react';
 import { useState } from 'react';
-import ConfirmationDialog from './ConfirmationDialog';
+import ConfirmationDialog from '../ui/ConfirmationDialog';
 import AddOptionDialog from './AddOptionDialog';
 import { useDrag, useDrop } from 'react-dnd';
 import NewOptionEditor from './NewOptionEditor';
 import OptionEditor from './OptionEditor';
+import { QUESTION_CATEGORIES } from '../config/QuestionCategory';
 
 
 const ItemType = 'QUESTION';
 
 
-const QUESTION_CATEGORIES = {
-    'DIA': 'Digital Identity & Authentication',
-    'DCC': 'Data Collection & Control',
-    'LPS': 'Location & Physical Safety',
-    'SRM': 'Social & Reputation Management',
-    'ST': 'Surveillance & Tracking',
-    'TCT': 'Transparency & Corporate Trust',
-    'LAP': 'Legal & Advanced Privacy'
-};
-
 export default function QuestionCard({ question, index, onDelete, onUpdate, moveQuestion }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [isAddOptionModalOpen, setAddOptionModalOpen] = useState(false);
+    // const [isAddOptionModalOpen, setAddOptionModalOpen] = useState(false);
     const [optionToDelete, setOptionToDelete] = useState(null);
 
     const ref = useRef(null);
@@ -49,23 +40,16 @@ export default function QuestionCard({ question, index, onDelete, onUpdate, move
 
     drag(drop(ref));
 
-    const handleAddOption = (newOptionText) => {
-        const newOption = {
-            id: `opt_${Date.now()}`,
-            text: newOptionText,
-            scores: {}
-        };
-        const updatedOptions = [...question.options, newOption];
-        onUpdate(question.id, { options: updatedOptions });
-        setAddOptionModalOpen(false);
-    };
-
-    const handleUpdateOption = (optionId, updatedOptionData) => {
-        const updatedOptions = question.options.map(opt =>
-            opt.id === optionId ? { ...opt, ...updatedOptionData } : opt
-        );
-        onUpdate(question.id, { options: updatedOptions });
-    };
+    // const handleAddOption = (newOptionText) => {
+    //     const newOption = {
+    //         id: `opt_${Date.now()}`,
+    //         text: newOptionText,
+    //         scores: {}
+    //     };
+    //     const updatedOptions = [...question.options, newOption];
+    //     onUpdate(question.id, { options: updatedOptions });
+    //     setAddOptionModalOpen(false);
+    // };
 
     const handleDeleteOption = (optionId) => {
         const updatedOptions = question.options.filter(opt => opt.id !== optionId);
@@ -84,8 +68,8 @@ export default function QuestionCard({ question, index, onDelete, onUpdate, move
                         <p className="font-semibold text-slate-800 ">{question.text}</p>
                         {!isExpanded && (
                             <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
-                                 <span className="font-medium px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">{QUESTION_CATEGORIES[question.category] || 'Uncategorized'}</span>
-                                <span className={`font-medium px-2 py-0.5 rounded-full capitalize ${ question.multiChoice ? 'bg-purple-100 text-purple-800 ' : 'bg-green-100 text-green-800 ' }`}>{question.multiChoice ? 'multiple' : 'single'}</span>
+                                <span className="font-medium px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">{QUESTION_CATEGORIES[question.category] || 'Uncategorized'}</span>
+                                <span className={`font-medium px-2 py-0.5 rounded-full capitalize ${question.multiChoice ? 'bg-purple-100 text-purple-800 ' : 'bg-green-100 text-green-800 '}`}>{question.multiChoice ? 'multiple' : 'single'}</span>
                                 <span>{question.options.length} options</span>
                             </div>
                         )}
@@ -97,18 +81,18 @@ export default function QuestionCard({ question, index, onDelete, onUpdate, move
                 </div>
                 {isExpanded && (
                     <div className="pb-4 px-6 space-y-3">
-                        {question.options.map((option, idx) => <OptionEditor key={option.id} option={option} optionIndex={idx} onUpdate={handleUpdateOption} onDelete={() => setOptionToDelete(option._id)} />)}
-                        <button onClick={() => setAddOptionModalOpen(true)} className="w-full mt-2 bg-slate-100 hover:bg-slate-200 0 text-slate-600  font-semibold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
+                        {question.options.map((option, idx) => <OptionEditor key={idx} option={option} optionIndex={idx} onDelete={() => setOptionToDelete(option._id)} />)}
+                        {/* <button onClick={() => setAddOptionModalOpen(true)} className="w-full mt-2 bg-slate-100 hover:bg-slate-200 0 text-slate-600  font-semibold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                             Add Option
-                        </button>
+                        </button> */}
                     </div>
                 )}
             </div>
-            
+
             <ConfirmationDialog isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)} onConfirm={() => { onDelete(question._id); setDeleteModalOpen(false); }} title="Delete Question" message="Are you sure you want to delete this question and all its options? This action cannot be undone." />
             <ConfirmationDialog isOpen={!!optionToDelete} onClose={() => setOptionToDelete(null)} onConfirm={() => handleDeleteOption(optionToDelete)} title="Delete Option" message="Are you sure you want to delete this option?" />
-            <AddOptionDialog isOpen={isAddOptionModalOpen} onClose={() => setAddOptionModalOpen(false)} onConfirm={handleAddOption} />
+            {/* <AddOptionDialog isOpen={isAddOptionModalOpen} onClose={() => setAddOptionModalOpen(false)} onConfirm={handleAddOption} /> */}
         </>
     );
 }

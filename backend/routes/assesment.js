@@ -40,7 +40,6 @@ const fetchSuggestions = async () => {
 };
 
 route.post('/report', async function(req, res, next){
-     // Fetch suggestions from the database at the start of the request
      const suggestionsDB = await fetchSuggestions();
 
      if (Object.keys(suggestionsDB).length === 0) {
@@ -49,12 +48,10 @@ route.post('/report', async function(req, res, next){
  
      const { scores, maxScores } = req.body;
  
-     // --- Input Validation ---
      if (!scores || !maxScores || Object.keys(scores).length === 0) {
          return res.status(400).json({ error: "Request body must contain 'scores' and 'maxScores' objects." });
      }
  
-     // This validation step checks if the codes sent by the client are valid concern codes.
      const allConcernCodes = new Set(Object.values(categoryMappingForScoring).flat());
      for (const key in scores) {
          if (!allConcernCodes.has(key)) {
@@ -67,12 +64,7 @@ route.post('/report', async function(req, res, next){
  
      const report = {};
  
-     // --- Report Generation Logic ---
- 
-     // Iterate over each of the 7 major categories
      for (const categoryName in categoryMappingForScoring) {
-         // --- SCORE CALCULATION ---
-         // Uses the original, complete mapping to ensure scores are accurate.
          const concernsForScoring = categoryMappingForScoring[categoryName];
          let categoryTotalPoints = 0;
          let maxPossiblePointsForCategory = 0;
@@ -86,8 +78,6 @@ route.post('/report', async function(req, res, next){
              ? Math.round(((maxPossiblePointsForCategory - categoryTotalPoints) / maxPossiblePointsForCategory) * 100)
              : 0;
  
-         // --- SUGGESTION GENERATION ---
-         // Uses the new, sparser mapping to distribute suggestions.
          const categorySuggestions = [];
          const concernsForSuggestions = suggestionMapping[categoryName] || [];
  
@@ -95,7 +85,6 @@ route.post('/report', async function(req, res, next){
              const userScore = scores[concernCode] || 0;
              const maxScore = maxScores[concernCode] || 0;
  
-             // Since suggestionMapping has unique concerns, we no longer need to check for duplicates.
              if (suggestionsDB[concernCode] && maxScore > 0) {
                  if (userScore > (maxScore / 2)) {
                      categorySuggestions.push({
@@ -111,14 +100,12 @@ route.post('/report', async function(req, res, next){
              }
          }
  
-         // Assemble the final JSON object for this category
          report[categoryName] = {
              scorePercentage: scorePercentage,
              suggestions: categorySuggestions
          };
      }
  
-     // Send the complete report back to the client.
      res.status(200).json(report);
  });
 
