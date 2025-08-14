@@ -60,39 +60,32 @@ const addOptionsForQuestion = async (questionId, optionsData, session = null) =>
 router.get('/questions', async (req, res) => {
     try {
         const questions = await questionSchema.aggregate([
-            // Stage 2: For each question, perform a lookup to find its options
             {
                 $lookup: {
                     from: "optionsschemas", // The collection name for the options model
                     let: { question_id: "$_id" },
                     pipeline: [
-                        // Find all options that match the question's ID
                         { $match: { $expr: { $eq: ["$questionId", "$$question_id"] } } },
-                        // For each matching option, perform another lookup to find its scores
                         {
                             $lookup: {
                                 from: "optionscoreschemas", // The collection name for the scores model
                                 let: { option_id: "$_id" },
                                 pipeline: [
-                                    // Find all scores that match the option's ID
                                     { $match: { $expr: { $eq: ["$optionId", "$$option_id"] } } },
-                                    // For each score, lookup its category details
                                     {
                                         $lookup: {
-                                            from: "categoryschemas", // The collection name for the categories model
+                                            from: "categoryschemas",
                                             localField: "categoryId",
                                             foreignField: "_id",
                                             as: "category"
                                         }
                                     },
-                                    // Deconstruct the category array to get a single object
                                     { $unwind: "$category" },
-                                    // Reshape the output for the score
                                     {
                                         $project: {
-                                            _id: 0, // Exclude the score's original _id
+                                            _id: 0,
                                             score: 1,
-                                            code: "$category.code",
+                                            code: "$category.code", // Use 'code' as requested
                                             categoryName: "$category.name"
                                         }
                                     }
@@ -100,18 +93,72 @@ router.get('/questions', async (req, res) => {
                                 as: "scores"
                             }
                         },
-                        // Reshape the output for the option
                         {
                             $project: {
                                 _id: 1,
                                 text: 1,
                                 scores: 1,
-                                suggestion: 1,
+                                suggestion: 1, // Add suggestion fields as requested
                                 suggestion_category: 1,
                             }
                         }
                     ],
                     as: "options"
+                }
+            },
+            // Add a new field 'maxScore' to each question
+            {
+                $addFields: {
+                    maxScore: {
+                        $let: {
+                            vars: {
+                                allScores: {
+                                    $reduce: {
+                                        input: "$options",
+                                        initialValue: [],
+                                        in: { $concatArrays: ["$$value", "$$this.scores"] }
+                                    }
+                                }
+                            },
+                            in: {
+                                $let: {
+                                    vars: {
+                                        uniqueCodes: {
+                                            $reduce: {
+                                                input: "$$allScores.code",
+                                                initialValue: [],
+                                                in: { $setUnion: ["$$value", ["$$this"]] }
+                                            }
+                                        }
+                                    },
+                                    in: {
+                                        $map: {
+                                            input: "$$uniqueCodes",
+                                            as: "currentCode",
+                                            in: {
+                                                categoryCode: "$$currentCode",
+                                                max: {
+                                                    $max: {
+                                                        $map: {
+                                                            input: {
+                                                                $filter: {
+                                                                    input: "$$allScores",
+                                                                    as: "scoreItem",
+                                                                    cond: { $eq: ["$$scoreItem.code", "$$currentCode"] }
+                                                                }
+                                                            },
+                                                            as: "filteredScore",
+                                                            in: "$$filteredScore.score"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         ]);
