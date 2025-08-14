@@ -84,6 +84,7 @@ export default function Assesment() {
     console.log(api_data)
 
     setSelectedOption(selectedIndex);
+    setAnswers({ ...answers, [currentQuestion]: selectedIndex });
     setShowToast(true); // Show toast
     setShowModal(true); // Show Modal
 
@@ -149,6 +150,10 @@ export default function Assesment() {
 
       setSuggestions(newSuggestions);
 
+      api_data[question_no].options[answers[question_no]].scores.forEach(s => {
+        privacyScores.scores[s.code] -= s.score;
+      });
+
       setCurrentQuestion(question_no);
 
   };
@@ -207,6 +212,7 @@ export default function Assesment() {
       onNext={handleNext}
       onFinish={handleFinish}
       isLastQuestion={currentQuestion === api_data.length - 1}
+      selectedOption={answers[currentQuestion]}
     />
     </>
   )
