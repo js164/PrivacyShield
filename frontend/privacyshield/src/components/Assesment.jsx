@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom';
 import SurveyQuestion from "./ui/QuestionDisplay";
 import { Navbar_Questions } from './ui/Navbar';
 import Toast from "./ui/QuestionSuggestion";
@@ -30,6 +30,8 @@ export default function Assesment() {
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  const navigate = useNavigate();
 
   // Fetch questions from API
   useEffect(() => {
