@@ -15,7 +15,7 @@ export default function Assesment() {
   const [user_selected_option, setSelectedOption] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   // Fetch questions from API
   useEffect(() => {
@@ -63,11 +63,13 @@ export default function Assesment() {
 
   const handleNext = (selectedIndex) => {
 
+    console.log(api_data.length)
     console.log(selectedIndex)
     console.log(api_data)
 
     setSelectedOption(selectedIndex);
     setShowToast(true); // Show toast
+    setShowModal(true); // Show Modal
 
     const question_no = currentQuestion + 1
 
@@ -155,7 +157,7 @@ export default function Assesment() {
     />
 
 <ContinueModal
-  show={(currentQuestion === api_data.length-1) && showModal}
+  show={(currentQuestion === Math.floor(api_data.length/2)) && showModal}
   onContinue={() => setShowModal(false)}
   onStop={handleFinish}
 />
