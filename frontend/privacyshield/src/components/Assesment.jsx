@@ -153,7 +153,7 @@ export default function Assesment() {
       time_delay = 3000;
       }
       setTimeout(() => {
-        navigate('/report', { state: { scores: globalScores } });
+        navigate('/report', { state: { scores: privacyScores } });
       }, time_delay); // delay in milliseconds (2000 = 2s)
     } catch (err) {
       console.error("Error submitting survey:", err);
