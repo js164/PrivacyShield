@@ -5,6 +5,7 @@ import Report from "./components/Report"
 import axios from 'axios';
 import { Navbar } from "./components/ui/Navbar"; // Import the Navbar
 import AdminDashboard from "./components/AdminDashboard/AdminDashboard";
+import Footer from "./components/ui/Footer"; 
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
           <Route exact path="/admindashboard" element={<AdminDashboard />} />
         </Routes>
       </div>
+      <Footer />
     </>
   )
 }
