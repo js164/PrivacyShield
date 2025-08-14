@@ -5,6 +5,20 @@ import { Navbar_Questions } from './ui/Navbar';
 import Toast from "./ui/QuestionSuggestion";
 import ContinueModal from './ui/Dialog';
 
+// Global scores object initialized with 0
+export const privacyScores = {
+  scores: {
+    DC: 0, LC: 0, UDU: 0, ST: 0, DR: 0, ESH: 0, MIC: 0, SB: 0, RD: 0,
+    PD: 0, DIT: 0, SE: 0, GLR: 0, ODU: 0, MPOT: 0, LRPG: 0, PA: 0,
+    DSTP: 0, LT: 0, CD: 0, APS: 0, CE: 0
+  },
+  maxScores: {
+    DC: 0, LC: 0, UDU: 0, ST: 0, DR: 0, ESH: 0, MIC: 0, SB: 0, RD: 0,
+    PD: 0, DIT: 0, SE: 0, GLR: 0, ODU: 0, MPOT: 0, LRPG: 0, PA: 0,
+    DSTP: 0, LT: 0, CD: 0, APS: 0, CE: 0
+  }
+};
+
 export default function Assesment() {
   const [api_data, setAPIData] = useState([]);
   const [questions, setQuestions] = useState([]);
@@ -138,9 +152,9 @@ export default function Assesment() {
       setShowToast(true);
       time_delay = 3000;
       }
-                setTimeout(() => {
-      window.location.href = "/report";
-    }, time_delay); // delay in milliseconds (2000 = 2s)
+      setTimeout(() => {
+        navigate('/report', { state: { scores: globalScores } });
+      }, time_delay); // delay in milliseconds (2000 = 2s)
     } catch (err) {
       console.error("Error submitting survey:", err);
     }
