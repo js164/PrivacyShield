@@ -111,6 +111,14 @@ export default function Assesment() {
 
       setSuggestions(newSuggestions);
 
+      //console.log(api_data)
+
+      api_data[currentQuestion].options[selectedIndex].scores.forEach(s => {
+        privacyScores.scores[s.code] += s.score;
+      });
+
+      //privacyScores.scores[api_data.options[selectedIndex].scores.code] += api_data.options[selectedIndex].scores.score;
+
       setCurrentQuestion(question_no);
 
   };
@@ -154,6 +162,16 @@ export default function Assesment() {
       setShowToast(true);
       time_delay = 3000;
       }
+
+      // Loop through data and sum scores
+      api_data.forEach(item => {
+        item.maxScore.forEach(s => {
+          privacyScores.maxScores[s.categoryCode] += s.max;
+        });
+      });
+
+        console.log({privacyScores})
+
       setTimeout(() => {
         navigate('/report', { state: { scores: privacyScores } });
       }, time_delay); // delay in milliseconds (2000 = 2s)
