@@ -29,9 +29,6 @@ const adminAuth = async (req, res, next) => {
         req.adminId = decoded.adminId;
         req.admin = admin;
 
-        // Debug log (optional)
-        console.log(`Admin authenticated: ${admin.email}`);
-
         next(); // allow access
     } catch (error) {
         console.error('Admin auth error:', error.message);
