@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
+const adminAuth = require('../middleware/adminAuth'); // Ensure this middleware is used for admin routes
 
 // --- Model Imports ---
 const categorySchema = require('../models/category')

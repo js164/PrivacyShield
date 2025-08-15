@@ -1,38 +1,41 @@
-import { Route, Routes } from "react-router-dom"
-import HomePage from "./components/HomePage"
-import Assesment from "./components/Assesment"
-import Report from "./components/Report"
-import axios from 'axios';
-import { Navbar } from "./components/ui/Navbar"; // Import the Navbar
-import AdminDashboard from "./components/AdminDashboard/AdminDashboard";
-import Footer from "./components/ui/Footer"; 
-
-function App() {
-
-  return (
-    <>
-      {/*<Navbar /> */}{/* Keep the Navbar outside the padded div */}
-      {/* Add this div with padding-top */}
-      <div> 
-        <Routes>
-          <Route exact path="/" element={<HomePage />} />
-          <Route exact path="/assesment" element={<Assesment />} />
-          <Route exact path="/report" element={<Report />} />
-          <Route exact path="/admindashboard" element={<AdminDashboard />} />
-        </Routes>
-      </div>
-      <Footer />
-    </>
-  )
-}
+import { Route, Routes } from "react-router-dom"; // removed BrowserRouter
+import HomePage from "./components/HomePage";
+import Assesment from "./components/Assesment";
+import Report from "./components/Report";
+import axios from "axios";
+import Footer from "./components/ui/Footer";
+import { AdminAuthProvider } from "./context/AdminAuthContext";
+import AdminLogin from "./components/AdminLogin";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
+import AdminDashboard from "./components/AdminDashboard/AdminDashboard"; // keep this one
 
 axios.interceptors.request.use(function (config) {
-  if(config.url.slice(0,4)!=='http'){
-    config.url = 'http://localhost:8000' + config.url
+  if (config.url.slice(0, 4) !== "http") {
+    config.url = "http://localhost:8000" + config.url;
   }
   return config;
 });
 
-
+function App() {
+  return (
+    <AdminAuthProvider>
+      <Routes>
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedAdminRoute>
+              <AdminDashboard />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/assesment" element={<Assesment />} />
+        <Route path="/report" element={<Report />} />
+      </Routes>
+      <Footer />
+    </AdminAuthProvider>
+  );
+}
 
 export default App;
