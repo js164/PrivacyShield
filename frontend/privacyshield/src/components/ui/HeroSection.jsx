@@ -18,7 +18,7 @@ export default function HeroSection() {
                     to='/assesment' 
                     className="inline-block bg-primary-blue hover:bg-dark-blue text-white font-semibold px-8 py-3 rounded-full shadow-lg"
                 >
-                    Start Your Privacy Assessment
+                    Reveal My Privacy Risks
                 </Link>
             </div>
         </div>
