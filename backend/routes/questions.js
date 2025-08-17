@@ -171,7 +171,7 @@ router.get('/questions', async (req, res) => {
     }
 });
 
-router.post('/add', async (req, res) => {
+router.post('/add', adminAuth, async (req, res) => {
     console.log(req.body.options[0].scores);
     const { text, multiChoice, options , category } = req.body;
 
