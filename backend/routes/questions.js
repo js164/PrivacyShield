@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
+const adminAuth = require('../middleware/adminAuth'); // Ensure this middleware is used for admin routes
 
 // --- Model Imports ---
 const categorySchema = require('../models/category')
@@ -170,7 +171,7 @@ router.get('/questions', async (req, res) => {
     }
 });
 
-router.post('/add', async (req, res) => {
+router.post('/add', adminAuth, async (req, res) => {
     console.log(req.body.options[0].scores);
     const { text, multiChoice, options , category } = req.body;
 

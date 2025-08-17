@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Navbar } from "./ui/Navbar";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import {
   Chart,
@@ -24,7 +26,7 @@ Chart.register(
   ChartDataLabels
 );
 
-// Simple icon components to replace lucide-react
+// Icon components
 const ShieldIcon = () => (
   <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
     <path
@@ -65,6 +67,38 @@ const XIcon = () => (
   </svg>
 );
 
+const TickIcon = () => (
+  <svg
+    className="w-5 h-5 text-green-600"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M5 13l4 4L19 7"
+    />
+  </svg>
+);
+
+const CrossIcon = () => (
+  <svg
+    className="w-5 h-5 text-red-600"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M6 18L18 6M6 6l12 12"
+    />
+  </svg>
+);
+
 const RotateIcon = () => (
   <svg
     className="w-5 h-5 mr-2"
@@ -88,14 +122,113 @@ const HomeIcon = () => (
 );
 
 const PrivacyReport = () => {
-  // Sample data - in real app this would come from props or context
-  const [reportData, setReportData] = useState({
-    score: 65,
-    riskLevel: "Moderate Risk",
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [reportData, setReportData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
+
+  // Function to calculate overall privacy score from API response
+  const calculateOverallScore = (apiResponse) => {
+    if (!apiResponse || Object.keys(apiResponse).length === 0) return 0;
+
+    const scores = Object.values(apiResponse).map(
+      (category) => category.scorePercentage
+    );
+    const avgScore =
+      scores.reduce((sum, score) => sum + score, 0) / scores.length;
+    return Math.round(avgScore);
+  };
+
+  // Function to get short titles for chart display
+  const getShortTitle = (title) => {
+    const shortTitles = {
+      "Digital Identity & Authentication": "Digital Identity",
+      "Data Collection & Control": "Data Control",
+      "Location & Physical Safety": "Location Safety",
+      "Social & Reputation Management": "Social Reputation",
+      "Surveillance & Tracking": "Surveillance",
+      "Transparency & Corporate Trust": "Corporate Trust",
+      "Legal & Advanced Privacy": "Legal Privacy",
+    };
+    return shortTitles[title] || title;
+  };
+
+  // Function to get risk level from score
+  const getRiskLevel = (score) => {
+    if (score >= 80) return "Low Risk";
+    if (score >= 60) return "Moderate Risk";
+    if (score >= 40) return "High Risk";
+    return "Critical Risk";
+  };
+
+  // Function to fetch report data from API
+  const fetchReportData = async (privacyScores) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch("http://localhost:8000/assesment/report", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(privacyScores),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const apiResponse = await response.json();
+
+      // Transform API response to match our component structure
+      const transformedCategories = Object.entries(apiResponse).map(
+        ([categoryName, categoryData]) => ({
+          title: categoryName,
+          shortTitle: getShortTitle(categoryName),
+          score: categoryData.scorePercentage,
+          recommendations: categoryData.suggestions.map((suggestion) => ({
+            text: suggestion.text,
+            status: suggestion.type, // 'positive' or 'negative'
+          })),
+        })
+      );
+
+      // Calculate overall score
+      const overallScore = calculateOverallScore(apiResponse);
+
+      setReportData({
+        score: overallScore,
+        riskLevel: getRiskLevel(overallScore),
+        categories: transformedCategories,
+      });
+    } catch (err) {
+      console.error("Error fetching report data:", err);
+      setError(err.message || "Failed to load privacy report");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Get privacy scores from navigation state
+    const privacyScores = location.state?.scores;
+
+    if (!privacyScores) {
+      setError(
+        "No assessment data found. Please complete the assessment first."
+      );
+      setLoading(false);
+      return;
+    }
+
+    fetchReportData(privacyScores);
+  }, [location.state]);
 
   const getRiskDetails = (score) => {
     if (score >= 80) {
@@ -133,89 +266,9 @@ const PrivacyReport = () => {
     }
   };
 
-  const getPrivacyCategories = () => [
-    {
-      title: "Digital Identity & Authentication",
-      shortTitle: "Digital Identity",
-      score: 72,
-      suggestions: [
-        "Use strong, unique passwords for all accounts",
-        "Enable two-factor authentication on important services",
-        "Consider using a reputable password manager",
-        "Regularly update passwords and security questions",
-      ],
-    },
-    {
-      title: "Data Collection & Control",
-      shortTitle: "Data Control",
-      score: 58,
-      suggestions: [
-        "Review and adjust privacy settings on all platforms",
-        "Limit data sharing with third-party applications",
-        "Regularly audit what information companies collect",
-        "Use privacy-focused alternatives when possible",
-      ],
-    },
-    {
-      title: "Location & Physical Safety",
-      shortTitle: "Location Safety",
-      score: 45,
-      suggestions: [
-        "Disable location tracking for unnecessary apps",
-        "Use airplane mode in sensitive locations",
-        "Consider using a VPN to mask your IP address",
-        "Review location history and delete old data",
-      ],
-    },
-    {
-      title: "Social & Reputation Management",
-      shortTitle: "Social Reputation",
-      score: 63,
-      suggestions: [
-        "Regularly audit your social media profiles and posts",
-        "Set up Google alerts for your name",
-        "Use privacy-focused social platforms for sensitive communications",
-        "Review tagged photos and mentions regularly",
-      ],
-    },
-    {
-      title: "Surveillance & Tracking",
-      shortTitle: "Surveillance",
-      score: 51,
-      suggestions: [
-        "Use ad blockers and privacy extensions",
-        "Disable tracking cookies in browser settings",
-        "Consider browsers like Firefox or Brave",
-        "Enable 'Do Not Track' settings where available",
-      ],
-    },
-    {
-      title: "Transparency & Corporate Trust",
-      shortTitle: "Corporate Trust",
-      score: 69,
-      suggestions: [
-        "Read privacy policies of services you use",
-        "Choose services from privacy-committed companies",
-        "Avoid platforms with poor transparency records",
-        "Research company data handling practices",
-      ],
-    },
-    {
-      title: "Legal & Advanced Privacy",
-      shortTitle: "Legal Privacy",
-      score: 74,
-      suggestions: [
-        "Stay informed about privacy laws in your jurisdiction",
-        "Use encrypted messaging apps like Signal",
-        "Learn about your data rights under GDPR",
-        "Consider using Tor browser for sensitive browsing",
-      ],
-    },
-  ];
-
   const createPieChart = () => {
     const canvas = chartRef.current;
-    if (!canvas) return;
+    if (!canvas || !reportData?.categories) return;
 
     const ctx = canvas.getContext("2d");
 
@@ -223,8 +276,6 @@ const PrivacyReport = () => {
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
-
-    const categories = getPrivacyCategories();
 
     // Define colors for each category
     const backgroundColor = [
@@ -249,10 +300,10 @@ const PrivacyReport = () => {
     chartInstance.current = new Chart(ctx, {
       type: "pie",
       data: {
-        labels: categories.map((cat) => cat.shortTitle),
+        labels: reportData.categories.map((cat) => cat.shortTitle),
         datasets: [
           {
-            data: categories.map((cat) => cat.score),
+            data: reportData.categories.map((cat) => cat.score),
             backgroundColor: backgroundColor,
             borderColor: borderColor,
             borderWidth: 1,
@@ -278,16 +329,14 @@ const PrivacyReport = () => {
               },
             },
           },
-          // Add data labels plugin
           datalabels: {
             display: true,
             color: "#37277aff",
             font: {
-              weight: "bold",
-              size: 14,
+              size: 18,
             },
-            formatter: function (value, context) {
-              return value; // Shows the score number
+            formatter: function (value) {
+              return value;
             },
             anchor: "center",
             align: "center",
@@ -307,254 +356,975 @@ const PrivacyReport = () => {
     };
   }, [reportData]);
 
-  const riskDetails = getRiskDetails(reportData.score);
-  const RiskIcon = riskDetails.icon;
-  const privacyCategories = getPrivacyCategories();
-
   const handleRetakeAssessment = () => {
-    // Reset data for demo purposes
-    setReportData({
-      score: Math.floor(Math.random() * 100),
-      questionsAnswered: Math.floor(Math.random() * 25) + 1,
-      totalQuestions: 25,
-      riskLevel: "Recalculating...",
-    });
+    navigate("/assessment");
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
-            <ShieldIcon />
+  const handleBackToDashboard = () => {
+    navigate("/dashboard");
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-blue-700 text-lg">
+              Loading privacy assessment...
+            </p>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-blue-900 mb-2">
-            Privacy Assessment Report
-          </h1>
-          <p className="text-blue-700 text-lg">
-            Your comprehensive digital privacy analysis
-          </p>
         </div>
+      </>
+    );
+  }
 
-        {/* Large Score Display Card */}
-        <div className="relative rounded-3xl shadow-2xl mb-8 overflow-hidden">
-          {/* Glass Background */}
-          <div className="absolute inset-0 backdrop-blur-sm"></div>
-          <div className="absolute inset-0 bg-white/10 backdrop-blur-md"></div>
+  // Error state
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 flex items-center justify-center">
+          <div className="text-center max-w-md mx-auto p-6">
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              <h2 className="font-bold text-lg mb-2">Error Loading Report</h2>
+              <p>{error}</p>
+            </div>
+            <button
+              onClick={() => navigate("/assessment")}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Back to Assessment
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
 
-          {/* Content */}
-          <div className="relative z-10 flex flex-col p-8 sm:p-12">
-            {/* Score + Risk on Left, Chart on Right */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-              {/* Left Column */}
-              <div className="flex flex-col gap-6">
-                {/* Score Card */}
-                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/30 shadow-2xl">
-                  <div className="text-center">
-                    <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-blue-900">
-                      Your Privacy Score
-                    </h2>
-                    <div className="text-5xl sm:text-6xl font-bold mb-2 text-blue-900">
-                      {reportData.score}
+  // Don't render until data is loaded
+  if (!reportData) {
+    return null;
+  }
+
+  const riskDetails = getRiskDetails(reportData.score);
+  const RiskIcon = riskDetails.icon;
+
+  return (
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+              <ShieldIcon />
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-blue-900 mb-2">
+              Privacy Assessment Report
+            </h1>
+            <p className="text-blue-700 text-lg">
+              Your comprehensive digital privacy analysis
+            </p>
+          </div>
+
+          {/* Large Score Display Card */}
+          <div className="relative rounded-3xl shadow-2xl mb-8 overflow-hidden">
+            {/* Glass Background */}
+            <div className="absolute inset-0 backdrop-blur-sm"></div>
+            <div className="absolute inset-0 bg-white/10 backdrop-blur-md"></div>
+
+            {/* Content */}
+            <div className="relative z-10 flex flex-col p-8 sm:p-12">
+              {/* Score + Risk on Left, Chart on Right */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                {/* Left Column */}
+                <div className="flex flex-col gap-6">
+                  {/* Score Card */}
+                  <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/30 shadow-2xl">
+                    <div className="text-center">
+                      <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-blue-900">
+                        Your Privacy Score
+                      </h2>
+                      <div className="text-5xl sm:text-6xl font-bold mb-2 text-blue-900">
+                        {reportData.score}
+                      </div>
+                      <p className="text-blue-900 text-lg">out of 100</p>
                     </div>
-                    <p className="text-blue-900 text-lg">out of 100</p>
+                  </div>
+
+                  {/* Risk Level Card */}
+                  <div
+                    className={`${riskDetails.bgColor} ${riskDetails.borderColor} border-l-4 rounded-xl p-6 shadow-2xl`}
+                  >
+                    <div className="flex items-center mb-4 gap-4">
+                      <RiskIcon
+                        className={`w-8 h-8 ${riskDetails.color} mr-3`}
+                      />
+                      <div>
+                        <h3 className="text-xl font-bold text-blue-900">
+                          Risk Assessment
+                        </h3>
+                        <p
+                          className={`text-lg font-semibold ${riskDetails.color}`}
+                        >
+                          {riskDetails.level}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Risk Level Card */}
+                {/* Right Column - Chart */}
+                <div className="w-full bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/30 shadow-2xl relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent rounded-2xl"></div>
+                  <div className="relative z-10 w-full aspect-[4/3] sm:aspect-[16/9]">
+                    <canvas ref={chartRef} className="w-full h-full"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Personalized Recommendations */}
+          <div className="mb-8">
+            <h3 className="text-2xl sm:text-3xl font-bold text-blue-900 mb-8 text-center">
+              Personalized Recommendations
+            </h3>
+
+            <div className="space-y-6">
+              {reportData.categories.map((category, index) => (
                 <div
-                  className={`${riskDetails.bgColor} ${riskDetails.borderColor} border-l-4 rounded-xl p-6 shadow-2xl`}
+                  key={index}
+                  className="bg-white rounded-xl p-6 shadow-md border border-blue-100 hover:shadow-lg transition-shadow duration-200"
                 >
-                  <div className="flex items-center mb-4 gap-4">
-                    <RiskIcon className={`w-8 h-8 ${riskDetails.color} mr-3`} />
-                    <div>
-                      <h3 className="text-xl font-bold text-blue-900">
-                        Risk Assessment
-                      </h3>
-                      <p
-                        className={`text-lg font-semibold ${riskDetails.color}`}
-                      >
-                        {riskDetails.level}
+                  <div className="flex justify-between items-start mb-4">
+                    {/* Title and Content */}
+                    <div className="flex-1 pr-4">
+                      <h4 className="text-lg font-bold text-blue-900 mb-3">
+                        {category.title}
+                      </h4>
+                      {category.recommendations.length > 0 ? (
+                        <ul className="space-y-3">
+                          {category.recommendations.map(
+                            (recommendation, suggestionIndex) => (
+                              <li
+                                key={suggestionIndex}
+                                className="flex items-start text-blue-700 text-sm"
+                              >
+                                <div className="flex-shrink-0 mt-0.5 mr-3">
+                                  {recommendation.status === "positive" ? (
+                                    <TickIcon />
+                                  ) : (
+                                    <CrossIcon />
+                                  )}
+                                </div>
+                                <span className="leading-relaxed">
+                                  {recommendation.text}
+                                </span>
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      ) : (
+                        <p className="text-blue-600 text-sm italic">
+                          No specific recommendations available for this
+                          category.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Score and Mini Chart */}
+                    <div className="flex-shrink-0 flex flex-col items-center">
+                      <div className="relative w-16 h-16 mb-2">
+                        <svg
+                          className="w-full h-full transform -rotate-90"
+                          viewBox="0 0 42 42"
+                        >
+                          <circle
+                            cx="21"
+                            cy="21"
+                            r="15.5"
+                            stroke="#e5e7eb"
+                            strokeWidth="3"
+                            fill="transparent"
+                          />
+                          <circle
+                            cx="21"
+                            cy="21"
+                            r="15.5"
+                            stroke={
+                              category.score >= 70
+                                ? "#10b981"
+                                : category.score >= 50
+                                ? "#f59e0b"
+                                : "#ef4444"
+                            }
+                            strokeWidth="3"
+                            fill="transparent"
+                            strokeDasharray={`${2 * Math.PI * 15.5}`}
+                            strokeDashoffset={`${
+                              2 * Math.PI * 15.5 * (1 - category.score / 100)
+                            }`}
+                            className="transition-all duration-1000 ease-out"
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span
+                            className={`font-bold text-sm ${
+                              category.score >= 70
+                                ? "text-green-600"
+                                : category.score >= 50
+                                ? "text-yellow-600"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {category.score}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-blue-600 font-medium -ml-2">
+                        Category Score
                       </p>
                     </div>
                   </div>
-                  {riskDetails.description && (
-                    <p className="text-blue-800">{riskDetails.description}</p>
-                  )}
                 </div>
-              </div>
+              ))}
+            </div>
+          </div>
 
-              {/* Right Column - Chart */}
-              <div className="w-full bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/30 shadow-2xl relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent rounded-2xl"></div>
-                <div className="relative z-10 w-full aspect-[4/3] sm:aspect-[16/9]">
-                  <canvas ref={chartRef} className="w-full h-full"></canvas>
-                </div>
+          {/* Stay Updated Card */}
+          <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 sm:p-8 border border-blue-200 mb-8">
+            <h3 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4">
+              Stay Privacy-Protected
+            </h3>
+            <p className="text-blue-700 mb-6 leading-relaxed">
+              Privacy threats evolve constantly. New data breaches, updated
+              privacy policies, and emerging tracking technologies mean your
+              privacy score can change. Regular reassessment ensures you stay
+              ahead of new risks and maintain optimal protection.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white rounded-lg p-4 border border-blue-200">
+                <h4 className="font-semibold text-blue-900 mb-2">
+                  Monthly Check-ups
+                </h4>
+                <p className="text-blue-700 text-sm">
+                  Reassess your privacy posture as new threats emerge
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4 border border-blue-200">
+                <h4 className="font-semibold text-blue-900 mb-2">
+                  Updated Insights
+                </h4>
+                <p className="text-blue-700 text-sm">
+                  Get fresh recommendations based on latest privacy research
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4 border border-blue-200">
+                <h4 className="font-semibold text-blue-900 mb-2">
+                  Track Progress
+                </h4>
+                <p className="text-blue-700 text-sm">
+                  Monitor improvements and maintain your privacy gains
+                </p>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Personalized Recommendations */}
-        <div className="mb-8">
-          <h3 className="text-2xl sm:text-3xl font-bold text-blue-900 mb-8 text-center">
-            Personalized Recommendations
-          </h3>
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={handleRetakeAssessment}
+              className="flex items-center justify-center px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg"
+            >
+              <RotateIcon />
+              Retake Assessment
+            </button>
 
-          <div className="space-y-6">
-            {privacyCategories.map((category, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl p-6 shadow-md border border-blue-100 hover:shadow-lg transition-shadow duration-200"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  {/* Title and Content */}
-                  <div className="flex-1 pr-4">
-                    <h4 className="text-lg font-bold text-blue-900 mb-3">
-                      {category.title}
-                    </h4>
-                    <ul className="space-y-2">
-                      {category.suggestions.map(
-                        (suggestion, suggestionIndex) => (
-                          <li
-                            key={suggestionIndex}
-                            className="flex items-start text-blue-700 text-sm"
-                          >
-                            <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                            <span className="leading-relaxed">
-                              {suggestion}
-                            </span>
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </div>
-
-                  {/* Score and Mini Chart */}
-                  <div className="flex-shrink-0 flex flex-col items-center">
-                    <div className="relative w-16 h-16 mb-2">
-                      <svg
-                        className="w-full h-full transform -rotate-90"
-                        viewBox="0 0 42 42"
-                      >
-                        <circle
-                          cx="21"
-                          cy="21"
-                          r="15.5"
-                          stroke="#e5e7eb"
-                          strokeWidth="3"
-                          fill="transparent"
-                        />
-                        <circle
-                          cx="21"
-                          cy="21"
-                          r="15.5"
-                          stroke={
-                            category.score >= 70
-                              ? "#10b981"
-                              : category.score >= 50
-                              ? "#f59e0b"
-                              : "#ef4444"
-                          }
-                          strokeWidth="3"
-                          fill="transparent"
-                          strokeDasharray={`${2 * Math.PI * 15.5}`}
-                          strokeDashoffset={`${
-                            2 * Math.PI * 15.5 * (1 - category.score / 100)
-                          }`}
-                          className="transition-all duration-1000 ease-out"
-                        />
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span
-                          className={`font-bold text-sm ${
-                            category.score >= 70
-                              ? "text-green-600"
-                              : category.score >= 50
-                              ? "text-yellow-600"
-                              : "text-red-600"
-                          }`}
-                        >
-                          {category.score}
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-blue-600 font-medium -ml-2">
-                      Category Score
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
+            <button
+              onClick={handleBackToDashboard}
+              className="flex items-center justify-center px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors duration-200"
+            >
+              <HomeIcon />
+              Back to Dashboard
+            </button>
           </div>
-        </div>
 
-        {/* Stay Updated Card */}
-        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 sm:p-8 border border-blue-200 mb-8">
-          <h3 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4">
-            Stay Privacy-Protected
-          </h3>
-          <p className="text-blue-700 mb-6 leading-relaxed">
-            Privacy threats evolve constantly. New data breaches, updated
-            privacy policies, and emerging tracking technologies mean your
-            privacy score can change. Regular reassessment ensures you stay
-            ahead of new risks and maintain optimal protection.
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white rounded-lg p-4 border border-blue-200">
-              <h4 className="font-semibold text-blue-900 mb-2">
-                Monthly Check-ups
-              </h4>
-              <p className="text-blue-700 text-sm">
-                Reassess your privacy posture as new threats emerge
-              </p>
-            </div>
-            <div className="bg-white rounded-lg p-4 border border-blue-200">
-              <h4 className="font-semibold text-blue-900 mb-2">
-                Updated Insights
-              </h4>
-              <p className="text-blue-700 text-sm">
-                Get fresh recommendations based on latest privacy research
-              </p>
-            </div>
-            <div className="bg-white rounded-lg p-4 border border-blue-200">
-              <h4 className="font-semibold text-blue-900 mb-2">
-                Track Progress
-              </h4>
-              <p className="text-blue-700 text-sm">
-                Monitor improvements and maintain your privacy gains
-              </p>
-            </div>
+          {/* Footer */}
+          <div className="text-center mt-12 pb-6">
+            <p className="text-blue-600 text-sm">
+              Privacy Shield Assessment • Protecting Your Digital Identity
+            </p>
           </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
-            onClick={handleRetakeAssessment}
-            className="flex items-center justify-center px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg"
-          >
-            <RotateIcon />
-            Retake Assessment
-          </button>
-
-          <button className="flex items-center justify-center px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors duration-200">
-            <HomeIcon />
-            Back to Dashboard
-          </button>
-        </div>
-
-        {/* Footer */}
-        <div className="text-center mt-12 pb-6">
-          <p className="text-blue-600 text-sm">
-            Privacy Shield Assessment • Protecting Your Digital Identity
-          </p>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
 export default PrivacyReport;
+
+// import React, { useState, useEffect, useRef } from "react";
+// import { useLocation, useNavigate } from "react-router-dom";
+// import { Navbar } from "./ui/Navbar";
+// import ChartDataLabels from "chartjs-plugin-datalabels";
+// import {
+//   Chart,
+//   CategoryScale,
+//   LinearScale,
+//   BarElement,
+//   Title,
+//   Tooltip,
+//   Legend,
+//   ArcElement,
+//   PieController,
+// } from "chart.js";
+
+// Chart.register(
+//   CategoryScale,
+//   LinearScale,
+//   BarElement,
+//   Title,
+//   Tooltip,
+//   Legend,
+//   ArcElement,
+//   PieController,
+//   ChartDataLabels
+// );
+
+// // Simple icon components to replace lucide-react
+// const ShieldIcon = () => (
+//   <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+//     <path
+//       fillRule="evenodd"
+//       d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+//       clipRule="evenodd"
+//     />
+//   </svg>
+// );
+
+// const CheckIcon = () => (
+//   <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+//     <path
+//       fillRule="evenodd"
+//       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+//       clipRule="evenodd"
+//     />
+//   </svg>
+// );
+
+// const WarningIcon = () => (
+//   <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+//     <path
+//       fillRule="evenodd"
+//       d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+//       clipRule="evenodd"
+//     />
+//   </svg>
+// );
+
+// const XIcon = () => (
+//   <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+//     <path
+//       fillRule="evenodd"
+//       d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+//       clipRule="evenodd"
+//     />
+//   </svg>
+// );
+
+// // Tick and Cross icons for recommendations
+// const TickIcon = () => (
+//   <svg
+//     className="w-5 h-5 text-green-600"
+//     fill="none"
+//     stroke="currentColor"
+//     viewBox="0 0 24 24"
+//   >
+//     <path
+//       strokeLinecap="round"
+//       strokeLinejoin="round"
+//       strokeWidth={2}
+//       d="M5 13l4 4L19 7"
+//     />
+//   </svg>
+// );
+
+// const CrossIcon = () => (
+//   <svg
+//     className="w-5 h-5 text-red-600"
+//     fill="none"
+//     stroke="currentColor"
+//     viewBox="0 0 24 24"
+//   >
+//     <path
+//       strokeLinecap="round"
+//       strokeLinejoin="round"
+//       strokeWidth={2}
+//       d="M6 18L18 6M6 6l12 12"
+//     />
+//   </svg>
+// );
+
+// const RotateIcon = () => (
+//   <svg
+//     className="w-5 h-5 mr-2"
+//     fill="none"
+//     stroke="currentColor"
+//     viewBox="0 0 24 24"
+//   >
+//     <path
+//       strokeLinecap="round"
+//       strokeLinejoin="round"
+//       strokeWidth={2}
+//       d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+//     />
+//   </svg>
+// );
+
+// const HomeIcon = () => (
+//   <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+//     <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+//   </svg>
+// );
+
+// const PrivacyReport = () => {
+//   const location = useLocation();
+//   const navigate = useNavigate();
+
+//   const [reportData, setReportData] = useState(null);
+//   const [apiData, setApiData] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   const chartRef = useRef(null);
+//   const chartInstance = useRef(null);
+
+//   // Function to calculate overall privacy score from categories
+//   const calculateOverallScore = (categories) => {
+//     if (!categories || Object.keys(categories).length === 0) return 0;
+
+//     const scores = Object.values(categories).map(cat => cat.scorePercentage);
+//     const avgScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+//     return Math.round(avgScore);
+//   };
+
+//   // Function to fetch report data from API
+//   const fetchReportData = async (scoresData) => {
+//     try {
+//       setLoading(true);
+//       setError(null);
+
+//       const response = await fetch('http://localhost:8000/assesment/report', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(scoresData)
+//       });
+
+//       if (!response.ok) {
+//         throw new Error(`HTTP error! status: ${response.status}`);
+//       }
+
+//       const data = await response.json();
+
+//       // Transform API data to match frontend structure
+//       const transformedData = {
+//         categories: Object.entries(data).map(([title, categoryData]) => ({
+//           title,
+//           shortTitle: getShortTitle(title),
+//           score: categoryData.scorePercentage,
+//           recommendations: categoryData.suggestions.map(suggestion => ({
+//             text: suggestion.text,
+//             status: suggestion.type // 'positive' or 'negative'
+//           }))
+//         }))
+//       };
+
+//       setApiData(transformedData);
+
+//       const overallScore = calculateOverallScore(data);
+//       setReportData({
+//         score: overallScore,
+//         riskLevel: getRiskLevel(overallScore)
+//       });
+
+//     } catch (err) {
+//       console.error('Error fetching report data:', err);
+//       setError(err.message || 'Failed to load privacy report');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   // Helper function to get short titles for categories
+//   const getShortTitle = (title) => {
+//     const shortTitles = {
+//       "Digital Identity & Authentication": "Digital Identity",
+//       "Data Collection & Control": "Data Control",
+//       "Location & Physical Safety": "Location Safety",
+//       "Social & Reputation Management": "Social Reputation",
+//       "Surveillance & Tracking": "Surveillance",
+//       "Transparency & Corporate Trust": "Corporate Trust",
+//       "Legal & Advanced Privacy": "Legal Privacy"
+//     };
+//     return shortTitles[title] || title;
+//   };
+
+//   // Helper function to get risk level from score
+//   const getRiskLevel = (score) => {
+//     if (score >= 80) return "Low Risk";
+//     if (score >= 60) return "Moderate Risk";
+//     if (score >= 40) return "High Risk";
+//     return "Critical Risk";
+//   };
+
+//   useEffect(() => {
+//     // Get scores data from navigation state
+//     const scoresData = location.state?.scores;
+
+//     if (!scoresData) {
+//       setError('No assessment data found. Please complete the assessment first.');
+//       setLoading(false);
+//       return;
+//     }
+
+//     fetchReportData(scoresData);
+//   }, [location.state]);
+
+//   const getRiskDetails = (score) => {
+//     if (score >= 80) {
+//       return {
+//         level: "Low Risk",
+//         color: "text-green-700",
+//         bgColor: "bg-green-50",
+//         borderColor: "border-green-300",
+//         icon: CheckIcon,
+//       };
+//     } else if (score >= 60) {
+//       return {
+//         level: "Moderate Risk",
+//         color: "text-yellow-600",
+//         bgColor: "bg-yellow-50",
+//         borderColor: "border-yellow-200",
+//         icon: WarningIcon,
+//       };
+//     } else if (score >= 40) {
+//       return {
+//         level: "High Risk",
+//         color: "text-red-700",
+//         bgColor: "bg-red-100",
+//         borderColor: "border-red-400",
+//         icon: XIcon,
+//       };
+//     } else {
+//       return {
+//         level: "Critical Risk",
+//         color: "text-red-800",
+//         bgColor: "bg-red-200",
+//         borderColor: "border-red-500",
+//         icon: XIcon,
+//       };
+//     }
+//   };
+
+//   const createPieChart = () => {
+//     const canvas = chartRef.current;
+//     if (!canvas || !apiData) return;
+
+//     const ctx = canvas.getContext("2d");
+
+//     // Destroy previous instance to avoid "already in use" error
+//     if (chartInstance.current) {
+//       chartInstance.current.destroy();
+//     }
+
+//     // Define colors for each category
+//     const backgroundColor = [
+//       "rgba(255, 99, 132, 0.2)",
+//       "rgba(255, 159, 64, 0.2)",
+//       "rgba(255, 205, 86, 0.2)",
+//       "rgba(75, 192, 192, 0.2)",
+//       "rgba(54, 162, 235, 0.2)",
+//       "rgba(153, 102, 255, 0.2)",
+//       "rgba(201, 203, 207, 0.2)",
+//     ];
+//     const borderColor = [
+//       "rgb(255, 99, 132)",
+//       "rgb(255, 159, 64)",
+//       "rgb(255, 205, 86)",
+//       "rgb(75, 192, 192)",
+//       "rgb(54, 162, 235)",
+//       "rgb(153, 102, 255)",
+//       "rgb(201, 203, 207)",
+//     ];
+
+//     chartInstance.current = new Chart(ctx, {
+//       type: "pie",
+//       data: {
+//         labels: apiData.categories.map((cat) => cat.shortTitle),
+//         datasets: [
+//           {
+//             data: apiData.categories.map((cat) => cat.score),
+//             backgroundColor: backgroundColor,
+//             borderColor: borderColor,
+//             borderWidth: 1,
+//           },
+//         ],
+//       },
+//       options: {
+//         responsive: true,
+//         maintainAspectRatio: true,
+//         plugins: {
+//           legend: {
+//             display: true,
+//             position: "right",
+//             labels: {
+//               padding: 15,
+//               usePointStyle: true,
+//             },
+//           },
+//           tooltip: {
+//             callbacks: {
+//               label: function (context) {
+//                 return context.label + ": " + context.parsed + "%";
+//               },
+//             },
+//           },
+//           datalabels: {
+//             display: true,
+//             color: "#37277aff",
+//             font: {
+//               size: 18,
+//             },
+//             formatter: function (value, context) {
+//               return value;
+//             },
+//             anchor: "center",
+//             align: "center",
+//           },
+//         },
+//       },
+//     });
+//   };
+
+//   useEffect(() => {
+//     createPieChart();
+
+//     return () => {
+//       if (chartInstance.current) {
+//         chartInstance.current.destroy();
+//       }
+//     };
+//   }, [reportData, apiData]);
+
+//   const handleRetakeAssessment = () => {
+//     navigate('/assessment'); // Navigate back to assessment page
+//   };
+
+//   const handleBackToDashboard = () => {
+//     navigate('/dashboard'); // Navigate to dashboard
+//   };
+
+//   // Loading state
+//   if (loading) {
+//     return (
+//       <>
+//         <Navbar />
+//         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 flex items-center justify-center">
+//           <div className="text-center">
+//             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
+//             <p className="text-blue-700 text-lg">Loading privacy assessment...</p>
+//           </div>
+//         </div>
+//       </>
+//     );
+//   }
+
+//   // Error state
+//   if (error) {
+//     return (
+//       <>
+//         <Navbar />
+//         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 flex items-center justify-center">
+//           <div className="text-center max-w-md mx-auto p-6">
+//             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+//               <h2 className="font-bold text-lg mb-2">Error Loading Report</h2>
+//               <p>{error}</p>
+//             </div>
+//             <button
+//               onClick={() => navigate('/assessment')}
+//               className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+//             >
+//               Back to Assessment
+//             </button>
+//           </div>
+//         </div>
+//       </>
+//     );
+//   }
+
+//   // Don't render until data is loaded
+//   if (!reportData || !apiData) {
+//     return null;
+//   }
+
+//   const riskDetails = getRiskDetails(reportData.score);
+//   const RiskIcon = riskDetails.icon;
+
+//   return (
+//     <>
+//       <Navbar />
+//       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 p-4 sm:p-6 lg:p-8">
+//         <div className="max-w-4xl mx-auto">
+//           {/* Header */}
+//           <div className="text-center mb-8">
+//             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+//               <ShieldIcon />
+//             </div>
+//             <h1 className="text-3xl sm:text-4xl font-bold text-blue-900 mb-2">
+//               Privacy Assessment Report
+//             </h1>
+//             <p className="text-blue-700 text-lg">
+//               Your comprehensive digital privacy analysis
+//             </p>
+//           </div>
+
+//           {/* Large Score Display Card */}
+//           <div className="relative rounded-3xl shadow-2xl mb-8 overflow-hidden">
+//             {/* Glass Background */}
+//             <div className="absolute inset-0 backdrop-blur-sm"></div>
+//             <div className="absolute inset-0 bg-white/10 backdrop-blur-md"></div>
+
+//             {/* Content */}
+//             <div className="relative z-10 flex flex-col p-8 sm:p-12">
+//               {/* Score + Risk on Left, Chart on Right */}
+//               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+//                 {/* Left Column */}
+//                 <div className="flex flex-col gap-6">
+//                   {/* Score Card */}
+//                   <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/30 shadow-2xl">
+//                     <div className="text-center">
+//                       <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-blue-900">
+//                         Your Privacy Score
+//                       </h2>
+//                       <div className="text-5xl sm:text-6xl font-bold mb-2 text-blue-900">
+//                         {reportData.score}
+//                       </div>
+//                       <p className="text-blue-900 text-lg">out of 100</p>
+//                     </div>
+//                   </div>
+
+//                   {/* Risk Level Card */}
+//                   <div
+//                     className={`${riskDetails.bgColor} ${riskDetails.borderColor} border-l-4 rounded-xl p-6 shadow-2xl`}
+//                   >
+//                     <div className="flex items-center mb-4 gap-4">
+//                       <RiskIcon
+//                         className={`w-8 h-8 ${riskDetails.color} mr-3`}
+//                       />
+//                       <div>
+//                         <h3 className="text-xl font-bold text-blue-900">
+//                           Risk Assessment
+//                         </h3>
+//                         <p
+//                           className={`text-lg font-semibold ${riskDetails.color}`}
+//                         >
+//                           {riskDetails.level}
+//                         </p>
+//                       </div>
+//                     </div>
+//                     {riskDetails.description && (
+//                       <p className="text-blue-800">{riskDetails.description}</p>
+//                     )}
+//                   </div>
+//                 </div>
+
+//                 {/* Right Column - Chart */}
+//                 <div className="w-full bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/30 shadow-2xl relative">
+//                   <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent rounded-2xl"></div>
+//                   <div className="relative z-10 w-full aspect-[4/3] sm:aspect-[16/9]">
+//                     <canvas ref={chartRef} className="w-full h-full"></canvas>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Personalized Recommendations */}
+//           <div className="mb-8">
+//             <h3 className="text-2xl sm:text-3xl font-bold text-blue-900 mb-8 text-center">
+//               Personalized Recommendations
+//             </h3>
+
+//             <div className="space-y-6">
+//               {apiData.categories.map((category, index) => (
+//                 <div
+//                   key={index}
+//                   className="bg-white rounded-xl p-6 shadow-md border border-blue-100 hover:shadow-lg transition-shadow duration-200"
+//                 >
+//                   <div className="flex justify-between items-start mb-4">
+//                     {/* Title and Content */}
+//                     <div className="flex-1 pr-4">
+//                       <h4 className="text-lg font-bold text-blue-900 mb-3">
+//                         {category.title}
+//                       </h4>
+//                       <ul className="space-y-3">
+//                         {category.recommendations.map(
+//                           (recommendation, suggestionIndex) => (
+//                             <li
+//                               key={suggestionIndex}
+//                               className="flex items-start text-blue-700 text-sm"
+//                             >
+//                               <div className="flex-shrink-0 mt-0.5 mr-3">
+//                                 {recommendation.status === "positive" ? (
+//                                   <TickIcon />
+//                                 ) : (
+//                                   <CrossIcon />
+//                                 )}
+//                               </div>
+//                               <span className="leading-relaxed">
+//                                 {recommendation.text}
+//                               </span>
+//                             </li>
+//                           )
+//                         )}
+//                       </ul>
+//                     </div>
+
+//                     {/* Score and Mini Chart */}
+//                     <div className="flex-shrink-0 flex flex-col items-center">
+//                       <div className="relative w-16 h-16 mb-2">
+//                         <svg
+//                           className="w-full h-full transform -rotate-90"
+//                           viewBox="0 0 42 42"
+//                         >
+//                           <circle
+//                             cx="21"
+//                             cy="21"
+//                             r="15.5"
+//                             stroke="#e5e7eb"
+//                             strokeWidth="3"
+//                             fill="transparent"
+//                           />
+//                           <circle
+//                             cx="21"
+//                             cy="21"
+//                             r="15.5"
+//                             stroke={
+//                               category.score >= 70
+//                                 ? "#10b981"
+//                                 : category.score >= 50
+//                                 ? "#f59e0b"
+//                                 : "#ef4444"
+//                             }
+//                             strokeWidth="3"
+//                             fill="transparent"
+//                             strokeDasharray={`${2 * Math.PI * 15.5}`}
+//                             strokeDashoffset={`${
+//                               2 * Math.PI * 15.5 * (1 - category.score / 100)
+//                             }`}
+//                             className="transition-all duration-1000 ease-out"
+//                           />
+//                         </svg>
+//                         <div className="absolute inset-0 flex items-center justify-center">
+//                           <span
+//                             className={`font-bold text-sm ${
+//                               category.score >= 70
+//                                 ? "text-green-600"
+//                                 : category.score >= 50
+//                                 ? "text-yellow-600"
+//                                 : "text-red-600"
+//                             }`}
+//                           >
+//                             {category.score}
+//                           </span>
+//                         </div>
+//                       </div>
+//                       <p className="text-xs text-blue-600 font-medium -ml-2">
+//                         Category Score
+//                       </p>
+//                     </div>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+
+//           {/* Stay Updated Card */}
+//           <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 sm:p-8 border border-blue-200 mb-8">
+//             <h3 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4">
+//               Stay Privacy-Protected
+//             </h3>
+//             <p className="text-blue-700 mb-6 leading-relaxed">
+//               Privacy threats evolve constantly. New data breaches, updated
+//               privacy policies, and emerging tracking technologies mean your
+//               privacy score can change. Regular reassessment ensures you stay
+//               ahead of new risks and maintain optimal protection.
+//             </p>
+
+//             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+//               <div className="bg-white rounded-lg p-4 border border-blue-200">
+//                 <h4 className="font-semibold text-blue-900 mb-2">
+//                   Monthly Check-ups
+//                 </h4>
+//                 <p className="text-blue-700 text-sm">
+//                   Reassess your privacy posture as new threats emerge
+//                 </p>
+//               </div>
+//               <div className="bg-white rounded-lg p-4 border border-blue-200">
+//                 <h4 className="font-semibold text-blue-900 mb-2">
+//                   Updated Insights
+//                 </h4>
+//                 <p className="text-blue-700 text-sm">
+//                   Get fresh recommendations based on latest privacy research
+//                 </p>
+//               </div>
+//               <div className="bg-white rounded-lg p-4 border border-blue-200">
+//                 <h4 className="font-semibold text-blue-900 mb-2">
+//                   Track Progress
+//                 </h4>
+//                 <p className="text-blue-700 text-sm">
+//                   Monitor improvements and maintain your privacy gains
+//                 </p>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Action Buttons */}
+//           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+//             <button
+//               onClick={handleRetakeAssessment}
+//               className="flex items-center justify-center px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg"
+//             >
+//               <RotateIcon />
+//               Retake Assessment
+//             </button>
+
+//             <button
+//               onClick={handleBackToDashboard}
+//               className="flex items-center justify-center px-8 py-3 bg-white text-blue-600 border-2 border-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors duration-200"
+//             >
+//               <HomeIcon />
+//               Back to Dashboard
+//             </button>
+//           </div>
+
+//           {/* Footer */}
+//           <div className="text-center mt-12 pb-6">
+//             <p className="text-blue-600 text-sm">
+//               Privacy Shield Assessment • Protecting Your Digital Identity
+//             </p>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };
+
+// export default PrivacyReport;
