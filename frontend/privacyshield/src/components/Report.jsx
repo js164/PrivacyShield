@@ -357,7 +357,7 @@ const PrivacyReport = () => {
   }, [reportData]);
 
   const handleRetakeAssessment = () => {
-    navigate("/assessment");
+    navigate("/assesment");
   };
 
   const handleBackToDashboard = () => {

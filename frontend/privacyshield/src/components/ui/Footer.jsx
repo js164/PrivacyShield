@@ -13,7 +13,7 @@ export default function Footer() {
         {/* Admin Dashboard Button */}
         <div>
           <Link
-            to="/admindashboard"
+            to="/admin/dashboard"
             className="py-2 px-4 rounded-lg text-base font-medium 
                        text-neutral-gray 
                        hover:bg-gray-100 transition-colors"

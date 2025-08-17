@@ -79,9 +79,9 @@ export default function Assesment() {
 
   const handleNext = (selectedIndex) => {
 
-    console.log(api_data.length)
-    console.log(selectedIndex)
-    console.log(api_data)
+    // console.log(api_data.length)
+    // console.log(selectedIndex)
+    // console.log(api_data)
 
     setSelectedOption(selectedIndex);
     setAnswers({ ...answers, [currentQuestion]: selectedIndex });
@@ -121,6 +121,8 @@ export default function Assesment() {
       //privacyScores.scores[api_data.options[selectedIndex].scores.code] += api_data.options[selectedIndex].scores.score;
 
       setCurrentQuestion(question_no);
+      console.log(privacyScores);
+      
 
   };
 
