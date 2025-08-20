@@ -21,6 +21,7 @@ import { Navbar } from "../ui/Navbar";
 import logo from "../../public/Images/logo.png";
 import { CATEGORIES } from "../config/Categories";
 import Toast from "../ui/QuestionSuggestion";
+const backend_url = import.meta.env.VITE_BACKEND_URI;
 
 export default function AdminDashboard() {
   // --- State Management ---
@@ -65,7 +66,7 @@ export default function AdminDashboard() {
       const token = localStorage.getItem("adminToken"); // or from context if you stored it elsewhere
 
       const response = await axios.post(
-        "http://localhost:8000/question/add",
+        backend_url + "/question/add",
         questionData,
         {
           headers: {

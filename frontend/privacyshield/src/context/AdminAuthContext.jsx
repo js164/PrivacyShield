@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
+const backend_url = import.meta.env.VITE_BACKEND_URI;
 
 const AdminAuthContext = createContext();
 
@@ -26,7 +27,7 @@ export const AdminAuthProvider = ({ children }) => {
 
   const verifyToken = async (token) => {
     try {
-      const response = await fetch("http://localhost:8000/api/admin/verify", {
+      const response = await fetch(backend_url+"/api/admin/verify", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -49,7 +50,7 @@ export const AdminAuthProvider = ({ children }) => {
 
   const login = async (userId, password) => {
     try {
-      const response = await fetch("http://localhost:8000/api/admin/login", {
+      const response = await fetch(backend_url+"/api/admin/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

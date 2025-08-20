@@ -4,6 +4,7 @@ import SurveyQuestion from "./ui/QuestionDisplay";
 import { Navbar_Questions } from './ui/Navbar';
 import Toast from "./ui/QuestionSuggestion";
 import ContinueModal from './ui/Dialog';
+const backend_url = import.meta.env.BACKEND_URI;
 
 // Global scores object initialized with 0
 export const privacyScores = {
@@ -38,7 +39,7 @@ export default function Assesment() {
     const fetchQuestions = async () => {
       try {
 
-        const res = await fetch("http://localhost:8000/question/questions");
+        const res = await fetch(backend_url+"/question/questions");
         if (!res.ok) throw new Error("Failed to fetch questions");
         const data = await res.json();
         console.log({currentQuestion})
