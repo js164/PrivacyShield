@@ -9,13 +9,14 @@ import AdminLogin from "./components/AdminLogin";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import AdminDashboard from "./components/AdminDashboard/AdminDashboard"; // keep this one
 
+/*
 axios.interceptors.request.use(function (config) {
   if (config.url.slice(0, 4) !== "http") {
     config.url = "http://localhost:8000" + config.url;
   }
   return config;
 });
-
+*/
 function App() {
   return (
     <AdminAuthProvider>
