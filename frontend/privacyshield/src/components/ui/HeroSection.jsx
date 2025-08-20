@@ -106,7 +106,7 @@ export default function HeroSection() {
                     }}
                 >
                     <Link
-                        to='/assesment'
+                        to='/initialassesment'
                         className="inline-block bg-primary-blue hover:bg-dark-blue text-white font-semibold px-8 py-3 rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)}

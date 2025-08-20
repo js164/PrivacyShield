@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom"; // removed BrowserRouter
 import HomePage from "./components/HomePage";
+import InitialAssesment from "./components/InitialAssesment";
 import Assesment from "./components/Assesment";
 import Report from "./components/Report";
 import axios from "axios";
@@ -31,6 +32,7 @@ function App() {
           }
         />
         <Route path="/" element={<HomePage />} />
+        <Route path="/initialassesment" element={<InitialAssesment />} />
         <Route path="/assesment" element={<Assesment />} />
         <Route path="/report" element={<Report />} />
       </Routes>

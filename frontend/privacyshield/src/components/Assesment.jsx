@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import SurveyQuestion from "./ui/QuestionDisplay";
 import { Navbar_Questions } from './ui/Navbar';
 import Toast from "./ui/QuestionSuggestion";
@@ -21,6 +21,18 @@ export const privacyScores = {
 };
 
 export default function Assesment() {
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { initial_answers } = location.state || { initial_answers: [] }; // fallback if no state
+
+  // Redirect if user opens /assesment directly or has no answers
+  useEffect(() => {
+    if (!initial_answers || initial_answers.length === 0) {
+      navigate("/initialassesment", { replace: true });
+    }
+  }, [initial_answers, navigate]);
+
   const [api_data, setAPIData] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -31,8 +43,6 @@ export default function Assesment() {
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
-  const navigate = useNavigate();
 
   // Fetch questions from API
   useEffect(() => {
