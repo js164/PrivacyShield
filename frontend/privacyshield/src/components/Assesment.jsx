@@ -38,7 +38,7 @@ export default function Assesment() {
     const fetchQuestions = async () => {
       try {
 
-        const res = await fetch("http://localhost:8000/question/questions");
+        const res = await fetch("/api/question/questions");
         if (!res.ok) throw new Error("Failed to fetch questions");
         const data = await res.json();
         console.log({currentQuestion})
