@@ -25,6 +25,7 @@ Chart.register(
   PieController,
   ChartDataLabels
 );
+const backend_url = import.meta.env.VITE_BACKEND_URI;
 
 // Icon components
 const ShieldIcon = () => (
@@ -172,7 +173,7 @@ const PrivacyReport = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("http://localhost:8000/assesment/report", {
+      const response = await fetch(backend_url+"/assesment/report", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
