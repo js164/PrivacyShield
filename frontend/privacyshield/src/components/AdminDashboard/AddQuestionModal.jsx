@@ -11,10 +11,10 @@ const ItemType = 'QUESTION';
 const getInitialScores = () => Object.keys(CATEGORIES).reduce((acc, key) => ({ ...acc, [key]: 0 }), {});
 
 export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
-    const [questionData, setQuestionData] = useState({ text: '', category: 'DIA', multiChoice: 'false', options: [{ text: '', scores: getInitialScores(), suggestion: '', suggestion_category: 'area_of_concern' }] });
+    const [questionData, setQuestionData] = useState({ text: '', category: 'DIA', options: [{ text: '', scores: getInitialScores(), suggestion: '', suggestion_category: 'area_of_concern' }] });
     const [error, setError] = useState('');
 
-    useEffect(() => { if (isOpen) { setQuestionData({ text: '', category: 'DIA', multiChoice: 'false', options: [{ text: '', scores: getInitialScores(), suggestion: '', suggestion_category: 'area_of_concern' }] }); setError(''); } }, [isOpen]);
+    useEffect(() => { if (isOpen) { setQuestionData({ text: '', category: 'DIA', options: [{ text: '', scores: getInitialScores(), suggestion: '', suggestion_category: 'area_of_concern' }] }); setError(''); } }, [isOpen]);
 
     const handleTextChange = (e) => setQuestionData({ ...questionData, text: e.target.value });
     const handleTypeChange = (e) => setQuestionData({ ...questionData, type: e.target.value });
@@ -27,7 +27,6 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
         console.log(questionData);
         return {
             text: questionData.text,
-            multiChoice: questionData.type == 'multiple',
             category: questionData.category,
             options: questionData.options.map(option => ({
                 text: option.text,
@@ -62,13 +61,6 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
                         {Object.entries(QUESTION_CATEGORIES).map(([key, name]) => (
                             <option key={key} value={key}>{name}</option>
                         ))}
-                    </select>
-                </div>
-                <div>
-                    <label className="text-sm font-bold text-gray-600 mb-2 block">Question Type</label>
-                    <select value={questionData.type} onChange={handleTypeChange} className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
-                        <option value="signle">Single Choice (Radio Buttons)</option>
-                        <option value="multiple">Multiple Choice (Checkboxes)</option>
                     </select>
                 </div>
                 <div>
