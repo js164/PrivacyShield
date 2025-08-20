@@ -24,7 +24,6 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
     const handleCategoryChange = (e) => setQuestionData({ ...questionData, category: e.target.value });
 
     function transformQuestionData(questionData) {
-        console.log(questionData);
         return {
             text: questionData.text,
             category: questionData.category,
@@ -40,12 +39,10 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
     }
 
     const handleConfirm = () => {
-        console.log(questionData);
         if (!questionData.text.trim()) { setError("Question text cannot be empty."); return; }
         const validOptions = questionData.options.filter(opt => opt.text.trim() !== '');
         if (validOptions.length === 0) { setError("Please add and fill out at least one option."); return; }
         const data = transformQuestionData(questionData)
-        console.log(data);
         onConfirm(data);
     };
 
