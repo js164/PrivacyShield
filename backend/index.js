@@ -7,6 +7,8 @@ const MongoStore = require('connect-mongo');
 const cors = require('cors');
 const adminRoutes = require('./routes/admin');
 
+const port = process.env.PORT || 8000;
+
 // Middleware
 app.use(cors({ origin: '*' }));
 app.use(express.urlencoded({ extended: false }));
@@ -28,6 +30,11 @@ app.use(session({
 
 // DB and server
 const connectDB = require('./db');
-connectDB();
-const port = process.env.PORT || 8000;
-module.exports = app;
+connectDB().then(() => {
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`🚀 Server running on port ${port}`);
+  });
+}).catch(err => {
+  console.error("❌ DB connection failed", err);
+});
+// module.exports = app;
