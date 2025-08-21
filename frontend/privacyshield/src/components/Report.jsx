@@ -186,7 +186,7 @@ const PrivacyReport = () => {
       }
 
       const apiResponse = await response.json();
-      console.log(apiResponse);
+      // console.log(apiResponse);
       
 
       // Transform API response to match our component structure

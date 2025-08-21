@@ -22,7 +22,7 @@ export default function HeroSection() {
                         className={`absolute w-48 h-60 transition-all duration-1000 ease-in-out ${isHovered ? 'opacity-20 transform-none' : 'opacity-10 -translate-x-96 -translate-y-32 rotate-12'
                             }`}
                         style={{
-                            backgroundImage: `url('/src/public/Images/logo.png')`,
+                            backgroundImage: `url('/logo.png')`,
                             backgroundSize: '384px 480px',
                             backgroundPosition: '0 0',
                             backgroundRepeat: 'no-repeat'
@@ -34,7 +34,7 @@ export default function HeroSection() {
                         className={`absolute top-0 right-0 w-48 h-60 transition-all duration-1000 ease-in-out ${isHovered ? 'opacity-20 transform-none' : 'opacity-10 translate-x-96 -translate-y-32 -rotate-12'
                             }`}
                         style={{
-                            backgroundImage: `url('/src/public/Images/logo.png')`,
+                            backgroundImage: `url('/logo.png')`,
                             backgroundSize: '384px 480px',
                             backgroundPosition: '-192px 0',
                             backgroundRepeat: 'no-repeat'
@@ -46,7 +46,7 @@ export default function HeroSection() {
                         className={`absolute bottom-0 left-0 w-48 h-60 transition-all duration-1000 ease-in-out ${isHovered ? 'opacity-20 transform-none' : 'opacity-10 -translate-x-96 translate-y-32 -rotate-12'
                             }`}
                         style={{
-                            backgroundImage: `url('/src/public/Images/logo.png')`,
+                            backgroundImage: `url('/logo.png')`,
                             backgroundSize: '384px 480px',
                             backgroundPosition: '0 -240px',
                             backgroundRepeat: 'no-repeat'
@@ -58,7 +58,7 @@ export default function HeroSection() {
                         className={`absolute bottom-0 right-0 w-48 h-60 transition-all duration-1000 ease-in-out ${isHovered ? 'opacity-20 transform-none' : 'opacity-10 translate-x-96 translate-y-32 rotate-12'
                             }`}
                         style={{
-                            backgroundImage: `url('/src/public/Images/logo.png')`,
+                            backgroundImage: `url('/logo.png')`,
                             backgroundSize: '384px 480px',
                             backgroundPosition: '-192px -240px',
                             backgroundRepeat: 'no-repeat'

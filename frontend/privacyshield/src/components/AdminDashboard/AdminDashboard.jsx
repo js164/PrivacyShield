@@ -18,7 +18,6 @@ import {
 import StatsCard from "../StatsCard";
 import InitialQuestionCard from "./InitialQuestionCard";
 import { Navbar } from "../ui/Navbar";
-import logo from "../../public/Images/logo.png";
 import { CATEGORIES } from "../config/Categories";
 import Toast from "../ui/QuestionSuggestion";
 const backend_url = import.meta.env.VITE_BACKEND_URI;
