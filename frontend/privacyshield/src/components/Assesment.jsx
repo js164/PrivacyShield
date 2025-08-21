@@ -26,6 +26,8 @@ export default function Assesment() {
   const location = useLocation();
   const { initial_answers } = location.state || { initial_answers: [] }; // fallback if no state
 
+  console.log(initial_answers)
+
   // Redirect if user opens /assesment directly or has no answers
   useEffect(() => {
     if (!initial_answers || initial_answers.length === 0) {
@@ -130,7 +132,9 @@ export default function Assesment() {
       //console.log(api_data)
 
       api_data[currentQuestion].options[selectedIndex].scores.forEach(s => {
-        privacyScores.scores[s.code] += s.score;
+        if (s.score !== -1) {
+          privacyScores.scores[s.code] += s.score;
+        }
       });
 
       //privacyScores.scores[api_data.options[selectedIndex].scores.code] += api_data.options[selectedIndex].scores.score;
@@ -168,7 +172,9 @@ export default function Assesment() {
       setSuggestions(newSuggestions);
 
       api_data[question_no].options[answers[question_no]].scores.forEach(s => {
-        privacyScores.scores[s.code] -= s.score;
+        if (s.score !== -1) {
+          privacyScores.scores[s.code] -= s.score;
+        }
       });
 
       setCurrentQuestion(question_no);
