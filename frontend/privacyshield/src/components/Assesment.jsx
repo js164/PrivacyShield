@@ -183,6 +183,7 @@ export default function Assesment() {
 
     const handleFinish = (selectedIndex) => {
     try {
+      console.log(currentQuestion)
       setShowModal(false);
       var time_delay = 500;
       if (typeof selectedIndex == 'number'){
@@ -192,11 +193,20 @@ export default function Assesment() {
       }
 
       // Loop through data and sum scores
+      /*
       api_data.forEach(item => {
         item.maxScore.forEach(s => {
           privacyScores.maxScores[s.categoryCode] += s.max;
         });
       });
+      */
+
+      // Loop through data from 0 till currentQuestion and sum scores
+      for (let i = 0; i <= currentQuestion; i++) {
+        api_data[i].maxScore.forEach(s => {
+          privacyScores.maxScores[s.categoryCode] += s.max;
+        });
+      }
 
         console.log({privacyScores})
 
