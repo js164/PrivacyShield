@@ -20,6 +20,29 @@ export const privacyScores = {
   }
 };
 
+function sortData(data, initial_answers) {
+  const seen = new Set();
+  const first = [];
+  const rest = [];
+
+  // Pick first object per unique category
+  data.forEach(obj => {
+    if (!seen.has(obj.category)) {
+      seen.add(obj.category);
+      first.push(obj);
+    } else {
+      rest.push(obj);
+    }
+  });
+
+  // Split remaining into selected & not selected
+  const selected = rest.filter(obj => initial_answers.includes(obj.category));
+  const notSelected = rest.filter(obj => !initial_answers.includes(obj.category));
+
+  // concat in required order
+  return [...first, ...selected, ...notSelected];
+};
+
 export default function Assesment() {
 
   const navigate = useNavigate();
@@ -55,12 +78,15 @@ export default function Assesment() {
         const res = await fetch(backend_url+"/question/questions");
         if (!res.ok) throw new Error("Failed to fetch questions");
         const fetched_data = await res.json();
-        const data = [...fetched_data].sort(() => Math.random() - 0.5);
+        const randomised_data = [...fetched_data].sort(() => Math.random() - 0.5);
+        const data = sortData(randomised_data, initial_answers);
         // console.log({currentQuestion})
         setAPIData(data)
         // console.log({api_data})
 
         setQuestions(data[currentQuestion].text); // Assuming `data` is an array of questions
+
+        // console.log(data[currentQuestion].category)
 
         const newOptions = [];
 
@@ -138,6 +164,7 @@ export default function Assesment() {
       });
 
       //privacyScores.scores[api_data.options[selectedIndex].scores.code] += api_data.options[selectedIndex].scores.score;
+      // console.log(api_data[currentQuestion].category)
 
       setCurrentQuestion(question_no);
       // console.log(privacyScores);

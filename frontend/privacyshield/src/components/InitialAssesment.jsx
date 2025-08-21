@@ -20,7 +20,10 @@ export default function QuestionPage() {
 
   const handleSubmit = () => {
     if (selected.length > 0) {
-      navigate("/assesment", { state: { initial_answers: selected } });
+
+      const categories = INITIAL_QUESTION.options.filter(opt => selected.includes(opt.text)).map(opt => opt.category);
+
+      navigate("/assesment", { state: { initial_answers: categories } });
     }
   };
 
