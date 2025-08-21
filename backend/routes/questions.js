@@ -333,6 +333,51 @@ router.put('/options/:optionId/scores', async (req, res) => {
     }
 });
 
+router.post('/add-multiple', async (req, res) => {
+    const questionsArray = req.body.questions;
+
+    if (!questionsArray || !Array.isArray(questionsArray) || questionsArray.length === 0) {
+        return res.status(400).json({ message: 'Request body must include a non-empty "questions" array.' });
+    }
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const insertedQuestions = [];
+
+        for (const questionData of questionsArray) {
+            const { text, multiChoice, category, options } = questionData;
+
+            if (!text || !options || !Array.isArray(options) || options.length === 0) {
+                throw new Error(`Invalid question data: ${JSON.stringify(questionData)}`);
+            }
+
+            // Insert Question
+            const question = new questionSchema({ text, multiChoice, category });
+            const savedQuestion = await question.save({ session });
+
+            // Insert Options + Scores
+            await addOptionsForQuestion(savedQuestion._id, options, session);
+
+            insertedQuestions.push(savedQuestion);
+        }
+
+        await session.commitTransaction();
+        res.status(201).json({
+            message: `${insertedQuestions.length} questions added successfully!`,
+            questions: insertedQuestions
+        });
+    } catch (error) {
+        await session.abortTransaction();
+        console.error('Bulk transaction failed:', error);
+        res.status(500).json({ message: 'Failed to add questions.', error: error.message });
+    } finally {
+        session.endSession();
+    }
+});
+
+
 
 // --- Export Router ---
 module.exports = router;

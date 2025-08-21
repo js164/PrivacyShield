@@ -186,6 +186,8 @@ const PrivacyReport = () => {
       }
 
       const apiResponse = await response.json();
+      console.log(apiResponse);
+      
 
       // Transform API response to match our component structure
       const transformedCategories = Object.entries(apiResponse).map(

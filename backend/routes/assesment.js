@@ -29,7 +29,9 @@ const fetchSuggestions = async () => {
         return suggestionsArray.reduce((acc, suggestion) => {
             acc[suggestion.code] = {
                 positive: suggestion.positive_suggestion,
-                negative: suggestion.negative_suggestion
+                negative: suggestion.negative_suggestion,
+                tools: suggestion.tools,
+                methodology: suggestion.methodology
             };
             return acc;
         }, {});
@@ -39,74 +41,78 @@ const fetchSuggestions = async () => {
     }
 };
 
-route.post('/report', async function(req, res, next){
-     const suggestionsDB = await fetchSuggestions();
+route.post('/report', async function (req, res, next) {
+    const suggestionsDB = await fetchSuggestions();
 
-     if (Object.keys(suggestionsDB).length === 0) {
-         return res.status(500).json({ error: "Could not load suggestion data from the database." });
-     }
- 
-     const { scores, maxScores } = req.body;
- 
-     if (!scores || !maxScores || Object.keys(scores).length === 0) {
-         return res.status(400).json({ error: "Request body must contain 'scores' and 'maxScores' objects." });
-     }
- 
-     const allConcernCodes = new Set(Object.values(categoryMappingForScoring).flat());
-     for (const key in scores) {
-         if (!allConcernCodes.has(key)) {
-             return res.status(400).json({ error: `Invalid concern code provided in scores: '${key}'` });
-         }
-         if (maxScores[key] === undefined) {
-             return res.status(400).json({ error: `Missing max score for concern code: '${key}'` });
-         }
-     }
- 
-     const report = {};
- 
-     for (const categoryName in categoryMappingForScoring) {
-         const concernsForScoring = categoryMappingForScoring[categoryName];
-         let categoryTotalPoints = 0;
-         let maxPossiblePointsForCategory = 0;
- 
-         for (const concernCode of concernsForScoring) {
-             categoryTotalPoints += scores[concernCode] || 0;
-             maxPossiblePointsForCategory += maxScores[concernCode] || 0;
-         }
- 
-         const scorePercentage = maxPossiblePointsForCategory > 0 
-             ? Math.round(((maxPossiblePointsForCategory - categoryTotalPoints) / maxPossiblePointsForCategory) * 100)
-             : 0;
- 
-         const categorySuggestions = [];
-         const concernsForSuggestions = suggestionMapping[categoryName] || [];
- 
-         for (const concernCode of concernsForSuggestions) {
-             const userScore = scores[concernCode] || 0;
-             const maxScore = maxScores[concernCode] || 0;
- 
-             if (suggestionsDB[concernCode] && maxScore > 0) {
-                 if (userScore > (maxScore / 2)) {
-                     categorySuggestions.push({
-                         type: 'negative',
-                         text: suggestionsDB[concernCode].negative
-                     });
-                 } else {
-                     categorySuggestions.push({
-                         type: 'positive',
-                         text: suggestionsDB[concernCode].positive
-                     });
-                 }
-             }
-         }
- 
-         report[categoryName] = {
-             scorePercentage: scorePercentage,
-             suggestions: categorySuggestions
-         };
-     }
- 
-     res.status(200).json(report);
- });
+    if (Object.keys(suggestionsDB).length === 0) {
+        return res.status(500).json({ error: "Could not load suggestion data from the database." });
+    }
+
+    const { scores, maxScores } = req.body;
+
+    if (!scores || !maxScores || Object.keys(scores).length === 0) {
+        return res.status(400).json({ error: "Request body must contain 'scores' and 'maxScores' objects." });
+    }
+
+    const allConcernCodes = new Set(Object.values(categoryMappingForScoring).flat());
+    for (const key in scores) {
+        if (!allConcernCodes.has(key)) {
+            return res.status(400).json({ error: `Invalid concern code provided in scores: '${key}'` });
+        }
+        if (maxScores[key] === undefined) {
+            return res.status(400).json({ error: `Missing max score for concern code: '${key}'` });
+        }
+    }
+
+    const report = {};
+
+    for (const categoryName in categoryMappingForScoring) {
+        const concernsForScoring = categoryMappingForScoring[categoryName];
+        let categoryTotalPoints = 0;
+        let maxPossiblePointsForCategory = 0;
+
+        for (const concernCode of concernsForScoring) {
+            categoryTotalPoints += scores[concernCode] || 0;
+            maxPossiblePointsForCategory += maxScores[concernCode] || 0;
+        }
+
+        const scorePercentage = maxPossiblePointsForCategory > 0
+            ? Math.round(((maxPossiblePointsForCategory - categoryTotalPoints) / maxPossiblePointsForCategory) * 100)
+            : 0;
+
+        const categorySuggestions = [];
+        const concernsForSuggestions = suggestionMapping[categoryName] || [];
+
+        for (const concernCode of concernsForSuggestions) {
+            const userScore = scores[concernCode] || 0;
+            const maxScore = maxScores[concernCode] || 0;
+
+            if (suggestionsDB[concernCode] && maxScore > 0) {
+                if (userScore > (maxScore / 2)) {
+                    categorySuggestions.push({
+                        type: 'negative',
+                        text: suggestionsDB[concernCode].negative,
+                        categoryTools: suggestionsDB[concernCode].tools,
+                        categoryMethodology: suggestionsDB[concernCode].methodology
+                    });
+                } else {
+                    categorySuggestions.push({
+                        type: 'positive',
+                        text: suggestionsDB[concernCode].positive,
+                        tools: suggestionsDB[concernCode].tools,
+                        methodology: suggestionsDB[concernCode].methodology
+                    });
+                }
+            }
+        }
+
+        report[categoryName] = {
+            scorePercentage: scorePercentage,
+            suggestions: categorySuggestions
+        };
+    }
+
+    res.status(200).json(report);
+});
 
 module.exports = route;

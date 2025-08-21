@@ -18,6 +18,14 @@ const CategorySchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  tools: {
+    type: [String], // array of strings
+    default: [],
+  },
+  methodology: {
+    type: String,
+    required: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now
