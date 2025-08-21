@@ -21,7 +21,7 @@ export default function SurveyQuestion({
   }, [questionNumber, selectedOption]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6">
+    <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6 animate-fade-in-up">
       <div className="max-w-3xl w-full">
         {/* Header */}
         <div className="mb-6">
