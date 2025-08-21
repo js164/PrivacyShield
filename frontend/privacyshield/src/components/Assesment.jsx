@@ -37,10 +37,12 @@ function sortData(data, initial_answers) {
 
   // Split remaining into selected & not selected
   const selected = rest.filter(obj => initial_answers.includes(obj.category));
+  const randomised_selected = [...selected].sort(() => Math.random() - 0.5);
   const notSelected = rest.filter(obj => !initial_answers.includes(obj.category));
+  const randomised_notSelected = [...notSelected].sort(() => Math.random() - 0.5);
 
   // concat in required order
-  return [...first, ...selected, ...notSelected];
+  return [...first, ...randomised_selected, ...randomised_notSelected];
 };
 
 export default function Assesment() {
@@ -102,7 +104,12 @@ export default function Assesment() {
 
       for (let i = 0; i < data[currentQuestion].options.length; i++) {
 
-        newSuggestions.push(data[currentQuestion].options[i].suggestion)
+        //newSuggestions.push(data[currentQuestion].options[i].suggestion)
+
+        newSuggestions.push({
+          suggestion: data[currentQuestion].options[i].suggestion,
+          category: data[currentQuestion].options[i].suggestion_category
+        });
 
       }
 
@@ -149,7 +156,12 @@ export default function Assesment() {
 
       for (let i = 0; i < api_data[currentQuestion].options.length; i++) {
 
-        newSuggestions.push(api_data[currentQuestion].options[i].suggestion)
+        //newSuggestions.push(api_data[currentQuestion].options[i].suggestion)
+
+        newSuggestions.push({
+          suggestion: api_data[currentQuestion].options[i].suggestion,
+          category: api_data[currentQuestion].options[i].suggestion_category
+        });
 
       }
 
@@ -192,7 +204,12 @@ export default function Assesment() {
 
       for (let i = 0; i < api_data[currentQuestion].options.length; i++) {
 
-        newSuggestions.push(api_data[currentQuestion].options[i].suggestion)
+        //newSuggestions.push(api_data[currentQuestion].options[i].suggestion)
+
+        newSuggestions.push({
+          suggestion: api_data[currentQuestion].options[i].suggestion,
+          category: api_data[currentQuestion].options[i].suggestion_category
+        });
 
       }
 
@@ -280,7 +297,8 @@ export default function Assesment() {
     <>
     <Navbar_Questions />
     <Toast
-      message={suggestions[user_selected_option]}
+      message={suggestions[user_selected_option]?.suggestion}
+      color_category={suggestions[user_selected_option]?.category}
       show={showToast}
       duration={3000}
       onClose={() => setShowToast(false)}
