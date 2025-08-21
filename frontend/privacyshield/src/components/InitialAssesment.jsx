@@ -10,11 +10,11 @@ export default function QuestionPage() {
   const question = INITIAL_QUESTION.text;
   const options = INITIAL_QUESTION.options;
 
-  const toggleSelect = (label) => {
-    if (selected.includes(label)) {
-      setSelected(selected.filter((item) => item !== label));
+  const toggleSelect = (category) => {
+    if (selected.includes(category)) {
+      setSelected(selected.filter((item) => item !== category));
     } else {
-      setSelected([...selected, label]);
+      setSelected([...selected, category]);
     }
   };
 
