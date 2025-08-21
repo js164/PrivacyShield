@@ -67,7 +67,7 @@ export default function Assesment() {
   const [user_selected_option, setSelectedOption] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(true);
   const [isChecking, setIsChecking] = useState(true);
 
   // Fetch questions from API
@@ -129,7 +129,7 @@ export default function Assesment() {
     setSelectedOption(selectedIndex);
     setAnswers({ ...answers, [currentQuestion]: selectedIndex });
     setShowToast(true); // Show toast
-    setShowModal(true); // Show Modal
+    //setShowModal(true); // Show Modal
 
     const question_no = currentQuestion + 1
 
