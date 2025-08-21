@@ -210,7 +210,7 @@ export default function Assesment() {
 
     const handleFinish = (selectedIndex) => {
     try {
-      console.log(currentQuestion)
+      // console.log(currentQuestion)
       setShowModal(false);
       var time_delay = 500;
       if (typeof selectedIndex == 'number'){
