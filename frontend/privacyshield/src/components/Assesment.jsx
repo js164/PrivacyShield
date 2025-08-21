@@ -26,7 +26,7 @@ export default function Assesment() {
   const location = useLocation();
   const { initial_answers } = location.state || { initial_answers: [] }; // fallback if no state
 
-  console.log(initial_answers)
+  // console.log(initial_answers)
 
   // Redirect if user opens /assesment directly or has no answers
   useEffect(() => {
@@ -56,9 +56,9 @@ export default function Assesment() {
         if (!res.ok) throw new Error("Failed to fetch questions");
         const fetched_data = await res.json();
         const data = [...fetched_data].sort(() => Math.random() - 0.5);
-        console.log({currentQuestion})
+        // console.log({currentQuestion})
         setAPIData(data)
-        console.log({api_data})
+        // console.log({api_data})
 
         setQuestions(data[currentQuestion].text); // Assuming `data` is an array of questions
 
@@ -140,7 +140,7 @@ export default function Assesment() {
       //privacyScores.scores[api_data.options[selectedIndex].scores.code] += api_data.options[selectedIndex].scores.score;
 
       setCurrentQuestion(question_no);
-      console.log(privacyScores);
+      // console.log(privacyScores);
       
 
   };
@@ -198,7 +198,7 @@ export default function Assesment() {
         });
       });
 
-        console.log({privacyScores})
+        // console.log({privacyScores})
 
       setTimeout(() => {
         navigate('/report', { state: { scores: privacyScores } });
