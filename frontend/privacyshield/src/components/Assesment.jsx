@@ -300,7 +300,7 @@ export default function Assesment() {
       message={suggestions[user_selected_option]?.suggestion}
       color_category={suggestions[user_selected_option]?.category}
       show={showToast}
-      duration={3000}
+      duration={3750}
       onClose={() => setShowToast(false)}
     />
 
