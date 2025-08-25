@@ -173,7 +173,7 @@ router.get('/questions', async (req, res) => {
 
 router.post('/add', adminAuth, async (req, res) => {
     console.log(req.body.options[0].scores);
-    const { text, multiChoice, options , category } = req.body;
+    const { text, options , category } = req.body;
 
     if (!text || !options || !Array.isArray(options) || options.length === 0) {
         return res.status(400).json({ message: 'Request body must include text and a non-empty options array.' });
@@ -183,7 +183,7 @@ router.post('/add', adminAuth, async (req, res) => {
     session.startTransaction();
 
     try {
-        const question = new questionSchema({ text, multiChoice, category });
+        const question = new questionSchema({ text, category });
         const savedQuestion = await question.save({ session });
 
         await addOptionsForQuestion(savedQuestion._id, options, session);
@@ -201,7 +201,7 @@ router.post('/add', adminAuth, async (req, res) => {
 
 router.put('/questions/:questionId', async (req, res) => {
     const { questionId } = req.params;
-    const { text, multiChoice, category } = req.body;
+    const { text, category } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(questionId)) {
         return res.status(400).json({ message: 'Invalid question ID format.' });
@@ -210,7 +210,7 @@ router.put('/questions/:questionId', async (req, res) => {
     try {
         const updatedQuestion = await questionSchema.findByIdAndUpdate(
             questionId,
-            { $set: { text, multiChoice, category } },
+            { $set: { text, category } },
             { new: true, runValidators: true } // Return the updated doc and run schema validators
         );
 
@@ -332,6 +332,51 @@ router.put('/options/:optionId/scores', async (req, res) => {
         session.endSession();
     }
 });
+
+router.post('/add-multiple', async (req, res) => {
+    const questionsArray = req.body.questions;
+
+    if (!questionsArray || !Array.isArray(questionsArray) || questionsArray.length === 0) {
+        return res.status(400).json({ message: 'Request body must include a non-empty "questions" array.' });
+    }
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const insertedQuestions = [];
+
+        for (const questionData of questionsArray) {
+            const { text, multiChoice, category, options } = questionData;
+
+            if (!text || !options || !Array.isArray(options) || options.length === 0) {
+                throw new Error(`Invalid question data: ${JSON.stringify(questionData)}`);
+            }
+
+            // Insert Question
+            const question = new questionSchema({ text, multiChoice, category });
+            const savedQuestion = await question.save({ session });
+
+            // Insert Options + Scores
+            await addOptionsForQuestion(savedQuestion._id, options, session);
+
+            insertedQuestions.push(savedQuestion);
+        }
+
+        await session.commitTransaction();
+        res.status(201).json({
+            message: `${insertedQuestions.length} questions added successfully!`,
+            questions: insertedQuestions
+        });
+    } catch (error) {
+        await session.abortTransaction();
+        console.error('Bulk transaction failed:', error);
+        res.status(500).json({ message: 'Failed to add questions.', error: error.message });
+    } finally {
+        session.endSession();
+    }
+});
+
 
 
 // --- Export Router ---

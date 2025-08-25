@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function SurveyQuestion({
   title,
@@ -10,12 +10,18 @@ export default function SurveyQuestion({
   onBack,
   onNext,
   onFinish,
-  isLastQuestion
+  isLastQuestion,
+  selectedOption
 }) {
   const [selected, setSelected] = useState(null);
 
+  // Update local state whenever questionNumber or selectedOption changes
+  useEffect(() => {
+    setSelected(selectedOption ?? null);
+  }, [questionNumber, selectedOption]);
+
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6">
+    <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6 animate-fade-in-up">
       <div className="max-w-3xl w-full">
         {/* Header */}
         <div className="mb-6">

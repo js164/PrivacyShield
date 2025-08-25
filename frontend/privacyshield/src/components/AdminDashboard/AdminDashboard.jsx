@@ -18,9 +18,9 @@ import {
 import StatsCard from "../StatsCard";
 import InitialQuestionCard from "./InitialQuestionCard";
 import { Navbar } from "../ui/Navbar";
-import logo from "../../public/Images/logo.png";
 import { CATEGORIES } from "../config/Categories";
 import Toast from "../ui/QuestionSuggestion";
+const backend_url = import.meta.env.VITE_BACKEND_URI;
 
 export default function AdminDashboard() {
   // --- State Management ---
@@ -45,27 +45,12 @@ export default function AdminDashboard() {
     fetchQuestions();
   }, []);
 
-  // const handleAddQuestion = (questionData) => {
-  //     console.log(questionData);
-  //     axios.post('/question/add', questionData).then(response => {
-  //         console.log(response);
-  //         if (response.status == 200 || response.status == 201) {
-  //             console.log("successsss");
-  //             questionData["_id"] = response.data.question._id
-  //             setQuestions(prev => [...prev, questionData].sort((a, b) => a.order - b.order));
-  //             setToastMessage(response.data.message)
-  //             setShowToast(true)
-  //         };
-  //         setAddQuestionModalOpen(false);
-  //     });
-  // }
-
   const handleAddQuestion = async (questionData) => {
     try {
       const token = localStorage.getItem("adminToken"); // or from context if you stored it elsewhere
 
       const response = await axios.post(
-        "http://localhost:8000/question/add",
+        backend_url + "/question/add",
         questionData,
         {
           headers: {
@@ -76,7 +61,6 @@ export default function AdminDashboard() {
       );
 
       if (response.status === 200 || response.status === 201) {
-        console.log("Success!");
         questionData["_id"] = response.data.question._id;
         setQuestions((prev) =>
           [...prev, questionData].sort((a, b) => a.order - b.order)
@@ -95,7 +79,6 @@ export default function AdminDashboard() {
 
   const handleDeleteQuestion = (id) => {
     axios.delete("/question/question/" + id).then((response) => {
-      console.log(response);
       if (response.status == 200) {
         setQuestions((prev) => prev.filter((q) => q._id !== id));
       }

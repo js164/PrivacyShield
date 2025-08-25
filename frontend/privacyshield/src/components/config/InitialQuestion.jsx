@@ -1,6 +1,6 @@
 export const INITIAL_QUESTION = {
     id: 'q0',
-    text: 'When it comes to your privacy and safety online, which of these concerns you the most? (Select all that apply)',
+    text: 'When it comes to your privacy and safety online, which of these concerns you the most?',
     type: 'multiple',
     options: [
         { id: 'q0_opt1', text: 'Someone stealing or misusing my online accounts and passwords', category: 'DIA' },

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import SurveyQuestion from "./ui/QuestionDisplay";
 import { Navbar_Questions } from './ui/Navbar';
 import Toast from "./ui/QuestionSuggestion";
 import ContinueModal from './ui/Dialog';
+const backend_url = import.meta.env.VITE_BACKEND_URI;
 
 // Global scores object initialized with 0
 export const privacyScores = {
@@ -19,7 +20,46 @@ export const privacyScores = {
   }
 };
 
+function sortData(data, initial_answers) {
+  const seen = new Set();
+  const first = [];
+  const rest = [];
+
+  // Pick first object per unique category
+  data.forEach(obj => {
+    if (!seen.has(obj.category)) {
+      seen.add(obj.category);
+      first.push(obj);
+    } else {
+      rest.push(obj);
+    }
+  });
+
+  // Split remaining into selected & not selected
+  const selected = rest.filter(obj => initial_answers.includes(obj.category));
+  const randomised_selected = [...selected].sort(() => Math.random() - 0.5);
+  const notSelected = rest.filter(obj => !initial_answers.includes(obj.category));
+  const randomised_notSelected = [...notSelected].sort(() => Math.random() - 0.5);
+
+  // concat in required order
+  return [...first, ...randomised_selected, ...randomised_notSelected];
+};
+
 export default function Assesment() {
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { initial_answers } = location.state || { initial_answers: [] }; // fallback if no state
+
+  // console.log(initial_answers)
+
+  // Redirect if user opens /assesment directly or has no answers
+  useEffect(() => {
+    if (!initial_answers || initial_answers.length === 0) {
+      navigate("/initialassesment", { replace: true });
+    }
+  }, [initial_answers, navigate]);
+
   const [api_data, setAPIData] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -29,23 +69,26 @@ export default function Assesment() {
   const [user_selected_option, setSelectedOption] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-
-  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(true);
+  const [isChecking, setIsChecking] = useState(true);
 
   // Fetch questions from API
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
 
-        const res = await fetch("http://localhost:8000/question/questions");
+        const res = await fetch(backend_url+"/question/questions");
         if (!res.ok) throw new Error("Failed to fetch questions");
-        const data = await res.json();
-        console.log({currentQuestion})
+        const fetched_data = await res.json();
+        const randomised_data = [...fetched_data].sort(() => Math.random() - 0.5);
+        const data = sortData(randomised_data, initial_answers);
+        // console.log({currentQuestion})
         setAPIData(data)
-        console.log({api_data})
+        // console.log({api_data})
 
         setQuestions(data[currentQuestion].text); // Assuming `data` is an array of questions
+
+        // console.log(data[currentQuestion].category)
 
         const newOptions = [];
 
@@ -61,7 +104,12 @@ export default function Assesment() {
 
       for (let i = 0; i < data[currentQuestion].options.length; i++) {
 
-        newSuggestions.push(data[currentQuestion].options[i].suggestion)
+        //newSuggestions.push(data[currentQuestion].options[i].suggestion)
+
+        newSuggestions.push({
+          suggestion: data[currentQuestion].options[i].suggestion,
+          category: data[currentQuestion].options[i].suggestion_category
+        });
 
       }
 
@@ -71,6 +119,8 @@ export default function Assesment() {
         console.error("Error fetching questions:", err);
       } finally {
         setLoading(false);
+        await new Promise(res => setTimeout(res, 1000));
+        setIsChecking(false);
       }
     };
 
@@ -79,13 +129,14 @@ export default function Assesment() {
 
   const handleNext = (selectedIndex) => {
 
-    console.log(api_data.length)
-    console.log(selectedIndex)
-    console.log(api_data)
+    // console.log(api_data.length)
+    // console.log(selectedIndex)
+    // console.log(api_data)
 
     setSelectedOption(selectedIndex);
+    setAnswers({ ...answers, [currentQuestion]: selectedIndex });
     setShowToast(true); // Show toast
-    setShowModal(true); // Show Modal
+    //setShowModal(true); // Show Modal
 
     const question_no = currentQuestion + 1
 
@@ -105,7 +156,12 @@ export default function Assesment() {
 
       for (let i = 0; i < api_data[currentQuestion].options.length; i++) {
 
-        newSuggestions.push(api_data[currentQuestion].options[i].suggestion)
+        //newSuggestions.push(api_data[currentQuestion].options[i].suggestion)
+
+        newSuggestions.push({
+          suggestion: api_data[currentQuestion].options[i].suggestion,
+          category: api_data[currentQuestion].options[i].suggestion_category
+        });
 
       }
 
@@ -114,12 +170,17 @@ export default function Assesment() {
       //console.log(api_data)
 
       api_data[currentQuestion].options[selectedIndex].scores.forEach(s => {
-        privacyScores.scores[s.code] += s.score;
+        if (s.score !== -1) {
+          privacyScores.scores[s.code] += s.score;
+        }
       });
 
       //privacyScores.scores[api_data.options[selectedIndex].scores.code] += api_data.options[selectedIndex].scores.score;
+      // console.log(api_data[currentQuestion].category)
 
       setCurrentQuestion(question_no);
+      // console.log(privacyScores);
+      
 
   };
 
@@ -143,11 +204,22 @@ export default function Assesment() {
 
       for (let i = 0; i < api_data[currentQuestion].options.length; i++) {
 
-        newSuggestions.push(api_data[currentQuestion].options[i].suggestion)
+        //newSuggestions.push(api_data[currentQuestion].options[i].suggestion)
+
+        newSuggestions.push({
+          suggestion: api_data[currentQuestion].options[i].suggestion,
+          category: api_data[currentQuestion].options[i].suggestion_category
+        });
 
       }
 
       setSuggestions(newSuggestions);
+
+      api_data[question_no].options[answers[question_no]].scores.forEach(s => {
+        if (s.score !== -1) {
+          privacyScores.scores[s.code] -= s.score;
+        }
+      });
 
       setCurrentQuestion(question_no);
 
@@ -155,6 +227,7 @@ export default function Assesment() {
 
     const handleFinish = (selectedIndex) => {
     try {
+      // console.log(currentQuestion)
       setShowModal(false);
       var time_delay = 500;
       if (typeof selectedIndex == 'number'){
@@ -164,13 +237,22 @@ export default function Assesment() {
       }
 
       // Loop through data and sum scores
+      /*
       api_data.forEach(item => {
         item.maxScore.forEach(s => {
           privacyScores.maxScores[s.categoryCode] += s.max;
         });
       });
+      */
 
-        console.log({privacyScores})
+      // Loop through data from 0 till currentQuestion and sum scores
+      for (let i = 0; i <= currentQuestion; i++) {
+        api_data[i].maxScore.forEach(s => {
+          privacyScores.maxScores[s.categoryCode] += s.max;
+        });
+      }
+
+        // console.log({privacyScores})
 
       setTimeout(() => {
         navigate('/report', { state: { scores: privacyScores } });
@@ -180,13 +262,45 @@ export default function Assesment() {
     }
   };
 
+  if (isChecking) {
+    return (
+    <>
+    <Navbar_Questions />
+      <div className="flex items-center justify-center min-h-screen animate-fade-in-up">
+        <svg
+          className="animate-spin -ml-1 mr-8 h-20 w-20 text-blue-400"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        <span className="text-3xl font-semibold">Loading Questions...</span>
+      </div>
+      </>
+    );
+  }
+
   return (
     <>
     <Navbar_Questions />
     <Toast
-      message={suggestions[user_selected_option]}
+      message={suggestions[user_selected_option]?.suggestion}
+      color_category={suggestions[user_selected_option]?.category}
       show={showToast}
-      duration={3000}
+      duration={3750}
       onClose={() => setShowToast(false)}
     />
 
@@ -207,6 +321,7 @@ export default function Assesment() {
       onNext={handleNext}
       onFinish={handleFinish}
       isLastQuestion={currentQuestion === api_data.length - 1}
+      selectedOption={answers[currentQuestion]}
     />
     </>
   )

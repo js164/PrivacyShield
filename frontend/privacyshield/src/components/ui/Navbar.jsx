@@ -30,7 +30,7 @@ export function Navbar() {
               About Us
             </Link>
             <Link
-              to="/assesment"
+              to="/initialassesment"
               className="inline-block bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-dark-blue transition-colors shadow"
             >
               Take Assessment

@@ -69,7 +69,7 @@ export default function QuestionCard({ question, index, onDelete, onUpdate, move
                         {!isExpanded && (
                             <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
                                 <span className="font-medium px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">{QUESTION_CATEGORIES[question.category] || 'Uncategorized'}</span>
-                                <span className={`font-medium px-2 py-0.5 rounded-full capitalize ${question.multiChoice ? 'bg-purple-100 text-purple-800 ' : 'bg-green-100 text-green-800 '}`}>{question.multiChoice ? 'multiple' : 'single'}</span>
+                                {/* <span className={`font-medium px-2 py-0.5 rounded-full capitalize ${question.multiChoice ? 'bg-purple-100 text-purple-800 ' : 'bg-green-100 text-green-800 '}`}>{question.multiChoice ? 'multiple' : 'single'}</span> */}
                                 <span>{question.options.length} options</span>
                             </div>
                         )}

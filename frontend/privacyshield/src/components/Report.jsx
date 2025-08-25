@@ -25,6 +25,7 @@ Chart.register(
   PieController,
   ChartDataLabels
 );
+const backend_url = import.meta.env.VITE_BACKEND_URI;
 
 // Icon components
 const ShieldIcon = () => (
@@ -172,7 +173,7 @@ const PrivacyReport = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("http://localhost:8000/assesment/report", {
+      const response = await fetch(backend_url+"/assesment/report", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -185,6 +186,8 @@ const PrivacyReport = () => {
       }
 
       const apiResponse = await response.json();
+      // console.log(apiResponse);
+      
 
       // Transform API response to match our component structure
       const transformedCategories = Object.entries(apiResponse).map(
@@ -357,7 +360,7 @@ const PrivacyReport = () => {
   }, [reportData]);
 
   const handleRetakeAssessment = () => {
-    navigate("/assessment");
+    navigate("/assesment");
   };
 
   const handleBackToDashboard = () => {

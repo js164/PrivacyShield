@@ -1,4 +1,5 @@
-const API_BASE = 'http://localhost:8000/api/admin';
+const backend_url = import.meta.env.VITE_BACKEND_URI;
+const API_BASE = backend_url+'/api/admin';
 
 const adminApi = {
     login: async (userId, password) => {
