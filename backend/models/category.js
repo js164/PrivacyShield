@@ -14,17 +14,13 @@ const CategorySchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  negative_suggestion: {
-    type: String,
-    required: true
-  },
   tools: {
     type: [String], // array of strings
     default: [],
   },
   methodology: {
-    type: String,
-    required: false,
+    type: [String],
+    default: [],
   },
   createdAt: {
     type: Date,

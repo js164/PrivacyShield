@@ -26,10 +26,11 @@ const suggestionMapping = {
 const fetchSuggestions = async () => {
     try {
         const suggestionsArray = await category.find({});
+        
         return suggestionsArray.reduce((acc, suggestion) => {
             acc[suggestion.code] = {
                 positive: suggestion.positive_suggestion,
-                negative: suggestion.negative_suggestion,
+                // negative: suggestion.negative_suggestion,
                 tools: suggestion.tools,
                 methodology: suggestion.methodology
             };
@@ -91,7 +92,7 @@ route.post('/report', async function (req, res, next) {
                 if (userScore > (maxScore / 2)) {
                     categorySuggestions.push({
                         type: 'negative',
-                        text: suggestionsDB[concernCode].negative,
+                        // text: suggestionsDB[concernCode].negative,
                         categoryTools: suggestionsDB[concernCode].tools,
                         categoryMethodology: suggestionsDB[concernCode].methodology
                     });
