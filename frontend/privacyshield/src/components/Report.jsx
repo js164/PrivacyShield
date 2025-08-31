@@ -149,117 +149,6 @@ const LightBulbIcon = () => (
   </svg>
 );
 
-// Misconceptions data for each category
-const misconceptionsData = {
-  "Digital Identity & Authentication": [
-    {
-      misconception: "Using a fake name online makes me completely safe.",
-      reality:
-        "Pseudonyms may hide your display name, but your device, IP, and behavior can still identify you.",
-      impact:
-        "This can lead to risks like identity theft or social engineering attacks.",
-    },
-    {
-      misconception: "I've never been hacked, so I don't need to worry.",
-      reality:
-        "Past safety does not guarantee future safety — new exploits and scams appear daily.",
-      impact: "Overconfidence leaves accounts vulnerable to security breaches.",
-    },
-  ],
-  "Data Collection & Control": [
-    {
-      misconception: "Deleting a post means it's gone forever.",
-      reality:
-        "Deleted content may remain on company servers, backups, or screenshots.",
-      impact:
-        "You may lose control of your data even when you think it's erased.",
-    },
-    {
-      misconception: "Clearing cookies completely protects my privacy.",
-      reality:
-        "Cookies are just one layer; companies also track you with device IDs, browser fingerprints, and server logs.",
-      impact: "Over-focusing on cookies can create a false sense of control.",
-    },
-    {
-      misconception: "If I don't post anything, I'm private.",
-      reality:
-        "Even passive browsing generates metadata (time, location, device).",
-      impact: "Data collection happens invisibly, even without posts.",
-    },
-  ],
-  "Location & Physical Safety": [
-    {
-      misconception: "Incognito mode hides my location from everyone.",
-      reality:
-        "Incognito only hides history on your device — ISPs, websites, and trackers still see you.",
-      impact: "You may still be exposed to geo-location tracking.",
-    },
-    {
-      misconception: "A VPN makes me fully anonymous and protected.",
-      reality:
-        "VPNs hide your IP, but they don't stop GPS tracking, app permissions, or malware.",
-      impact: "Overreliance can expose you to physical safety risks.",
-    },
-  ],
-  "Social & Reputation Management": [
-    {
-      misconception:
-        "Privacy settings give me full control over who sees my data.",
-      reality:
-        "Settings only cover visible data — companies may still collect and share it.",
-      impact: "You may underestimate risks to your social reputation.",
-    },
-    {
-      misconception: "If I adjust app settings, I'm fully protected.",
-      reality:
-        "Interfaces often give an illusion of control without limiting actual data use.",
-      impact: "Misplaced trust can lead to oversharing.",
-    },
-  ],
-  "Surveillance & Tracking": [
-    {
-      misconception: "Using VPNs or Tor makes me completely untrackable.",
-      reality:
-        "These tools reduce risk but don't stop all tracking — e.g., browser fingerprinting or malware.",
-      impact: "False confidence may expose you to continuous surveillance.",
-    },
-    {
-      misconception: "Default app settings are safe by design.",
-      reality: "Most defaults are optimized for data collection, not privacy.",
-      impact: "Blind trust in defaults increases your tracking exposure.",
-    },
-  ],
-  "Transparency & Corporate Trust": [
-    {
-      misconception: "Clicking 'Accept' means I've given informed consent.",
-      reality:
-        "Consent dialogs are often long, confusing, and designed to encourage compliance.",
-      impact: "You may agree to hidden data collection practices.",
-    },
-    {
-      misconception: "Big, well-known platforms must be trustworthy.",
-      reality:
-        "Popularity doesn't equal transparency — major companies have repeatedly mishandled data.",
-      impact: "Blind trust leads to mistrust in companies when issues arise.",
-    },
-  ],
-  "Legal & Advanced Privacy": [
-    {
-      misconception: "Privacy laws always protect me in the real world.",
-      reality: "Laws like GDPR exist, but enforcement is slow and uneven.",
-      impact:
-        "Relying only on legal safeguards leaves gaps in your personal protection.",
-    },
-    {
-      misconception: "If something is illegal, companies won't do it.",
-      reality:
-        "Many violations happen before regulators act — and fines come long after.",
-      impact:
-        "Believing 'the law has my back' weakens your personal privacy defenses.",
-    },
-  ],
-};
-
 const PrivacyReport = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -341,13 +230,26 @@ const PrivacyReport = () => {
           title: categoryName,
           shortTitle: getShortTitle(categoryName),
           score: categoryData.scorePercentage,
-          recommendations: categoryData.suggestions.map((suggestion) => ({
-            text: suggestion.text,
-            status: suggestion.type,
-            tools: suggestion.tools || suggestion.categoryTools || [],
-            methodology:
-              suggestion.methodology || suggestion.categoryMethodology || "",
-          })),
+          misconceptions: categoryData.misconceptions || [],
+          recommendations: categoryData.suggestions.map((suggestion) => {
+            // Handle different suggestion types based on the new API structure
+            if (suggestion.type === "negative") {
+              return {
+                text: suggestion.text,
+                status: suggestion.type,
+                tools: suggestion.categoryTools || [],
+                methodology: suggestion.categoryMethodology || [],
+              };
+            } else {
+              // For positive suggestions, put the text in methodology
+              return {
+                text: "",
+                status: suggestion.type,
+                tools: suggestion.tools || [],
+                methodology: [suggestion.text], // Put the text as methodology for positive suggestions
+              };
+            }
+          }),
         })
       );
 
@@ -429,6 +331,15 @@ const PrivacyReport = () => {
       chartInstance.current.destroy();
     }
 
+    // Calculate total score and percentages
+    const totalScore = reportData.categories.reduce(
+      (sum, cat) => sum + cat.score,
+      0
+    );
+    const percentages = reportData.categories.map((cat) =>
+      totalScore > 0 ? Math.round((cat.score / totalScore) * 100) : 0
+    );
+
     // Define colors for each category
     const backgroundColor = [
       "rgba(255, 99, 132, 0.2)",
@@ -455,7 +366,7 @@ const PrivacyReport = () => {
         labels: reportData.categories.map((cat) => cat.shortTitle),
         datasets: [
           {
-            data: reportData.categories.map((cat) => cat.score),
+            data: percentages,
             backgroundColor: backgroundColor,
             borderColor: borderColor,
             borderWidth: 1,
@@ -477,7 +388,16 @@ const PrivacyReport = () => {
           tooltip: {
             callbacks: {
               label: function (context) {
-                return context.label + ": " + context.parsed + "%";
+                const categoryIndex = context.dataIndex;
+                const actualScore = reportData.categories[categoryIndex].score;
+                return (
+                  context.label +
+                  ": " +
+                  context.parsed +
+                  "% (Score: " +
+                  actualScore +
+                  ")"
+                );
               },
             },
           },
@@ -485,10 +405,10 @@ const PrivacyReport = () => {
             display: true,
             color: "#37277aff",
             font: {
-              size: 18,
+              size: 16,
             },
-            formatter: function (value) {
-              return value;
+            formatter: function (value, context) {
+              return value + "%";
             },
             anchor: "center",
             align: "center",
@@ -672,24 +592,60 @@ const PrivacyReport = () => {
                         </h5>
                         <div className="flex flex-wrap gap-2">
                           {(() => {
-                            const allTools = category.recommendations
-                              .flatMap((rec) => rec.tools || [])
-                              .filter((tool) => tool && tool.trim() !== "");
+                            // Group tools by recommendation (category)
+                            const toolsByRecommendation =
+                              category.recommendations
+                                .map((rec) =>
+                                  (rec.tools || []).filter(
+                                    (tool) => tool && tool.trim() !== ""
+                                  )
+                                )
+                                .filter((tools) => tools.length > 0);
 
-                            return allTools.length > 0 ? (
-                              allTools.map((tool, toolIndex) => (
-                                <span
-                                  key={toolIndex}
-                                  className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
-                                >
-                                  {tool}
+                            if (toolsByRecommendation.length === 0) {
+                              return (
+                                <span className="text-blue-600 text-sm italic">
+                                  No tools available
                                 </span>
-                              ))
-                            ) : (
-                              <span className="text-blue-600 text-sm italic">
-                                No tools available
+                              );
+                            }
+
+                            // Round-robin selection: take 1 from each category, then repeat until we have 3
+                            const selectedTools = [];
+                            let roundIndex = 0;
+
+                            while (
+                              selectedTools.length < 3 &&
+                              roundIndex <
+                                Math.max(
+                                  ...toolsByRecommendation.map(
+                                    (tools) => tools.length
+                                  )
+                                )
+                            ) {
+                              for (
+                                let i = 0;
+                                i < toolsByRecommendation.length &&
+                                selectedTools.length < 3;
+                                i++
+                              ) {
+                                if (toolsByRecommendation[i][roundIndex]) {
+                                  selectedTools.push(
+                                    toolsByRecommendation[i][roundIndex]
+                                  );
+                                }
+                              }
+                              roundIndex++;
+                            }
+
+                            return selectedTools.map((tool, toolIndex) => (
+                              <span
+                                key={toolIndex}
+                                className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+                              >
+                                {tool}
                               </span>
-                            );
+                            ));
                           })()}
                         </div>
                       </div>
@@ -700,16 +656,27 @@ const PrivacyReport = () => {
                           Methodology:
                         </h5>
                         {(() => {
-                          const allMethodologies = category.recommendations
-                            .map((rec) => rec.methodology)
-                            .filter((method) => method && method.trim() !== "")
-                            .join(", ");
+                          // Separate negative and positive methodologies
+                          const negativeMethodologies = category.recommendations
+                            .filter((rec) => rec.status === "negative")
+                            .flatMap((rec) => rec.methodology || [])
+                            .filter((method) => method && method.trim() !== "");
 
-                          return allMethodologies ? (
+                          const positiveMethodologies = category.recommendations
+                            .filter((rec) => rec.status === "positive")
+                            .flatMap((rec) => rec.methodology || [])
+                            .filter((method) => method && method.trim() !== "");
+
+                          // Combine: negative first, then positive
+                          const orderedMethodologies = [
+                            ...negativeMethodologies,
+                            ...positiveMethodologies,
+                          ];
+
+                          return orderedMethodologies.length > 0 ? (
                             <div className="text-blue-600 text-sm">
-                              {allMethodologies
-                                .split(",")
-                                .map((method, methodIndex) => (
+                              {orderedMethodologies.map(
+                                (method, methodIndex) => (
                                   <div
                                     key={methodIndex}
                                     className="flex items-start mb-1"
@@ -721,7 +688,8 @@ const PrivacyReport = () => {
                                       {method.trim()}
                                     </span>
                                   </div>
-                                ))}
+                                )
+                              )}
                             </div>
                           ) : (
                             <span className="text-blue-600 text-sm italic">
@@ -764,57 +732,58 @@ const PrivacyReport = () => {
 
                         {expandedMisconceptions[category.title] && (
                           <div className="mt-4 space-y-6 bg-white rounded-lg p-5 border border-blue-200 shadow-inner">
-                            {misconceptionsData[category.title]?.map(
-                              (item, misconceptionIndex) => (
-                                <div
-                                  key={misconceptionIndex}
-                                  className="space-y-3"
-                                >
-                                  <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-400">
-                                    <div className="mb-3">
-                                      <div className="flex items-start gap-2 mb-2">
-                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 flex-shrink-0 mt-0.5">
-                                          Myth
-                                        </span>
-                                        <span className="text-blue-800 font-medium italic leading-relaxed">
-                                          "{item.misconception}"
-                                        </span>
+                            {category.misconceptions?.length > 0 ? (
+                              category.misconceptions.map(
+                                (item, misconceptionIndex) => (
+                                  <div
+                                    key={misconceptionIndex}
+                                    className="space-y-3"
+                                  >
+                                    <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-400">
+                                      <div className="mb-3">
+                                        <div className="flex items-start gap-2 mb-2">
+                                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 flex-shrink-0 mt-0.5">
+                                            Myth
+                                          </span>
+                                          <span className="text-blue-800 font-medium italic leading-relaxed">
+                                            "{item.misconceptionText}"
+                                          </span>
+                                        </div>
+                                      </div>
+
+                                      <div className="mb-3">
+                                        <div className="flex items-start gap-2 mb-2">
+                                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex-shrink-0 mt-0.5">
+                                            Reality
+                                          </span>
+                                          <span className="text-blue-700 leading-relaxed">
+                                            {item.realityCheck}
+                                          </span>
+                                        </div>
+                                      </div>
+
+                                      <div>
+                                        <div className="flex items-start gap-2">
+                                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 flex-shrink-0 mt-0.5">
+                                            Impact
+                                          </span>
+                                          <span className="text-blue-600 leading-relaxed">
+                                            {item.whyItMatters}
+                                          </span>
+                                        </div>
                                       </div>
                                     </div>
 
-                                    <div className="mb-3">
-                                      <div className="flex items-start gap-2 mb-2">
-                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex-shrink-0 mt-0.5">
-                                          Reality
-                                        </span>
-                                        <span className="text-blue-700 leading-relaxed">
-                                          {item.reality}
-                                        </span>
+                                    {misconceptionIndex <
+                                      category.misconceptions.length - 1 && (
+                                      <div className="flex justify-center">
+                                        <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-blue-300 to-transparent"></div>
                                       </div>
-                                    </div>
-
-                                    <div>
-                                      <div className="flex items-start gap-2">
-                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 flex-shrink-0 mt-0.5">
-                                          Impact
-                                        </span>
-                                        <span className="text-blue-600 leading-relaxed">
-                                          {item.impact}
-                                        </span>
-                                      </div>
-                                    </div>
+                                    )}
                                   </div>
-
-                                  {misconceptionIndex <
-                                    misconceptionsData[category.title].length -
-                                      1 && (
-                                    <div className="flex justify-center">
-                                      <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-blue-300 to-transparent"></div>
-                                    </div>
-                                  )}
-                                </div>
+                                )
                               )
-                            ) || (
+                            ) : (
                               <div className="text-center py-4">
                                 <span className="text-blue-600 text-sm italic">
                                   No misconceptions data available for this
