@@ -1,5 +1,6 @@
 const express = require('express');
 const category = require('../models/category');
+const Misconception = require('../models/misconceptions');
 const route = express.Router()
 
 
@@ -42,11 +43,32 @@ const fetchSuggestions = async () => {
     }
 };
 
+async function fetchMisconceptions() {
+    try {
+        const misconceptionDocs = await Misconception.find({});
+        const formattedData = {};
+        for (const doc of misconceptionDocs) {
+            formattedData[doc.categoryName] = doc.misconceptions;
+        }
+        return formattedData;
+    } catch (error) {
+        console.error("Error fetching misconception data:", error);
+        return {}; // Return an empty object on failure
+    }
+}
+
 route.post('/report', async function (req, res, next) {
-    const suggestionsDB = await fetchSuggestions();
+     const [suggestionsDB, misconceptionsDB] = await Promise.all([
+        fetchSuggestions(),
+        fetchMisconceptions()
+    ]);
 
     if (Object.keys(suggestionsDB).length === 0) {
         return res.status(500).json({ error: "Could not load suggestion data from the database." });
+    }
+    // ADDED: Check if misconceptions were loaded
+    if (Object.keys(misconceptionsDB).length === 0) {
+        return res.status(500).json({ error: "Could not load misconception data from the database." });
     }
 
     const { scores, maxScores } = req.body;
@@ -108,10 +130,13 @@ route.post('/report', async function (req, res, next) {
                 }
             }
         }
+        
+        const categoryMisconceptions = misconceptionsDB[categoryName] || [];
 
         report[categoryName] = {
             scorePercentage: scorePercentage,
-            suggestions: categorySuggestions
+            suggestions: categorySuggestions,
+            misconceptions: categoryMisconceptions
         };
     }
 
