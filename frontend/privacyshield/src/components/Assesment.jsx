@@ -71,6 +71,7 @@ export default function Assesment() {
   const [showToast, setShowToast] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [isChecking, setIsChecking] = useState(true);
+  const [fullReport, setFullReport] = useState(false)
 
   // Fetch questions from API
   useEffect(() => {
@@ -125,6 +126,7 @@ export default function Assesment() {
     };
 
     fetchQuestions();
+    setFullReport(false)
   }, []);
 
   const handleNext = (selectedIndex) => {
@@ -179,7 +181,10 @@ export default function Assesment() {
       // console.log(api_data[currentQuestion].category)
 
       setCurrentQuestion(question_no);
-      // console.log(privacyScores);
+
+      if(currentQuestion + 1 === Math.floor(api_data.length/2)){
+          setFullReport(true)
+      }
       
 
   };
@@ -314,9 +319,9 @@ export default function Assesment() {
 
     <SurveyQuestion
       title="Privacy Tools Survey"
-      progress={(currentQuestion + 1) / api_data.length * 100}
+      progress={(currentQuestion) / (fullReport ? api_data.length : Math.floor(api_data.length/2)) * 100}
       questionNumber={currentQuestion+1}
-      totalQuestions={api_data.length}
+      totalQuestions={fullReport ? api_data.length : Math.floor(api_data.length/2) }
       questionText={questions}
       options={options}
       onBack={handleBack}
