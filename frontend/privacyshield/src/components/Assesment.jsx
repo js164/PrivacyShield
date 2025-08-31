@@ -186,6 +186,8 @@ export default function Assesment() {
 
   const handleBack = (selectedIndex) => {
 
+    setShowToast(false); // Hide toast
+
     const question_no = currentQuestion - 1
 
     setQuestions(api_data[question_no].text); // Assuming `data` is an array of questions
