@@ -91,6 +91,7 @@ route.post('/report', async function (req, res, next) {
             if (suggestionsDB[concernCode] && maxScore > 0) {
                 if (userScore > (maxScore / 2)) {
                     categorySuggestions.push({
+                        concernCode: concernCode,
                         type: 'negative',
                         text: suggestionsDB[concernCode].negative,
                         categoryTools: suggestionsDB[concernCode].tools,
@@ -98,6 +99,7 @@ route.post('/report', async function (req, res, next) {
                     });
                 } else {
                     categorySuggestions.push({
+                        concernCode: concernCode,
                         type: 'positive',
                         text: suggestionsDB[concernCode].positive,
                         tools: suggestionsDB[concernCode].tools,
