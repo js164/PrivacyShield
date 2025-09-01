@@ -20,6 +20,19 @@ export const privacyScores = {
   }
 };
 
+const initPrivacyScores = () => ({
+  scores: {
+    DC: 0, LC: 0, UDU: 0, ST: 0, DR: 0, ESH: 0, MIC: 0, SB: 0, RD: 0,
+    PD: 0, DIT: 0, SE: 0, GLR: 0, ODU: 0, MPOT: 0, LRPG: 0, PA: 0,
+    DSTP: 0, LT: 0, CD: 0, APS: 0, CE: 0
+  },
+  maxScores: {
+    DC: 0, LC: 0, UDU: 0, ST: 0, DR: 0, ESH: 0, MIC: 0, SB: 0, RD: 0,
+    PD: 0, DIT: 0, SE: 0, GLR: 0, ODU: 0, MPOT: 0, LRPG: 0, PA: 0,
+    DSTP: 0, LT: 0, CD: 0, APS: 0, CE: 0
+  }
+});
+
 function sortData(data, initial_answers) {
   const seen = new Set();
   const first = [];
@@ -46,6 +59,11 @@ function sortData(data, initial_answers) {
 };
 
 export default function Assesment() {
+
+  useEffect(() => {
+    // reset on component mount
+    Object.assign(privacyScores, initPrivacyScores());
+  }, []);
 
   const navigate = useNavigate();
   const location = useLocation();
