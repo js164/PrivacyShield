@@ -32,14 +32,9 @@ export default function SurveyQuestion({
               style={{ width: `${progress}%` }}
             />
           </div>
-          <div className="flex justify-between items-center mt-2">
           <p className="text-sm text-gray-500 mt-1">
             Question {questionNumber} of {totalQuestions}
           </p>
-           <p className="text-sm font-medium text-gray-700">
-                {Math.round(progress * 10) / 10}% Complete
-              </p>
-            </div>
         </div>
 
         {/* Question */}
