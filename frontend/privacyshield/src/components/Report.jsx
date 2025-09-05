@@ -25,6 +25,11 @@ Chart.register(
   PieController,
   ChartDataLabels
 );
+
+// Import jsPDF and html2canvas for PDF generation
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+
 const backend_url = import.meta.env.VITE_BACKEND_URI;
 
 // Icon components
@@ -68,9 +73,9 @@ const XIcon = () => (
   </svg>
 );
 
-const TickIcon = () => (
+const BellIcon = () => (
   <svg
-    className="w-5 h-5 text-green-600"
+    className="w-5 h-5 mr-2"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -79,23 +84,7 @@ const TickIcon = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
-      d="M5 13l4 4L19 7"
-    />
-  </svg>
-);
-
-const CrossIcon = () => (
-  <svg
-    className="w-5 h-5 text-red-600"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M6 18L18 6M6 6l12 12"
+      d="M15 17h5l-3.5 3.5M9 19c.5-1.61 2.386-2.8 4-2.8s3.5 1.19 4 2.8M12 2C8.24 2 5 5.88 5 10.5V17l-2 2h16l-2-2v-6.5C17 5.88 13.76 2 12 2z"
     />
   </svg>
 );
@@ -138,7 +127,6 @@ const ChevronDownIcon = () => (
   </svg>
 );
 
-// New icon for misconceptions - lightbulb to indicate "insights"
 const LightBulbIcon = () => (
   <svg
     className="w-5 h-5 text-blue-500"
@@ -146,6 +134,54 @@ const LightBulbIcon = () => (
     viewBox="0 0 20 20"
   >
     <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM6 10a1 1 0 01-1 1H4a1 1 0 110-2h1a1 1 0 011 1zM10 14a4 4 0 100-8 4 4 0 000 8zM8 16a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zM9 18a1 1 0 100 2h2a1 1 0 100-2H9z" />
+  </svg>
+);
+
+const DownloadIcon = () => (
+  <svg
+    className="w-5 h-5 mr-2"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+    />
+  </svg>
+);
+
+const CalendarIcon = () => (
+  <svg
+    className="w-4 h-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+    />
+  </svg>
+);
+
+const TrendingUpIcon = () => (
+  <svg
+    className="w-4 h-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+    />
   </svg>
 );
 
@@ -157,9 +193,11 @@ const PrivacyReport = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedMisconceptions, setExpandedMisconceptions] = useState({});
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
+  const pdfContentRef = useRef(null);
 
   // Function to toggle misconceptions expansion
   const toggleMisconceptions = (categoryTitle) => {
@@ -442,6 +480,352 @@ const PrivacyReport = () => {
     navigate("/dashboard");
   };
 
+  // Enhanced PDF generation function (white theme)
+  const handleDownloadPDF = async () => {
+    if (!reportData || isGeneratingPDF) return;
+
+    try {
+      setIsGeneratingPDF(true);
+
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 15;
+      const contentWidth = pageWidth - margin * 2;
+      let yPosition = 20;
+
+      // Helper function to add page break if needed
+      const checkPageBreak = (requiredHeight) => {
+        if (yPosition + requiredHeight > pageHeight - 20) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+      };
+
+      // ===== HEADER =====
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFontSize(20);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Privacy Assessment Report", pageWidth / 2, 20, {
+        align: "center",
+      });
+
+      pdf.setFontSize(11);
+      pdf.setFont("helvetica", "normal");
+      pdf.text(
+        "Your comprehensive digital privacy analysis",
+        pageWidth / 2,
+        28,
+        { align: "center" }
+      );
+
+      yPosition = 45;
+
+      // ===== OVERALL SCORE =====
+      pdf.setFontSize(16);
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(0, 0, 0);
+      pdf.text("Overall Score", margin, yPosition);
+      yPosition += 12;
+
+      // Score
+      pdf.setTextColor(37, 99, 235);
+      pdf.setFontSize(36);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(`${reportData.score}/100`, margin + 40, yPosition);
+
+      // Risk Level
+      const riskDetails = getRiskDetails(reportData.score);
+      let riskColor = [37, 99, 235]; // Default blue
+      if (reportData.score >= 80) riskColor = [16, 185, 129]; // Green
+      else if (reportData.score >= 60) riskColor = [245, 158, 11]; // Yellow
+      else riskColor = [239, 68, 68]; // Red
+
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(riskColor[0], riskColor[1], riskColor[2]);
+      pdf.text(`Risk Level: ${riskDetails.level}`, margin, yPosition + 10);
+
+      yPosition += 30;
+
+      // ===== CHART =====
+      checkPageBreak(80);
+      pdf.setFontSize(14);
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Score Distribution by Category", margin, yPosition);
+      yPosition += 10;
+
+      const chartCanvas = chartRef.current;
+      if (chartCanvas) {
+        try {
+          const chartImage = await html2canvas(chartCanvas, {
+            backgroundColor: "#ffffff",
+            scale: 1.5,
+            width: chartCanvas.width,
+            height: chartCanvas.height,
+          });
+          const chartImgData = chartImage.toDataURL("image/png");
+
+          // Maintain aspect ratio
+          const chartAspectRatio = chartCanvas.height / chartCanvas.width;
+          let chartWidth = contentWidth;
+          let chartHeight = chartWidth * chartAspectRatio;
+
+          if (chartHeight > 60) {
+            chartHeight = 60;
+            chartWidth = chartHeight / chartAspectRatio;
+          }
+
+          const chartX = margin + (contentWidth - chartWidth) / 2;
+          pdf.addImage(
+            chartImgData,
+            "PNG",
+            chartX,
+            yPosition,
+            chartWidth,
+            chartHeight
+          );
+          yPosition += chartHeight + 10;
+        } catch (error) {
+          console.warn("Could not capture chart:", error);
+          yPosition += 70;
+        }
+      } else {
+        yPosition += 70;
+      }
+
+      // ===== DETAILED CATEGORIES =====
+      checkPageBreak(20);
+      pdf.setFontSize(14);
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Detailed Category Analysis", margin, yPosition);
+      yPosition += 12;
+
+      reportData.categories.forEach((category, idx) => {
+        checkPageBreak(30);
+
+        // Category title with score
+        pdf.setFontSize(11);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(37, 99, 235);
+        pdf.text(
+          `${idx + 1}. ${category.title} (Score: ${category.score}/100)`,
+          margin,
+          yPosition
+        );
+        yPosition += 8;
+
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(60, 60, 60);
+
+        // Tools section
+        const tools = category.recommendations
+          .flatMap((rec) => rec.tools || [])
+          .filter((tool) => tool && tool.trim() !== "")
+          .slice(0, 3);
+
+        if (tools.length > 0) {
+          checkPageBreak(15);
+          pdf.setFontSize(9);
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(0, 0, 0);
+          pdf.text("Tools:", margin + 5, yPosition);
+          yPosition += 5;
+
+          pdf.setFont("helvetica", "normal");
+          pdf.setTextColor(60, 60, 60);
+          tools.forEach((tool) => {
+            const lines = pdf.splitTextToSize(`• ${tool}`, contentWidth - 10);
+            lines.forEach((line) => {
+              checkPageBreak(5);
+              pdf.text(line, margin + 8, yPosition);
+              yPosition += 4;
+            });
+          });
+          yPosition += 3;
+        }
+
+        // Methodologies section
+        const negativeMethodologies = category.recommendations
+          .filter((rec) => rec.status === "negative")
+          .flatMap((rec) => rec.methodology || [])
+          .filter((method) => method && method.trim() !== "");
+
+        const positiveMethodologies = category.recommendations
+          .filter((rec) => rec.status === "positive")
+          .flatMap((rec) => rec.methodology || [])
+          .filter((method) => method && method.trim() !== "");
+
+        const orderedMethodologies = [
+          ...negativeMethodologies,
+          ...positiveMethodologies,
+        ];
+
+        if (orderedMethodologies.length > 0) {
+          checkPageBreak(15);
+          pdf.setFontSize(9);
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(0, 0, 0);
+          pdf.text("Methodology:", margin + 5, yPosition);
+          yPosition += 5;
+
+          pdf.setFont("helvetica", "normal");
+          pdf.setTextColor(60, 60, 60);
+          orderedMethodologies.forEach((method) => {
+            const lines = pdf.splitTextToSize(
+              `• ${method.trim()}`,
+              contentWidth - 10
+            );
+            lines.forEach((line) => {
+              checkPageBreak(5);
+              pdf.text(line, margin + 8, yPosition);
+              yPosition += 4;
+            });
+            yPosition += 1;
+          });
+          yPosition += 3;
+        }
+
+        // Misconceptions section
+        if (category.misconceptions && category.misconceptions.length > 0) {
+          checkPageBreak(20);
+          pdf.setFontSize(9);
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(0, 0, 0);
+          pdf.text("Privacy Insights & Common Myths:", margin + 5, yPosition);
+          yPosition += 6;
+
+          category.misconceptions.forEach((item, mIdx) => {
+            checkPageBreak(25);
+
+            // Myth
+            pdf.setFontSize(9);
+            pdf.setFont("helvetica", "bold");
+            pdf.setTextColor(60, 60, 60);
+            pdf.text(`Myth ${mIdx + 1}:`, margin + 8, yPosition);
+            yPosition += 5;
+
+            pdf.setFont("helvetica", "italic");
+            pdf.setTextColor(60, 60, 60);
+            const mythLines = pdf.splitTextToSize(
+              `"${item.misconceptionText}"`,
+              contentWidth - 15
+            );
+            mythLines.forEach((line) => {
+              checkPageBreak(5);
+              pdf.text(line, margin + 10, yPosition);
+              yPosition += 4;
+            });
+            yPosition += 2;
+
+            // Reality
+            pdf.setFont("helvetica", "bold");
+            pdf.setTextColor(60, 60, 60);
+            pdf.text("Reality:", margin + 8, yPosition);
+            yPosition += 5;
+
+            pdf.setFont("helvetica", "normal");
+            const realityLines = pdf.splitTextToSize(
+              item.realityCheck,
+              contentWidth - 15
+            );
+            realityLines.forEach((line) => {
+              checkPageBreak(5);
+              pdf.text(line, margin + 10, yPosition);
+              yPosition += 4;
+            });
+            yPosition += 2;
+
+            // Impact
+            pdf.setFont("helvetica", "bold");
+            pdf.setTextColor(60, 60, 60);
+            pdf.text("Impact:", margin + 8, yPosition);
+            yPosition += 5;
+
+            pdf.setFont("helvetica", "normal");
+            const impactLines = pdf.splitTextToSize(
+              item.whyItMatters,
+              contentWidth - 15
+            );
+            impactLines.forEach((line) => {
+              checkPageBreak(5);
+              pdf.text(line, margin + 10, yPosition);
+              yPosition += 4;
+            });
+            yPosition += 6;
+          });
+        }
+
+        yPosition += 8;
+      });
+
+      // ===== STAY UPDATED SECTION =====
+      checkPageBreak(25);
+      pdf.setFontSize(12);
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Stay Privacy-Protected", margin, yPosition);
+      yPosition += 8;
+
+      pdf.setTextColor(60, 60, 60);
+      pdf.setFontSize(9);
+      pdf.setFont("helvetica", "normal");
+      const stayUpdatedText =
+        "Privacy threats evolve constantly. New data breaches, updated privacy policies, and emerging tracking technologies mean your privacy score can change. Regular reassessment ensures you stay ahead of new risks and maintain optimal protection.";
+      const stayUpdatedLines = pdf.splitTextToSize(
+        stayUpdatedText,
+        contentWidth
+      );
+      stayUpdatedLines.forEach((line) => {
+        checkPageBreak(5);
+        pdf.text(line, margin, yPosition);
+        yPosition += 4;
+      });
+
+      // ===== FOOTER =====
+      const totalPages = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(8);
+        pdf.setTextColor(120, 120, 120);
+        pdf.text(
+          `Privacy Shield Assessment • Page ${i} of ${totalPages}`,
+          pageWidth / 2,
+          pageHeight - 10,
+          { align: "center" }
+        );
+        pdf.text(
+          `Generated: ${new Date().toLocaleDateString()}`,
+          pageWidth - margin,
+          pageHeight - 10,
+          { align: "right" }
+        );
+      }
+
+      pdf.save(
+        `Privacy_Assessment_Report_${
+          new Date().toISOString().split("T")[0]
+        }.pdf`
+      );
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Error generating PDF. Please try again.");
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
+  const handleSubscribeForUpdates = () => {
+    // You can implement your subscription logic here
+    // For now, this could open a modal, redirect to a subscription page, etc.
+    alert(
+      "Subscription feature coming soon! We'll notify you about privacy updates."
+    );
+    // Example: navigate("/subscribe") or open a modal
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -494,7 +878,7 @@ const PrivacyReport = () => {
     <>
       <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto" ref={pdfContentRef}>
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
@@ -856,7 +1240,7 @@ const PrivacyReport = () => {
           </div>
 
           {/* Stay Updated Card */}
-          <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 sm:p-8 border border-blue-200 mb-8">
+          {/* <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 sm:p-8 border border-blue-200 mb-8">
             <h3 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4">
               Stay Privacy-Protected
             </h3>
@@ -893,6 +1277,70 @@ const PrivacyReport = () => {
                 </p>
               </div>
             </div>
+          </div> */}
+
+          <div className="bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 rounded-xl p-6 sm:p-8 border-2 border-blue-200 mb-8 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
+                <ShieldIcon className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-blue-900">
+                Stay Privacy-Protected
+              </h3>
+            </div>
+
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 mb-6 border border-blue-100 shadow-sm">
+              <p className="text-blue-700 leading-relaxed">
+                Privacy threats evolve constantly. New data breaches, updated
+                privacy policies, and emerging tracking technologies mean your
+                privacy score can change. Regular reassessment ensures you stay
+                ahead of new risks and maintain optimal protection.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 border border-blue-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <CalendarIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <h4 className="font-semibold text-blue-900">
+                    Monthly Check-ups
+                  </h4>
+                </div>
+                <p className="text-blue-700 text-sm">
+                  Reassess your privacy posture as new threats emerge
+                </p>
+              </div>
+
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 border border-blue-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <LightBulbIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <h4 className="font-semibold text-blue-900">
+                    Updated Insights
+                  </h4>
+                </div>
+                <p className="text-blue-700 text-sm">
+                  Get fresh recommendations based on latest privacy research
+                </p>
+              </div>
+
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 border border-blue-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <TrendingUpIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <h4 className="font-semibold text-blue-900">
+                    Track Progress
+                  </h4>
+                </div>
+                <p className="text-blue-700 text-sm">
+                  Monitor improvements and maintain your privacy gains
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Action Buttons */}
@@ -903,6 +1351,23 @@ const PrivacyReport = () => {
             >
               <RotateIcon />
               Retake Assessment
+            </button>
+
+            <button
+              onClick={handleSubscribeForUpdates}
+              className="flex items-center justify-center px-8 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition-colors duration-200 shadow-md hover:shadow-lg"
+            >
+              <BellIcon />
+              Subscribe for Updates
+            </button>
+
+            <button
+              onClick={handleDownloadPDF}
+              disabled={isGeneratingPDF}
+              className="flex items-center justify-center px-8 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <DownloadIcon />
+              {isGeneratingPDF ? "Generating PDF..." : "Download PDF Report"}
             </button>
 
             <button
