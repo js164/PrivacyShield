@@ -153,6 +153,38 @@ const DownloadIcon = () => (
   </svg>
 );
 
+const CalendarIcon = () => (
+  <svg
+    className="w-4 h-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+    />
+  </svg>
+);
+
+const TrendingUpIcon = () => (
+  <svg
+    className="w-4 h-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+    />
+  </svg>
+);
+
 const PrivacyReport = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -1208,7 +1240,7 @@ const PrivacyReport = () => {
           </div>
 
           {/* Stay Updated Card */}
-          <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 sm:p-8 border border-blue-200 mb-8">
+          {/* <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 sm:p-8 border border-blue-200 mb-8">
             <h3 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4">
               Stay Privacy-Protected
             </h3>
@@ -1240,6 +1272,70 @@ const PrivacyReport = () => {
                 <h4 className="font-semibold text-blue-900 mb-2">
                   Track Progress
                 </h4>
+                <p className="text-blue-700 text-sm">
+                  Monitor improvements and maintain your privacy gains
+                </p>
+              </div>
+            </div>
+          </div> */}
+
+          <div className="bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 rounded-xl p-6 sm:p-8 border-2 border-blue-200 mb-8 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
+                <ShieldIcon className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-blue-900">
+                Stay Privacy-Protected
+              </h3>
+            </div>
+
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 mb-6 border border-blue-100 shadow-sm">
+              <p className="text-blue-700 leading-relaxed">
+                Privacy threats evolve constantly. New data breaches, updated
+                privacy policies, and emerging tracking technologies mean your
+                privacy score can change. Regular reassessment ensures you stay
+                ahead of new risks and maintain optimal protection.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 border border-blue-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <CalendarIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <h4 className="font-semibold text-blue-900">
+                    Monthly Check-ups
+                  </h4>
+                </div>
+                <p className="text-blue-700 text-sm">
+                  Reassess your privacy posture as new threats emerge
+                </p>
+              </div>
+
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 border border-blue-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <LightBulbIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <h4 className="font-semibold text-blue-900">
+                    Updated Insights
+                  </h4>
+                </div>
+                <p className="text-blue-700 text-sm">
+                  Get fresh recommendations based on latest privacy research
+                </p>
+              </div>
+
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 border border-blue-200 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <TrendingUpIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <h4 className="font-semibold text-blue-900">
+                    Track Progress
+                  </h4>
+                </div>
                 <p className="text-blue-700 text-sm">
                   Monitor improvements and maintain your privacy gains
                 </p>
