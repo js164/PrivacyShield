@@ -73,9 +73,9 @@ const XIcon = () => (
   </svg>
 );
 
-const TickIcon = () => (
+const BellIcon = () => (
   <svg
-    className="w-5 h-5 text-green-600"
+    className="w-5 h-5 mr-2"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -84,23 +84,7 @@ const TickIcon = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
-      d="M5 13l4 4L19 7"
-    />
-  </svg>
-);
-
-const CrossIcon = () => (
-  <svg
-    className="w-5 h-5 text-red-600"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M6 18L18 6M6 6l12 12"
+      d="M15 17h5l-3.5 3.5M9 19c.5-1.61 2.386-2.8 4-2.8s3.5 1.19 4 2.8M12 2C8.24 2 5 5.88 5 10.5V17l-2 2h16l-2-2v-6.5C17 5.88 13.76 2 12 2z"
     />
   </svg>
 );
@@ -801,6 +785,15 @@ const PrivacyReport = () => {
     }
   };
 
+  const handleSubscribeForUpdates = () => {
+    // You can implement your subscription logic here
+    // For now, this could open a modal, redirect to a subscription page, etc.
+    alert(
+      "Subscription feature coming soon! We'll notify you about privacy updates."
+    );
+    // Example: navigate("/subscribe") or open a modal
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -1262,6 +1255,14 @@ const PrivacyReport = () => {
             >
               <RotateIcon />
               Retake Assessment
+            </button>
+
+            <button
+              onClick={handleSubscribeForUpdates}
+              className="flex items-center justify-center px-8 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition-colors duration-200 shadow-md hover:shadow-lg"
+            >
+              <BellIcon />
+              Subscribe for Updates
             </button>
 
             <button
