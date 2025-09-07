@@ -41,12 +41,19 @@ export default function QuestionPage() {
             <div
               key={opt.id}
               onClick={() => toggleSelect(opt.text)}
-              className={`cursor-pointer rounded-2xl shadow-md transition transform hover:scale-[1.02] border-2 p-5 text-center font-semibold text-base ${
+              className={`flex items-center gap-3 cursor-pointer rounded-2xl shadow-md transition transform hover:scale-[1.02] border-2 p-5 text-left font-semibold text-base ${
                 selected.includes(opt.text)
                   ? "border-blue-300 bg-blue-50"
                   : "border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50"
               }`}
             >
+            <input
+            type="checkbox"
+            checked={selected.includes(opt.text)}
+            onChange={() => toggleSelect(opt.text)}
+            className="w-4 h-4 text-blue-500 border-gray-300 rounded cursor-pointer"
+            onClick={(e) => e.stopPropagation()} // prevent double toggle
+            />
               {opt.text}
             </div>
           ))}
