@@ -274,8 +274,11 @@ export default function Assesment() {
 
         // console.log({privacyScores})
 
+        // console.log({api_data})
+        // console.log({answers})
+
       setTimeout(() => {
-        navigate('/report', { state: { scores: privacyScores } });
+        navigate('/report', { state: { scores: privacyScores, questions: api_data, answers: answers } });
       }, time_delay); // delay in milliseconds (2000 = 2s)
     } catch (err) {
       console.error("Error submitting survey:", err);
