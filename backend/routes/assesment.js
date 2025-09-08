@@ -35,7 +35,7 @@ const fetchSuggestions = async () => {
         return suggestionsArray.reduce((acc, suggestion) => {
             acc[suggestion.code] = {
                 positive: suggestion.positive_suggestion,
-                negative: suggestion.negative_suggestion,
+                // negative: suggestion.negative_suggestion,
                 tools: suggestion.tools,
                 methodology: suggestion.methodology
             };
@@ -119,7 +119,7 @@ route.post('/report', async function (req, res, next) {
                     categorySuggestions.push({
                         concernCode: concernCode,
                         type: 'negative',
-                        text: suggestionsDB[concernCode].negative,
+                        // text: suggestionsDB[concernCode].negative,
                         categoryTools: suggestionsDB[concernCode].tools,
                         categoryMethodology: suggestionsDB[concernCode].methodology
                     });

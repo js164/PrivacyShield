@@ -275,7 +275,7 @@ const PrivacyReport = () => {
             // Handle different suggestion types based on the new API structure
             if (suggestion.type === "negative") {
               return {
-                text: suggestion.text,
+                // text: suggestion.text,
                 status: suggestion.type,
                 tools: suggestion.categoryTools || [],
                 methodology: suggestion.categoryMethodology || [],
@@ -283,7 +283,7 @@ const PrivacyReport = () => {
             } else {
               // For positive suggestions, put the text in methodology
               return {
-                text: "",
+                // text: "",
                 status: suggestion.type,
                 tools: suggestion.tools || [],
                 methodology: [suggestion.text], // Put the text as methodology for positive suggestions
@@ -479,7 +479,7 @@ const PrivacyReport = () => {
   };
 
   const handleBackToDashboard = () => {
-    navigate("/dashboard");
+    navigate("/");
   };
 
   // Enhanced PDF generation function (white theme)
