@@ -30,7 +30,7 @@ export default function QuestionPage() {
   return (
     <>
     <Navbar_Questions />
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 animate-fade-in-up">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6 animate-fade-in-up">
       <div className="w-full max-w-6xl bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
         <h1 className="text-2xl font-semibold mb-12 text-center">
           {question}
