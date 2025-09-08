@@ -260,6 +260,7 @@ export default function Assesment() {
       if (typeof selectedIndex == 'number'){
       setSelectedOption(selectedIndex);
       setShowToast(true);
+      setIsChecking(true);
       time_delay = 3000;
       }
 
@@ -296,7 +297,14 @@ export default function Assesment() {
     return (
     <>
     <Navbar_Questions />
-      <div className="flex items-center justify-center min-h-screen animate-fade-in-up">
+    <Toast
+      message={suggestions[user_selected_option]?.suggestion}
+      color_category={suggestions[user_selected_option]?.category}
+      show={showToast}
+      duration={3750}
+      onClose={() => setShowToast(false)}
+    />
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 animate-fade-in-up">
         <svg
           className="animate-spin -ml-1 mr-8 h-20 w-20 text-blue-400"
           xmlns="http://www.w3.org/2000/svg"
@@ -317,7 +325,7 @@ export default function Assesment() {
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           ></path>
         </svg>
-        <span className="text-3xl font-semibold">Loading Questions...</span>
+        <span className="text-3xl font-semibold">{continueSurvey ? "Generating Report..." : "Loading Questions..."}</span>
       </div>
       </>
     );
