@@ -351,7 +351,7 @@ export default function Assesment() {
     <SurveyQuestion
       title="Privacy Tools Survey"
       //progress={(currentQuestion + 1) / api_data.length * 100}
-      progress={(currentQuestion) / (continueSurvey ? api_data.length : INITIAL_SURVEY_LENGTH) * 100}
+      progress={(currentQuestion + 1) / (continueSurvey ? api_data.length : INITIAL_SURVEY_LENGTH) * 100}
       questionNumber={currentQuestion+1}
       //totalQuestions={api_data.length}
       totalQuestions={continueSurvey ? api_data.length : INITIAL_SURVEY_LENGTH }
