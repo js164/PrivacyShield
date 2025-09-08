@@ -6,6 +6,9 @@ import Toast from "./ui/QuestionSuggestion";
 import ContinueModal from './ui/Dialog';
 const backend_url = import.meta.env.VITE_BACKEND_URI;
 
+// Initial Survey Length"
+const INITIAL_SURVEY_LENGTH = 10;
+
 // Global scores object initialized with 0
 export const privacyScores = {
   scores: {
@@ -89,6 +92,7 @@ export default function Assesment() {
   const [showToast, setShowToast] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [isChecking, setIsChecking] = useState(true);
+  const [continueSurvey, setContinueSurvey] = useState(false);
 
   // Fetch questions from API
   useEffect(() => {
@@ -198,7 +202,10 @@ export default function Assesment() {
 
       setCurrentQuestion(question_no);
       // console.log(privacyScores);
-      
+
+      if(currentQuestion + 1 === INITIAL_SURVEY_LENGTH){
+          setContinueSurvey(true)
+      }
 
   };
 
@@ -335,9 +342,11 @@ export default function Assesment() {
 
     <SurveyQuestion
       title="Privacy Tools Survey"
-      progress={(currentQuestion + 1) / api_data.length * 100}
+      //progress={(currentQuestion + 1) / api_data.length * 100}
+      progress={(currentQuestion + 1) / (continueSurvey ? api_data.length : INITIAL_SURVEY_LENGTH) * 100}
       questionNumber={currentQuestion+1}
-      totalQuestions={api_data.length}
+      //totalQuestions={api_data.length}
+      totalQuestions={continueSurvey ? api_data.length : INITIAL_SURVEY_LENGTH }
       questionText={questions}
       options={options}
       onBack={handleBack}
