@@ -1,6 +1,10 @@
 const express = require('express');
 const category = require('../models/category');
 const Misconception = require('../models/misconceptions');
+const sendEmail = require('../mailer');
+const schedule = require("node-schedule");
+const emailTemplate = require('../EmailTemplate');
+const emailInitialTemplate = require('../EmailInitialTemplate');
 const route = express.Router()
 
 
@@ -31,7 +35,7 @@ const fetchSuggestions = async () => {
         return suggestionsArray.reduce((acc, suggestion) => {
             acc[suggestion.code] = {
                 positive: suggestion.positive_suggestion,
-                negative: suggestion.negative_suggestion,
+                // negative: suggestion.negative_suggestion,
                 tools: suggestion.tools,
                 methodology: suggestion.methodology
             };
@@ -115,7 +119,7 @@ route.post('/report', async function (req, res, next) {
                     categorySuggestions.push({
                         concernCode: concernCode,
                         type: 'negative',
-                        text: suggestionsDB[concernCode].negative,
+                        // text: suggestionsDB[concernCode].negative,
                         categoryTools: suggestionsDB[concernCode].tools,
                         categoryMethodology: suggestionsDB[concernCode].methodology
                     });
@@ -141,6 +145,33 @@ route.post('/report', async function (req, res, next) {
     }
 
     res.status(200).json(report);
+});
+
+
+route.post("/schedule", async (req, res) => {
+  const { to, subject, assessmentLink, date, frequency } = req.body;
+
+    try {
+    await sendEmail(to, subject, emailInitialTemplate(frequency , to));
+    console.log(`✅ Immediate email sent to ${to}`);
+  } catch (err) {
+    console.error(`❌ Failed to send immediate email to ${to}:`, err);
+  }
+
+  const jobDate = new Date(date);
+  if (jobDate < new Date()) return res.status(400).json({ error: "Date is in the past" });
+
+  // Schedule the email
+  schedule.scheduleJob(jobDate, async () => {
+    try {
+      await sendEmail(to, subject, emailTemplate(assessmentLink));
+      console.log(`✅ Email sent to ${to} at ${jobDate}`);
+    } catch (err) {
+      console.error(`❌ Failed to send email to ${to}:`, err);
+    }
+  });
+
+  res.json({ success: true, scheduledFor: jobDate });
 });
 
 module.exports = route;
