@@ -22,9 +22,7 @@ export function Navbar() {
             <Link 
               to="/about" 
               
-              className="py-2 px-4 rounded-lg text-base font-medium 
-                         text-neutral-gray 
-                         hover:bg-gray-100 transition-colors"
+              className="inline-block bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-dark-blue transition-colors shadow"
             >
               About Us
             </Link>
