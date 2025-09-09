@@ -186,6 +186,39 @@ const TrendingUpIcon = () => (
   </svg>
 );
 
+// New Tab Icons
+const ClipboardListIcon = () => (
+  <svg
+    className="w-5 h-5 mr-2"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+    />
+  </svg>
+);
+
+const QuestionMarkCircleIcon = () => (
+  <svg
+    className="w-5 h-5 mr-2"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
+  </svg>
+);
+
 const PrivacyReport = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -195,11 +228,15 @@ const PrivacyReport = () => {
   const [error, setError] = useState(null);
   const [expandedMisconceptions, setExpandedMisconceptions] = useState({});
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
   const pdfContentRef = useRef(null);
+
+  const [activeTab, setActiveTab] = useState("recommendations"); // New state for active tab
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
 
   // Function to toggle misconceptions expansion
   const toggleMisconceptions = (categoryTitle) => {
@@ -312,6 +349,19 @@ const PrivacyReport = () => {
   useEffect(() => {
     // Get privacy scores from navigation state
     const privacyScores = location.state?.scores;
+    const { questions: questionsData, answers: answersData } =
+      location.state || {};
+
+    console.log("Questions:", questionsData);
+    console.log("Answers:", answersData);
+
+    // Set questions and answers state
+    if (questionsData) {
+      setQuestions(questionsData);
+    }
+    if (answersData) {
+      setAnswers(answersData);
+    }
 
     if (!privacyScores) {
       setError(
@@ -650,20 +700,20 @@ const PrivacyReport = () => {
         }
 
         // Methodologies section
-        const negativeMethodologies = category.recommendations
-          .filter((rec) => rec.status === "negative")
-          .flatMap((rec) => rec.methodology || [])
-          .filter((method) => method && method.trim() !== "");
+        // const negativeMethodologies = category.recommendations
+        //   .filter((rec) => rec.status === "negative")
+        //   .flatMap((rec) => rec.methodology || [])
+        //   .filter((method) => method && method.trim() !== "");
 
-        const positiveMethodologies = category.recommendations
-          .filter((rec) => rec.status === "positive")
-          .flatMap((rec) => rec.methodology || [])
-          .filter((method) => method && method.trim() !== "");
+        // const positiveMethodologies = category.recommendations
+        //   .filter((rec) => rec.status === "positive")
+        //   .flatMap((rec) => rec.methodology || [])
+        //   .filter((method) => method && method.trim() !== "");
 
-        const orderedMethodologies = [
-          ...negativeMethodologies,
-          ...positiveMethodologies,
-        ];
+        // const orderedMethodologies = [
+        //   ...negativeMethodologies,
+        //   ...positiveMethodologies,
+        // ];
 
         if (orderedMethodologies.length > 0) {
           checkPageBreak(15);
@@ -876,6 +926,52 @@ const PrivacyReport = () => {
   const riskDetails = getRiskDetails(reportData.score);
   const RiskIcon = riskDetails.icon;
 
+  // Function to get suggestion style based on category
+  const getSuggestionStyle = (suggestionCategory) => {
+    switch (suggestionCategory) {
+      case "excellent":
+        return {
+          bgColor: "bg-green-50",
+          borderColor: "border-green-300",
+          textColor: "text-green-800",
+          badgeColor: "bg-green-100 text-green-800",
+          badge: "Excellent",
+        };
+      case "good":
+        return {
+          bgColor: "bg-blue-50",
+          borderColor: "border-blue-300",
+          textColor: "text-blue-800",
+          badgeColor: "bg-blue-100 text-blue-800",
+          badge: "Good",
+        };
+      case "room_for_improvement":
+        return {
+          bgColor: "bg-yellow-50",
+          borderColor: "border-yellow-300",
+          textColor: "text-yellow-800",
+          badgeColor: "bg-yellow-100 text-yellow-800",
+          badge: "Room for Improvement",
+        };
+      case "needs_attention":
+        return {
+          bgColor: "bg-red-50",
+          borderColor: "border-red-300",
+          textColor: "text-red-800",
+          badgeColor: "bg-red-100 text-red-800",
+          badge: "Needs Attention",
+        };
+      default:
+        return {
+          bgColor: "bg-gray-50",
+          borderColor: "border-gray-300",
+          textColor: "text-gray-800",
+          badgeColor: "bg-gray-100 text-gray-800",
+          badge: "Info",
+        };
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -953,333 +1049,419 @@ const PrivacyReport = () => {
           </div>
 
           {/* Personalized Recommendations */}
+          {/* Tab Navigation */}
           <div className="mb-8">
-            <h3 className="text-2xl sm:text-3xl font-bold text-blue-900 mb-8 text-center">
-              Personalized Recommendations
-            </h3>
-
-            <div className="space-y-6">
-              {reportData.categories.map((category, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-xl p-6 shadow-md border border-blue-100 hover:shadow-lg transition-shadow duration-200"
+            <div className="flex flex-col sm:flex-row justify-center mb-6">
+              <div className="bg-white rounded-xl p-2 shadow-md border border-blue-100 inline-flex">
+                <button
+                  onClick={() => setActiveTab("recommendations")}
+                  className={`flex items-center px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                    activeTab === "recommendations"
+                      ? "bg-blue-600 text-white shadow-md"
+                      : "text-blue-600 hover:bg-blue-50"
+                  }`}
                 >
-                  <div className="flex justify-between items-start mb-4">
-                    {/* Title and Content */}
-                    <div className="flex-1 pr-4">
-                      <h4 className="text-lg font-bold text-blue-900 mb-3">
-                        {category.title}
-                      </h4>
+                  <ClipboardListIcon />
+                  Personalized Recommendations
+                </button>
+                <button
+                  onClick={() => setActiveTab("answers")}
+                  className={`flex items-center px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                    activeTab === "answers"
+                      ? "bg-blue-600 text-white shadow-md"
+                      : "text-blue-600 hover:bg-blue-50"
+                  }`}
+                >
+                  <QuestionMarkCircleIcon />
+                  Answer-Based Details
+                </button>
+              </div>
+            </div>
 
-                      {/* Tools Section */}
-                      <div className="mb-4">
-                        <h5 className="font-semibold text-blue-700 mb-2">
-                          Tools:
-                        </h5>
-                        <div className="flex flex-wrap gap-2">
-                          {(() => {
-                            // Group tools by recommendation (category)
-                            const toolsByRecommendation =
-                              category.recommendations
-                                .map((rec) =>
-                                  (rec.tools || []).filter(
-                                    (tool) => tool && tool.trim() !== ""
-                                  )
-                                )
-                                .filter((tools) => tools.length > 0);
+            {/* Tab Content */}
+            {activeTab === "recommendations" && (
+              <div className="mb-8">
+                <h3 className="text-2xl sm:text-3xl font-bold text-blue-900 mb-8 text-center">
+                  Personalized Recommendations
+                </h3>
 
-                            if (toolsByRecommendation.length === 0) {
-                              return (
-                                <span className="text-blue-600 text-sm italic">
-                                  No tools available
-                                </span>
-                              );
-                            }
+                <div className="space-y-6">
+                  {reportData.categories.map((category, index) => (
+                    <div
+                      key={index}
+                      className="bg-white rounded-xl p-6 shadow-md border border-blue-100 hover:shadow-lg transition-shadow duration-200"
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        {/* Title and Content */}
+                        <div className="flex-1 pr-4">
+                          <h4 className="text-lg font-bold text-blue-900 mb-3">
+                            {category.title}
+                          </h4>
 
-                            // Round-robin selection: take 1 from each category, then repeat until we have 3
-                            const selectedTools = [];
-                            let roundIndex = 0;
+                          {/* Tools Section */}
+                          <div className="mb-4">
+                            <h5 className="font-semibold text-blue-700 mb-2">
+                              Tools:
+                            </h5>
+                            <div className="flex flex-wrap gap-2">
+                              {(() => {
+                                // Group tools by recommendation (category)
+                                const toolsByRecommendation =
+                                  category.recommendations
+                                    .map((rec) =>
+                                      (rec.tools || []).filter(
+                                        (tool) => tool && tool.trim() !== ""
+                                      )
+                                    )
+                                    .filter((tools) => tools.length > 0);
 
-                            while (
-                              selectedTools.length < 3 &&
-                              roundIndex <
-                                Math.max(
-                                  ...toolsByRecommendation.map(
-                                    (tools) => tools.length
-                                  )
-                                )
-                            ) {
-                              for (
-                                let i = 0;
-                                i < toolsByRecommendation.length &&
-                                selectedTools.length < 3;
-                                i++
-                              ) {
-                                if (toolsByRecommendation[i][roundIndex]) {
-                                  selectedTools.push(
-                                    toolsByRecommendation[i][roundIndex]
+                                if (toolsByRecommendation.length === 0) {
+                                  return (
+                                    <span className="text-blue-600 text-sm italic">
+                                      No tools available
+                                    </span>
                                   );
                                 }
-                              }
-                              roundIndex++;
-                            }
 
-                            return selectedTools.map((tool, toolIndex) => (
-                              <span
-                                key={toolIndex}
-                                className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
-                              >
-                                {tool}
-                              </span>
-                            ));
-                          })()}
-                        </div>
-                      </div>
+                                // Round-robin selection: take 1 from each category, then repeat until we have 3
+                                const selectedTools = [];
+                                let roundIndex = 0;
 
-                      {/* Methodology Section */}
-                      <div className="mb-6">
-                        <h5 className="font-semibold text-blue-700 mb-2">
-                          Methodology:
-                        </h5>
-                        {(() => {
-                          // Separate negative and positive methodologies
-                          const negativeMethodologies = category.recommendations
-                            .filter((rec) => rec.status === "negative")
-                            .flatMap((rec) => rec.methodology || [])
-                            .filter((method) => method && method.trim() !== "");
+                                while (
+                                  selectedTools.length < 3 &&
+                                  roundIndex <
+                                    Math.max(
+                                      ...toolsByRecommendation.map(
+                                        (tools) => tools.length
+                                      )
+                                    )
+                                ) {
+                                  for (
+                                    let i = 0;
+                                    i < toolsByRecommendation.length &&
+                                    selectedTools.length < 3;
+                                    i++
+                                  ) {
+                                    if (toolsByRecommendation[i][roundIndex]) {
+                                      selectedTools.push(
+                                        toolsByRecommendation[i][roundIndex]
+                                      );
+                                    }
+                                  }
+                                  roundIndex++;
+                                }
 
-                          const positiveMethodologies = category.recommendations
-                            .filter((rec) => rec.status === "positive")
-                            .flatMap((rec) => rec.methodology || [])
-                            .filter((method) => method && method.trim() !== "");
-
-                          // Combine: negative first, then positive
-                          const orderedMethodologies = [
-                            ...negativeMethodologies,
-                            ...positiveMethodologies,
-                          ];
-
-                          return orderedMethodologies.length > 0 ? (
-                            <div className="text-blue-600 text-sm">
-                              {orderedMethodologies.map(
-                                (method, methodIndex) => (
-                                  <div
-                                    key={methodIndex}
-                                    className="flex items-start mb-1"
+                                return selectedTools.map((tool, toolIndex) => (
+                                  <span
+                                    key={toolIndex}
+                                    className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
                                   >
-                                    <span className="text-blue-500 mr-2">
-                                      •
-                                    </span>
-                                    <span className="leading-relaxed">
-                                      {method.trim()}
-                                    </span>
-                                  </div>
-                                )
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-blue-600 text-sm italic">
-                              No methodology available
-                            </span>
-                          );
-                        })()}
-                      </div>
-
-                      {/* Enhanced Misconceptions Section */}
-                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border-l-4 border-blue-400 shadow-sm">
-                        <button
-                          onClick={() => toggleMisconceptions(category.title)}
-                          className="flex items-center justify-between w-full text-left group hover:bg-blue-100 rounded-lg p-2 -m-2 transition-all duration-200"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="flex-shrink-0">
-                              <LightBulbIcon />
-                            </div>
-                            <div>
-                              <span className="font-bold text-blue-800 text-base">
-                                Privacy Insights & Common Myths
-                              </span>
-                              <p className="text-blue-600 text-sm mt-1">
-                                Click to reveal important misconceptions about{" "}
-                                {category.title.toLowerCase()}
-                              </p>
+                                    {tool}
+                                  </span>
+                                ));
+                              })()}
                             </div>
                           </div>
-                          <div
-                            className={`transform transition-all duration-300 flex-shrink-0 p-1 rounded-full group-hover:bg-blue-200 ${
-                              expandedMisconceptions[category.title]
-                                ? "rotate-180 bg-blue-200"
-                                : "bg-blue-100"
-                            }`}
-                          >
-                            <ChevronDownIcon />
-                          </div>
-                        </button>
 
-                        {expandedMisconceptions[category.title] && (
-                          <div className="mt-4 space-y-6 bg-white rounded-lg p-5 border border-blue-200 shadow-inner">
-                            {category.misconceptions?.length > 0 ? (
-                              category.misconceptions.map(
-                                (item, misconceptionIndex) => (
-                                  <div
-                                    key={misconceptionIndex}
-                                    className="space-y-3"
-                                  >
-                                    <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-400">
-                                      <div className="mb-3">
-                                        <div className="flex items-start gap-2 mb-2">
-                                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 flex-shrink-0 mt-0.5">
-                                            Myth
-                                          </span>
-                                          <span className="text-blue-800 font-medium italic leading-relaxed">
-                                            "{item.misconceptionText}"
-                                          </span>
-                                        </div>
-                                      </div>
+                          {/* Methodology Section */}
+                          <div className="mb-6">
+                            <h5 className="font-semibold text-blue-700 mb-2">
+                              Privacy Practices :
+                            </h5>
+                            {(() => {
+                              // Separate negative and positive methodologies
+                              const negativeMethodologies =
+                                category.recommendations
+                                  .filter((rec) => rec.status === "negative")
+                                  .flatMap((rec) => rec.methodology || [])
+                                  .filter(
+                                    (method) => method && method.trim() !== ""
+                                  );
 
-                                      <div className="mb-3">
-                                        <div className="flex items-start gap-2 mb-2">
-                                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex-shrink-0 mt-0.5">
-                                            Reality
-                                          </span>
-                                          <span className="text-blue-700 leading-relaxed">
-                                            {item.realityCheck}
-                                          </span>
-                                        </div>
-                                      </div>
+                              const positiveMethodologies =
+                                category.recommendations
+                                  .filter((rec) => rec.status === "positive")
+                                  .flatMap((rec) => rec.methodology || [])
+                                  .filter(
+                                    (method) => method && method.trim() !== ""
+                                  );
 
-                                      <div>
-                                        <div className="flex items-start gap-2">
-                                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 flex-shrink-0 mt-0.5">
-                                            Impact
-                                          </span>
-                                          <span className="text-blue-600 leading-relaxed">
-                                            {item.whyItMatters}
-                                          </span>
-                                        </div>
+                              return (
+                                <div className="text-blue-600 text-sm">
+                                  {negativeMethodologies.map(
+                                    (method, methodIndex) => (
+                                      <div
+                                        key={`negative-${methodIndex}`}
+                                        className="flex items-start mb-1"
+                                      >
+                                        <span className="text-blue-500 mr-2">
+                                          •
+                                        </span>
+                                        <span className="leading-relaxed">
+                                          {method.trim()}
+                                        </span>
                                       </div>
-                                    </div>
+                                    )
+                                  )}
 
-                                    {misconceptionIndex <
-                                      category.misconceptions.length - 1 && (
-                                      <div className="flex justify-center">
-                                        <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-blue-300 to-transparent"></div>
+                                  {positiveMethodologies.length > 0 && (
+                                    <>
+                                      <div className="font-semibold text-sm mb-1 mt-2">
+                                        You're doing this right:
                                       </div>
+                                      {positiveMethodologies.map(
+                                        (method, methodIndex) => (
+                                          <div
+                                            key={`positive-${methodIndex}`}
+                                            className="flex items-start mb-1"
+                                          >
+                                            <span className="text-blue-500 mr-2">
+                                              •
+                                            </span>
+                                            <span className="leading-relaxed">
+                                              {method.trim()}
+                                            </span>
+                                          </div>
+                                        )
+                                      )}
+                                    </>
+                                  )}
+
+                                  {negativeMethodologies.length === 0 &&
+                                    positiveMethodologies.length === 0 && (
+                                      <span className="text-blue-600 text-sm italic">
+                                        No methodology available
+                                      </span>
                                     )}
+                                </div>
+                              );
+                            })()}
+                          </div>
+
+                          {/* Enhanced Misconceptions Section */}
+                          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border-l-4 border-blue-400 shadow-sm">
+                            <button
+                              onClick={() =>
+                                toggleMisconceptions(category.title)
+                              }
+                              className="flex items-center justify-between w-full text-left group hover:bg-blue-100 rounded-lg p-2 -m-2 transition-all duration-200"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="flex-shrink-0">
+                                  <LightBulbIcon />
+                                </div>
+                                <div>
+                                  <span className="font-bold text-blue-800 text-base">
+                                    Privacy Insights & Common Myths
+                                  </span>
+                                  <p className="text-blue-600 text-sm mt-1">
+                                    Click to reveal important misconceptions
+                                    about {category.title.toLowerCase()}
+                                  </p>
+                                </div>
+                              </div>
+                              <div
+                                className={`transform transition-all duration-300 flex-shrink-0 p-1 rounded-full group-hover:bg-blue-200 ${
+                                  expandedMisconceptions[category.title]
+                                    ? "rotate-180 bg-blue-200"
+                                    : "bg-blue-100"
+                                }`}
+                              >
+                                <ChevronDownIcon />
+                              </div>
+                            </button>
+
+                            {expandedMisconceptions[category.title] && (
+                              <div className="mt-4 space-y-6 bg-white rounded-lg p-5 border border-blue-200 shadow-inner">
+                                {category.misconceptions?.length > 0 ? (
+                                  category.misconceptions.map(
+                                    (item, misconceptionIndex) => (
+                                      <div
+                                        key={misconceptionIndex}
+                                        className="space-y-3"
+                                      >
+                                        <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-400">
+                                          <div className="mb-3">
+                                            <div className="flex items-start gap-2 mb-2">
+                                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 flex-shrink-0 mt-0.5">
+                                                Myth
+                                              </span>
+                                              <span className="text-blue-800 font-medium italic leading-relaxed">
+                                                "{item.misconceptionText}"
+                                              </span>
+                                            </div>
+                                          </div>
+
+                                          <div className="mb-3">
+                                            <div className="flex items-start gap-2 mb-2">
+                                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex-shrink-0 mt-0.5">
+                                                Reality
+                                              </span>
+                                              <span className="text-blue-700 leading-relaxed">
+                                                {item.realityCheck}
+                                              </span>
+                                            </div>
+                                          </div>
+
+                                          <div>
+                                            <div className="flex items-start gap-2">
+                                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 flex-shrink-0 mt-0.5">
+                                                Impact
+                                              </span>
+                                              <span className="text-blue-600 leading-relaxed">
+                                                {item.whyItMatters}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        {misconceptionIndex <
+                                          category.misconceptions.length -
+                                            1 && (
+                                          <div className="flex justify-center">
+                                            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-blue-300 to-transparent"></div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    )
+                                  )
+                                ) : (
+                                  <div className="text-center py-4">
+                                    <span className="text-blue-600 text-sm italic">
+                                      No misconceptions data available for this
+                                      category
+                                    </span>
                                   </div>
-                                )
-                              )
-                            ) : (
-                              <div className="text-center py-4">
-                                <span className="text-blue-600 text-sm italic">
-                                  No misconceptions data available for this
-                                  category
-                                </span>
+                                )}
                               </div>
                             )}
                           </div>
-                        )}
-                      </div>
-                    </div>
+                        </div>
 
-                    {/* Score and Mini Chart */}
-                    <div className="flex-shrink-0 flex flex-col items-center">
-                      <div className="relative w-16 h-16 mb-2">
-                        <svg
-                          className="w-full h-full transform -rotate-90"
-                          viewBox="0 0 42 42"
-                        >
-                          <circle
-                            cx="21"
-                            cy="21"
-                            r="15.5"
-                            stroke="#e5e7eb"
-                            strokeWidth="3"
-                            fill="transparent"
-                          />
-                          <circle
-                            cx="21"
-                            cy="21"
-                            r="15.5"
-                            stroke={
-                              category.score >= 70
-                                ? "#10b981"
-                                : category.score >= 50
-                                ? "#f59e0b"
-                                : "#ef4444"
-                            }
-                            strokeWidth="3"
-                            fill="transparent"
-                            strokeDasharray={`${2 * Math.PI * 15.5}`}
-                            strokeDashoffset={`${
-                              2 * Math.PI * 15.5 * (1 - category.score / 100)
-                            }`}
-                            className="transition-all duration-1000 ease-out"
-                          />
-                        </svg>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span
-                            className={`font-bold text-sm ${
-                              category.score >= 70
-                                ? "text-green-600"
-                                : category.score >= 50
-                                ? "text-yellow-600"
-                                : "text-red-600"
-                            }`}
-                          >
-                            {category.score}
-                          </span>
+                        {/* Score and Mini Chart */}
+                        <div className="flex-shrink-0 flex flex-col items-center">
+                          <div className="relative w-16 h-16 mb-2">
+                            <svg
+                              className="w-full h-full transform -rotate-90"
+                              viewBox="0 0 42 42"
+                            >
+                              <circle
+                                cx="21"
+                                cy="21"
+                                r="15.5"
+                                stroke="#e5e7eb"
+                                strokeWidth="3"
+                                fill="transparent"
+                              />
+                              <circle
+                                cx="21"
+                                cy="21"
+                                r="15.5"
+                                stroke={
+                                  category.score >= 70
+                                    ? "#10b981"
+                                    : category.score >= 50
+                                    ? "#f59e0b"
+                                    : "#ef4444"
+                                }
+                                strokeWidth="3"
+                                fill="transparent"
+                                strokeDasharray={`${2 * Math.PI * 15.5}`}
+                                strokeDashoffset={`${
+                                  2 *
+                                  Math.PI *
+                                  15.5 *
+                                  (1 - category.score / 100)
+                                }`}
+                                className="transition-all duration-1000 ease-out"
+                              />
+                            </svg>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <span
+                                className={`font-bold text-sm ${
+                                  category.score >= 70
+                                    ? "text-green-600"
+                                    : category.score >= 50
+                                    ? "text-yellow-600"
+                                    : "text-red-600"
+                                }`}
+                              >
+                                {category.score}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-xs text-blue-600 font-medium -ml-2">
+                            Category Score
+                          </p>
                         </div>
                       </div>
-                      <p className="text-xs text-blue-600 font-medium -ml-2">
-                        Category Score
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === "answers" && (
+              <div>
+                <h3 className="text-2xl sm:text-3xl font-bold text-blue-900 mb-8 text-center">
+                  Answer-Based Details
+                </h3>
+
+                {questions.length > 0 ? (
+                  <div className="space-y-6">
+                    {questions.map((question, index) => {
+                      const userAnswerIndex = answers[index];
+                      const selectedOption =
+                        question.options?.[userAnswerIndex];
+
+                      if (!selectedOption) return null;
+
+                      return (
+                        <div
+                          key={index}
+                          className="bg-white border border-blue-200 rounded-xl p-6 shadow-md"
+                        >
+                          <div className="mb-4">
+                            {/* ✅ Now using question.text from your schema */}
+                            <h4 className="text-lg font-bold text-blue-900 mb-3">
+                              Question {index + 1}: {question.text}
+                            </h4>
+
+                            <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                              <p className="font-semibold mb-2">Your Answer:</p>
+                              <p className="italic">"{selectedOption.text}"</p>
+                            </div>
+
+                            <div>
+                              <p className="font-semibold mb-2">
+                                Personalized Suggestion:
+                              </p>
+                              <p className="leading-relaxed">
+                                {selectedOption.suggestion}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="bg-blue-50 rounded-xl p-8 border border-blue-200">
+                      <QuestionMarkCircleIcon className="w-16 h-16 text-blue-400 mx-auto mb-4" />
+                      <h4 className="text-xl font-semibold text-blue-900 mb-2">
+                        No Question Data Available
+                      </h4>
+                      <p className="text-blue-600">
+                        Question and answer details are not available for this
+                        session.
                       </p>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                )}
+              </div>
+            )}
           </div>
-
-          {/* Stay Updated Card */}
-          {/* <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 sm:p-8 border border-blue-200 mb-8">
-            <h3 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4">
-              Stay Privacy-Protected
-            </h3>
-            <p className="text-blue-700 mb-6 leading-relaxed">
-              Privacy threats evolve constantly. New data breaches, updated
-              privacy policies, and emerging tracking technologies mean your
-              privacy score can change. Regular reassessment ensures you stay
-              ahead of new risks and maintain optimal protection.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg p-4 border border-blue-200">
-                <h4 className="font-semibold text-blue-900 mb-2">
-                  Monthly Check-ups
-                </h4>
-                <p className="text-blue-700 text-sm">
-                  Reassess your privacy posture as new threats emerge
-                </p>
-              </div>
-              <div className="bg-white rounded-lg p-4 border border-blue-200">
-                <h4 className="font-semibold text-blue-900 mb-2">
-                  Updated Insights
-                </h4>
-                <p className="text-blue-700 text-sm">
-                  Get fresh recommendations based on latest privacy research
-                </p>
-              </div>
-              <div className="bg-white rounded-lg p-4 border border-blue-200">
-                <h4 className="font-semibold text-blue-900 mb-2">
-                  Track Progress
-                </h4>
-                <p className="text-blue-700 text-sm">
-                  Monitor improvements and maintain your privacy gains
-                </p>
-              </div>
-            </div>
-          </div> */}
 
           <div className="bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 rounded-xl p-6 sm:p-8 border-2 border-blue-200 mb-8 shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center gap-4 mb-6">
@@ -1390,9 +1572,9 @@ const PrivacyReport = () => {
         </div>
       </div>
 
-      <SubscriptionModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <SubscriptionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
     </>
   );
