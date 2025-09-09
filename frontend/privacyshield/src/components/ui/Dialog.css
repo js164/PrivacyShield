@@ -16,7 +16,7 @@
   background: #fff;
   padding: 3rem; /* Increased padding */
   border-radius: 20px; /* Slightly rounder corners */
-  max-width: 750px; /* Bigger max width */
+  max-width: 800px; /* Bigger max width */
   width: 95%; /* Slightly wider */
   text-align: center;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); /* Stronger shadow */
@@ -51,6 +51,12 @@
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
+}
+
+.modal-message {
+  display: block;
+  margin: 0.1rem 0; /* tight spacing */
+  font-size: 16px; /* 18px */
 }
 
 .btn-continue {
