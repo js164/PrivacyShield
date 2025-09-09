@@ -54,9 +54,8 @@
 }
 
 .modal-message {
-  display: block;
-  margin: 0.1rem 0; /* tight spacing */
   font-size: 16px; /* 18px */
+  color: #555;
 }
 
 .btn-continue {
