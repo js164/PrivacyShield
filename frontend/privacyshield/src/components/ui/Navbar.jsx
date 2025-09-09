@@ -5,7 +5,7 @@ import logo from '../../public/Images/log.jpg'; // Your logo path
 export function Navbar() {
   return (
     <header className="bg-white fixed w-full top-0 z-50 border-b border-gray-200">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo and Title */}
           <div className="flex items-center">
@@ -42,7 +42,7 @@ export function Navbar() {
 export function Navbar_Questions({ isChecking }) {
   return (
     <header className="bg-white sticky top-0 z-50 border-b border-gray-200">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 relative">
           {/* Logo and Title */}
           <div className="flex items-center">
