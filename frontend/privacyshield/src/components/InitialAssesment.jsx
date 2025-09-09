@@ -6,6 +6,7 @@ import { Navbar_Questions } from './ui/Navbar';
 export default function QuestionPage() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState([]);
+  const [isChecking, setIsChecking] = useState(true);
 
   const question = INITIAL_QUESTION.text;
   const options = INITIAL_QUESTION.options;
@@ -29,7 +30,7 @@ export default function QuestionPage() {
 
   return (
     <>
-    <Navbar_Questions />
+    <Navbar_Questions isChecking={isChecking} />
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6 animate-fade-in-up">
       <div className="w-full max-w-6xl bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
         <h1 className="text-2xl font-semibold mb-12 text-center">

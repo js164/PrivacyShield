@@ -64,6 +64,7 @@ export default function SurveyQuestion({
 
           {/* Buttons */}
           <div className="flex justify-between mt-8">
+            {/*
             <button
               className="px-4 py-2 bg-gray-200 rounded-lg text-gray-600 hover:bg-gray-300"
               disabled={questionNumber === 1}
@@ -71,6 +72,17 @@ export default function SurveyQuestion({
             >
               Back
             </button>
+            */}
+            {questionNumber > 1 ? (
+            <button
+              className="px-4 py-2 bg-gray-200 rounded-lg text-gray-600 hover:bg-gray-300"
+              onClick={onBack}
+            >
+              Back
+            </button>
+            ) : (
+              <div />
+            )}
             <button
               className="px-6 py-2 bg-blue-400 text-white rounded-lg hover:bg-primary-blue disabled:opacity-50"
               disabled={selected === null}

@@ -154,6 +154,7 @@ export default function Assesment() {
     // console.log(api_data.length)
     // console.log(selectedIndex)
     // console.log(api_data)
+    //console.log(privacyScores)
 
     setSelectedOption(selectedIndex);
     setAnswers({ ...answers, [currentQuestion]: selectedIndex });
@@ -296,7 +297,7 @@ export default function Assesment() {
   if (isChecking) {
     return (
     <>
-    <Navbar_Questions />
+    <Navbar_Questions isChecking={isChecking} />
     <Toast
       message={suggestions[user_selected_option]?.suggestion}
       color_category={suggestions[user_selected_option]?.category}
@@ -333,7 +334,7 @@ export default function Assesment() {
 
   return (
     <>
-    <Navbar_Questions />
+    <Navbar_Questions isChecking={isChecking} />
     <Toast
       message={suggestions[user_selected_option]?.suggestion}
       color_category={suggestions[user_selected_option]?.category}
