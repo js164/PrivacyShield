@@ -42,9 +42,9 @@ export function Navbar() {
   );
 }
 
-export function Navbar_Questions() {
+export function Navbar_Questions({ isChecking }) {
   return (
-    <header className="bg-white sticky top-0 z-50 border-b border-gray-200">
+    <header className="bg-white sticky top-0 z-50 border-b border-gray-200 relative">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-center h-20">
           {/* Logo and Title */}
@@ -56,6 +56,17 @@ export function Navbar_Questions() {
               </span>
             </Link>
           </div>
+
+          {/* Restart Survey button (only if isChecking is false) */}
+          {!isChecking && (
+            <Link
+              to="/initialassesment"
+              className="absolute right-0 mr-2 bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-blue-700 transition-colors shadow"
+            >
+              Restart Survey
+            </Link>
+          )}
+
         </div>
       </nav>
     </header>

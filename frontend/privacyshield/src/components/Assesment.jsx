@@ -6,6 +6,9 @@ import Toast from "./ui/QuestionSuggestion";
 import ContinueModal from './ui/Dialog';
 const backend_url = import.meta.env.VITE_BACKEND_URI;
 
+// Initial Survey Length"
+const INITIAL_SURVEY_LENGTH = 10;
+
 // Global scores object initialized with 0
 export const privacyScores = {
   scores: {
@@ -19,6 +22,19 @@ export const privacyScores = {
     DSTP: 0, LT: 0, CD: 0, APS: 0, CE: 0
   }
 };
+
+const initPrivacyScores = () => ({
+  scores: {
+    DC: 0, LC: 0, UDU: 0, ST: 0, DR: 0, ESH: 0, MIC: 0, SB: 0, RD: 0,
+    PD: 0, DIT: 0, SE: 0, GLR: 0, ODU: 0, MPOT: 0, LRPG: 0, PA: 0,
+    DSTP: 0, LT: 0, CD: 0, APS: 0, CE: 0
+  },
+  maxScores: {
+    DC: 0, LC: 0, UDU: 0, ST: 0, DR: 0, ESH: 0, MIC: 0, SB: 0, RD: 0,
+    PD: 0, DIT: 0, SE: 0, GLR: 0, ODU: 0, MPOT: 0, LRPG: 0, PA: 0,
+    DSTP: 0, LT: 0, CD: 0, APS: 0, CE: 0
+  }
+});
 
 function sortData(data, initial_answers) {
   const seen = new Set();
@@ -47,6 +63,11 @@ function sortData(data, initial_answers) {
 
 export default function Assesment() {
 
+  useEffect(() => {
+    // reset on component mount
+    Object.assign(privacyScores, initPrivacyScores());
+  }, []);
+
   const navigate = useNavigate();
   const location = useLocation();
   const { initial_answers } = location.state || { initial_answers: [] }; // fallback if no state
@@ -71,6 +92,7 @@ export default function Assesment() {
   const [showToast, setShowToast] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [isChecking, setIsChecking] = useState(true);
+  const [continueSurvey, setContinueSurvey] = useState(false);
 
   // Fetch questions from API
   useEffect(() => {
@@ -132,6 +154,7 @@ export default function Assesment() {
     // console.log(api_data.length)
     // console.log(selectedIndex)
     // console.log(api_data)
+    //console.log(privacyScores)
 
     setSelectedOption(selectedIndex);
     setAnswers({ ...answers, [currentQuestion]: selectedIndex });
@@ -180,7 +203,10 @@ export default function Assesment() {
 
       setCurrentQuestion(question_no);
       // console.log(privacyScores);
-      
+
+      if(currentQuestion + 1 === INITIAL_SURVEY_LENGTH){
+          setContinueSurvey(true)
+      }
 
   };
 
@@ -235,6 +261,7 @@ export default function Assesment() {
       if (typeof selectedIndex == 'number'){
       setSelectedOption(selectedIndex);
       setShowToast(true);
+      setIsChecking(true);
       time_delay = 3000;
       }
 
@@ -256,8 +283,11 @@ export default function Assesment() {
 
         // console.log({privacyScores})
 
+        // console.log({api_data})
+        // console.log({answers})
+
       setTimeout(() => {
-        navigate('/report', { state: { scores: privacyScores } });
+        navigate('/report', { state: { scores: privacyScores, questions: api_data, answers: answers } });
       }, time_delay); // delay in milliseconds (2000 = 2s)
     } catch (err) {
       console.error("Error submitting survey:", err);
@@ -267,8 +297,15 @@ export default function Assesment() {
   if (isChecking) {
     return (
     <>
-    <Navbar_Questions />
-      <div className="flex items-center justify-center min-h-screen animate-fade-in-up">
+    <Navbar_Questions isChecking={isChecking} />
+    <Toast
+      message={suggestions[user_selected_option]?.suggestion}
+      color_category={suggestions[user_selected_option]?.category}
+      show={showToast}
+      duration={3750}
+      onClose={() => setShowToast(false)}
+    />
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 animate-fade-in-up">
         <svg
           className="animate-spin -ml-1 mr-8 h-20 w-20 text-blue-400"
           xmlns="http://www.w3.org/2000/svg"
@@ -289,7 +326,7 @@ export default function Assesment() {
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           ></path>
         </svg>
-        <span className="text-3xl font-semibold">Loading Questions...</span>
+        <span className="text-3xl font-semibold">{continueSurvey ? "Generating Report..." : "Loading Questions..."}</span>
       </div>
       </>
     );
@@ -297,7 +334,7 @@ export default function Assesment() {
 
   return (
     <>
-    <Navbar_Questions />
+    <Navbar_Questions isChecking={isChecking} />
     <Toast
       message={suggestions[user_selected_option]?.suggestion}
       color_category={suggestions[user_selected_option]?.category}
@@ -314,9 +351,11 @@ export default function Assesment() {
 
     <SurveyQuestion
       title="Privacy Tools Survey"
-      progress={(currentQuestion + 1) / api_data.length * 100}
+      //progress={(currentQuestion + 1) / api_data.length * 100}
+      progress={(currentQuestion + 1) / (continueSurvey ? api_data.length : INITIAL_SURVEY_LENGTH) * 100}
       questionNumber={currentQuestion+1}
-      totalQuestions={api_data.length}
+      //totalQuestions={api_data.length}
+      totalQuestions={continueSurvey ? api_data.length : INITIAL_SURVEY_LENGTH }
       questionText={questions}
       options={options}
       onBack={handleBack}

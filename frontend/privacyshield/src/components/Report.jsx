@@ -29,6 +29,7 @@ Chart.register(
 // Import jsPDF and html2canvas for PDF generation
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import SubscriptionModal from "./ui/SubscriptionModal";
 
 const backend_url = import.meta.env.VITE_BACKEND_URI;
 
@@ -194,6 +195,7 @@ const PrivacyReport = () => {
   const [error, setError] = useState(null);
   const [expandedMisconceptions, setExpandedMisconceptions] = useState({});
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
@@ -273,7 +275,7 @@ const PrivacyReport = () => {
             // Handle different suggestion types based on the new API structure
             if (suggestion.type === "negative") {
               return {
-                text: suggestion.text,
+                // text: suggestion.text,
                 status: suggestion.type,
                 tools: suggestion.categoryTools || [],
                 methodology: suggestion.categoryMethodology || [],
@@ -281,7 +283,7 @@ const PrivacyReport = () => {
             } else {
               // For positive suggestions, put the text in methodology
               return {
-                text: "",
+                // text: "",
                 status: suggestion.type,
                 tools: suggestion.tools || [],
                 methodology: [suggestion.text], // Put the text as methodology for positive suggestions
@@ -477,7 +479,7 @@ const PrivacyReport = () => {
   };
 
   const handleBackToDashboard = () => {
-    navigate("/dashboard");
+    navigate("/");
   };
 
   // Enhanced PDF generation function (white theme)
@@ -1354,7 +1356,7 @@ const PrivacyReport = () => {
             </button>
 
             <button
-              onClick={handleSubscribeForUpdates}
+              onClick={() => setIsModalOpen(true)}
               className="flex items-center justify-center px-8 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition-colors duration-200 shadow-md hover:shadow-lg"
             >
               <BellIcon />
@@ -1387,6 +1389,11 @@ const PrivacyReport = () => {
           </div>
         </div>
       </div>
+
+      <SubscriptionModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </>
   );
 };
