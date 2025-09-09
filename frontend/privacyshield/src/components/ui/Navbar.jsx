@@ -4,7 +4,7 @@ import logo from '../../public/Images/log.jpg'; // Your logo path
 
 export function Navbar() {
   return (
-    <header className="bg-white sticky top-0 z-50 border-b border-gray-200">
+    <header className="bg-white fixed w-full top-0 z-50 border-b border-gray-200">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo and Title */}
@@ -21,8 +21,7 @@ export function Navbar() {
           <div className="space-x-4 flex items-center">
             <Link 
               to="/about" 
-              // --- CHANGE IS HERE ---
-              // This now looks like a simple text link, but gets a background on hover.
+              
               className="py-2 px-4 rounded-lg text-base font-medium 
                          text-neutral-gray 
                          hover:bg-gray-100 transition-colors"
@@ -33,7 +32,7 @@ export function Navbar() {
               to="/initialassesment"
               className="inline-block bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-dark-blue transition-colors shadow"
             >
-              Take Assessment
+              Get My Privacy Score
             </Link>
           </div>
         </div>
@@ -42,9 +41,9 @@ export function Navbar() {
   );
 }
 
-export function Navbar_Questions({ isChecking }) {
+export function Navbar_Questions() {
   return (
-    <header className="bg-white sticky top-0 z-50 border-b border-gray-200 relative">
+    <header className="bg-white sticky top-0 z-50 border-b border-gray-200">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-center h-20">
           {/* Logo and Title */}
@@ -56,17 +55,6 @@ export function Navbar_Questions({ isChecking }) {
               </span>
             </Link>
           </div>
-
-          {/* Restart Survey button (only if isChecking is false) */}
-          {!isChecking && (
-            <Link
-              to="/initialassesment"
-              className="absolute right-0 mr-2 bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-blue-700 transition-colors shadow"
-            >
-              Restart Survey
-            </Link>
-          )}
-
         </div>
       </nav>
     </header>
