@@ -700,32 +700,33 @@ const PrivacyReport = () => {
         }
 
         // Methodologies section
-        // const negativeMethodologies = category.recommendations
-        //   .filter((rec) => rec.status === "negative")
-        //   .flatMap((rec) => rec.methodology || [])
-        //   .filter((method) => method && method.trim() !== "");
+        const negativeMethodologies = category.recommendations
+          .filter((rec) => rec.status === "negative")
+          .flatMap((rec) => rec.methodology || [])
+          .filter((method) => method && method.trim() !== "");
 
-        // const positiveMethodologies = category.recommendations
-        //   .filter((rec) => rec.status === "positive")
-        //   .flatMap((rec) => rec.methodology || [])
-        //   .filter((method) => method && method.trim() !== "");
+        const positiveMethodologies = category.recommendations
+          .filter((rec) => rec.status === "positive")
+          .flatMap((rec) => rec.methodology || [])
+          .filter((method) => method && method.trim() !== "");
 
-        // const orderedMethodologies = [
-        //   ...negativeMethodologies,
-        //   ...positiveMethodologies,
-        // ];
+        const orderedMethodologies = [
+          ...negativeMethodologies,
+          ...positiveMethodologies,
+        ];
 
         if (orderedMethodologies.length > 0) {
           checkPageBreak(15);
           pdf.setFontSize(9);
           pdf.setFont("helvetica", "bold");
           pdf.setTextColor(0, 0, 0);
-          pdf.text("Methodology:", margin + 5, yPosition);
+          pdf.text("Privacy Practices:", margin + 5, yPosition);
           yPosition += 5;
 
+          // First show negative methodologies (things to improve)
           pdf.setFont("helvetica", "normal");
           pdf.setTextColor(60, 60, 60);
-          orderedMethodologies.forEach((method) => {
+          negativeMethodologies.forEach((method) => {
             const lines = pdf.splitTextToSize(
               `• ${method.trim()}`,
               contentWidth - 10
@@ -737,6 +738,32 @@ const PrivacyReport = () => {
             });
             yPosition += 1;
           });
+
+          // Then show positive methodologies with the special heading
+          if (positiveMethodologies.length > 0) {
+            checkPageBreak(10);
+            pdf.setFontSize(9);
+            pdf.setFont("helvetica", "bold");
+            pdf.setTextColor(0, 0, 0);
+            pdf.text("You're doing this right:", margin + 8, yPosition);
+            yPosition += 5;
+
+            pdf.setFont("helvetica", "normal");
+            pdf.setTextColor(60, 60, 60);
+            positiveMethodologies.forEach((method) => {
+              const lines = pdf.splitTextToSize(
+                `• ${method.trim()}`,
+                contentWidth - 10
+              );
+              lines.forEach((line) => {
+                checkPageBreak(5);
+                pdf.text(line, margin + 8, yPosition);
+                yPosition += 4;
+              });
+              yPosition += 1;
+            });
+          }
+
           yPosition += 3;
         }
 
@@ -813,28 +840,82 @@ const PrivacyReport = () => {
         yPosition += 8;
       });
 
-      // ===== STAY UPDATED SECTION =====
-      checkPageBreak(25);
-      pdf.setFontSize(12);
-      pdf.setTextColor(0, 0, 0);
-      pdf.setFont("helvetica", "bold");
-      pdf.text("Stay Privacy-Protected", margin, yPosition);
-      yPosition += 8;
+      // ===== QUESTIONS AND ANSWERS SECTION =====
+      if (questions && questions.length > 0) {
+        checkPageBreak(25);
+        pdf.setFontSize(14);
+        pdf.setTextColor(0, 0, 0);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("Question & Answer Details", margin, yPosition);
+        yPosition += 12;
 
-      pdf.setTextColor(60, 60, 60);
-      pdf.setFontSize(9);
-      pdf.setFont("helvetica", "normal");
-      const stayUpdatedText =
-        "Privacy threats evolve constantly. New data breaches, updated privacy policies, and emerging tracking technologies mean your privacy score can change. Regular reassessment ensures you stay ahead of new risks and maintain optimal protection.";
-      const stayUpdatedLines = pdf.splitTextToSize(
-        stayUpdatedText,
-        contentWidth
-      );
-      stayUpdatedLines.forEach((line) => {
-        checkPageBreak(5);
-        pdf.text(line, margin, yPosition);
-        yPosition += 4;
-      });
+        questions.forEach((question, index) => {
+          const userAnswerIndex = answers[index];
+          const selectedOption = question.options?.[userAnswerIndex];
+
+          if (!selectedOption) return;
+
+          checkPageBreak(35);
+
+          // Question number and text
+          pdf.setFontSize(11);
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(37, 99, 235);
+          pdf.text(`Question ${index + 1}:`, margin, yPosition);
+          yPosition += 6;
+
+          pdf.setFont("helvetica", "normal");
+          pdf.setTextColor(0, 0, 0);
+          const questionLines = pdf.splitTextToSize(
+            question.text,
+            contentWidth - 5
+          );
+          questionLines.forEach((line) => {
+            checkPageBreak(5);
+            pdf.text(line, margin + 2, yPosition);
+            yPosition += 4;
+          });
+          yPosition += 3;
+
+          // User's answer
+          pdf.setFontSize(10);
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(60, 60, 60);
+          pdf.text("Your Answer:", margin + 5, yPosition);
+          yPosition += 5;
+
+          pdf.setFont("helvetica", "italic");
+          pdf.setTextColor(60, 60, 60);
+          const answerLines = pdf.splitTextToSize(
+            `"${selectedOption.text}"`,
+            contentWidth - 10
+          );
+          answerLines.forEach((line) => {
+            checkPageBreak(5);
+            pdf.text(line, margin + 8, yPosition);
+            yPosition += 4;
+          });
+          yPosition += 3;
+
+          // Personalized suggestion
+          pdf.setFont("helvetica", "bold");
+          pdf.setTextColor(60, 60, 60);
+          pdf.text("Personalized Suggestion:", margin + 5, yPosition);
+          yPosition += 5;
+
+          pdf.setFont("helvetica", "normal");
+          const suggestionLines = pdf.splitTextToSize(
+            selectedOption.suggestion,
+            contentWidth - 10
+          );
+          suggestionLines.forEach((line) => {
+            checkPageBreak(5);
+            pdf.text(line, margin + 8, yPosition);
+            yPosition += 4;
+          });
+          yPosition += 8;
+        });
+      }
 
       // ===== FOOTER =====
       const totalPages = pdf.internal.getNumberOfPages();
