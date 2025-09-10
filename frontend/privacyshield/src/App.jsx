@@ -8,8 +8,9 @@ import Footer from "./components/ui/Footer";
 import { AdminAuthProvider } from "./context/AdminAuthContext";
 import AdminLogin from "./components/AdminLogin";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
-import AboutUs from "./components/AboutUs"; 
+import AboutUs from "./components/AboutUs";
 import AdminDashboard from "./components/AdminDashboard/AdminDashboard"; // keep this one
+import { FloatingDownloadButton } from "./components/ui/FloatingDownloadButton";
 const backend_url = import.meta.env.VITE_BACKEND_URI;
 
 axios.interceptors.request.use(function (config) {
@@ -38,6 +39,7 @@ function App() {
         <Route path="/report" element={<Report />} />
         <Route exact path="/about" element={<AboutUs />} />
       </Routes>
+      <FloatingDownloadButton />
       <Footer />
     </AdminAuthProvider>
   );

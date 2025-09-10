@@ -1508,7 +1508,20 @@ const PrivacyReport = () => {
                               Question {index + 1}: {question.text}
                             </h4>
 
-                            <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                            <div
+                              className={`mb-4 p-4 bg-blue-50 rounded-lg border ${
+                                selectedOption.suggestion_category ===
+                                "area_of_concern"
+                                  ? "border-red-500 bg-red-50"
+                                  : selectedOption.suggestion_category ===
+                                    "room_for_improvement"
+                                  ? "border-yellow-500 bg-yellow-50"
+                                  : selectedOption.suggestion_category ===
+                                    "strong_practice"
+                                  ? "border-green-500 bg-green-50"
+                                  : "border-blue-100"
+                              }`}
+                            >
                               <p className="font-semibold mb-2">Your Answer:</p>
                               <p className="italic">"{selectedOption.text}"</p>
                             </div>
@@ -1620,7 +1633,7 @@ const PrivacyReport = () => {
 
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center justify-center px-8 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 transition-colors duration-200 shadow-md hover:shadow-lg"
+              className="flex items-center justify-center px-8 py-3 bg-purple-500 text-white rounded-xl font-semibold hover:bg-purple-700 transition-colors duration-200 shadow-md hover:shadow-lg"
             >
               <BellIcon />
               Subscribe for Updates
@@ -1629,7 +1642,7 @@ const PrivacyReport = () => {
             <button
               onClick={handleDownloadPDF}
               disabled={isGeneratingPDF}
-              className="flex items-center justify-center px-8 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center px-8 py-3 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <DownloadIcon />
               {isGeneratingPDF ? "Generating PDF..." : "Download PDF Report"}
