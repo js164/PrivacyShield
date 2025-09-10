@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import logo from '../../public/Images/log.jpg'; // Your logo path
+import React from "react";
+import { Link } from "react-router-dom";
+import logo from "../../public/Images/log.jpg"; // Your logo path
 
 export function Navbar() {
   return (
@@ -19,9 +19,8 @@ export function Navbar() {
 
           {/* Navigation Links and Buttons */}
           <div className="space-x-4 flex items-center">
-            <Link 
-              to="/about" 
-              
+            <Link
+              to="/about"
               className="inline-block bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-dark-blue transition-colors shadow"
             >
               About Us
@@ -30,7 +29,7 @@ export function Navbar() {
               to="/initialassesment"
               className="inline-block bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-dark-blue transition-colors shadow"
             >
-              Get My Privacy Score
+              Take Assessment
             </Link>
           </div>
         </div>
@@ -54,21 +53,21 @@ export function Navbar_Questions({ isChecking }) {
             </Link>
           </div>
           <div className="space-x-4 flex items-center">
-            <Link 
-              to="/about" 
+            <Link
+              to="/about"
               className="bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-blue-700 transition-colors shadow"
             >
               About Us
             </Link>
-          {/* Restart Survey button (only if isChecking is false) */}
-          {!isChecking && (
-            <Link
-              to="/initialassesment"
-              className="bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-blue-700 transition-colors shadow"
-            >
-              Restart Survey
-            </Link>
-          )}
+            {/* Restart Survey button (only if isChecking is false) */}
+            {!isChecking && (
+              <Link
+                to="/initialassesment"
+                className="bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-blue-700 transition-colors shadow"
+              >
+                Restart Survey
+              </Link>
+            )}
           </div>
         </div>
       </nav>
