@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { INITIAL_QUESTION } from "./config/InitialQuestion";
 import { Navbar_Questions } from './ui/Navbar';
+import { QUESTION_CATEGORIES } from './config/QuestionCategory';
 
 export default function QuestionPage() {
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ export default function QuestionPage() {
             className="w-4 h-4 text-blue-500 border-gray-300 rounded cursor-pointer"
             onClick={(e) => e.stopPropagation()} // prevent double toggle
             />
-              {opt.text}
+              {opt.text}<span className="text-gray-500 font-normal">({QUESTION_CATEGORIES[opt.category]})</span>
             </div>
           ))}
         </div>

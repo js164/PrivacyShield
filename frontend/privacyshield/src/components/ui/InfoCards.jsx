@@ -3,12 +3,12 @@ import React from "react";
 const cards = [
   {
     title: "Comprehensive Assessment",
-    description: "Evaluate your privacy across 23 key areas, from data collection to security practices.",
+    description: "Evaluate your privacy across 22 key areas, from data collection to security practices.",
     icon: "📊",
   },
   {
     title: "Quick & Easy",
-    description: "Our assessment takes just 5-10 minutes to complete, with instant, easy-to-understand results.",
+    description: "Our assessment takes just 8-15 minutes to complete, with instant, easy-to-understand results.",
     icon: "⏱️",
   },
   {
@@ -24,7 +24,6 @@ export default function InfoCards() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
             <h2 className="text-3xl font-display font-extrabold text-dark-blue">How It Works</h2>
-            <p className="mt-4 text-lg text-neutral-gray">A simple three-step process to a safer digital you.</p>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
           {cards.map((card, index) => (

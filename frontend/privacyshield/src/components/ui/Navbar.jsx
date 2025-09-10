@@ -4,8 +4,8 @@ import logo from '../../public/Images/log.jpg'; // Your logo path
 
 export function Navbar() {
   return (
-    <header className="bg-white sticky top-0 z-50 border-b border-gray-200">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="bg-white fixed w-full top-0 z-50 border-b border-gray-200">
+      <nav className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo and Title */}
           <div className="flex items-center">
@@ -21,11 +21,8 @@ export function Navbar() {
           <div className="space-x-4 flex items-center">
             <Link 
               to="/about" 
-              // --- CHANGE IS HERE ---
-              // This now looks like a simple text link, but gets a background on hover.
-              className="py-2 px-4 rounded-lg text-base font-medium 
-                         text-neutral-gray 
-                         hover:bg-gray-100 transition-colors"
+              
+              className="inline-block bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-dark-blue transition-colors shadow"
             >
               About Us
             </Link>
@@ -33,7 +30,7 @@ export function Navbar() {
               to="/initialassesment"
               className="inline-block bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-dark-blue transition-colors shadow"
             >
-              Take Assessment
+              Get My Privacy Score
             </Link>
           </div>
         </div>
@@ -44,9 +41,9 @@ export function Navbar() {
 
 export function Navbar_Questions({ isChecking }) {
   return (
-    <header className="bg-white sticky top-0 z-50 border-b border-gray-200 relative">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center h-20">
+    <header className="bg-white sticky top-0 z-50 border-b border-gray-200">
+      <nav className="w-full mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20 relative">
           {/* Logo and Title */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-3">
@@ -56,17 +53,23 @@ export function Navbar_Questions({ isChecking }) {
               </span>
             </Link>
           </div>
-
+          <div className="space-x-4 flex items-center">
+            <Link 
+              to="/about" 
+              className="bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-blue-700 transition-colors shadow"
+            >
+              About Us
+            </Link>
           {/* Restart Survey button (only if isChecking is false) */}
           {!isChecking && (
             <Link
               to="/initialassesment"
-              className="absolute right-0 mr-2 bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-blue-700 transition-colors shadow"
+              className="bg-primary-blue text-white py-2 px-5 rounded-lg text-base font-medium hover:bg-blue-700 transition-colors shadow"
             >
               Restart Survey
             </Link>
           )}
-
+          </div>
         </div>
       </nav>
     </header>
