@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import SurveyQuestion from "./ui/QuestionDisplay";
 import { Navbar_Questions } from './ui/Navbar';
 import Toast from "./ui/QuestionSuggestion";
-import ContinueModal from './ui/Dialog';
+import ContinueModal from './ui/AssesmentContinueDialog';
 const backend_url = import.meta.env.VITE_BACKEND_URI;
 
 // Initial Survey Length"

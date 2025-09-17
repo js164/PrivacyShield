@@ -1,5 +1,5 @@
 import React from 'react';
-import './Dialog.css';
+import './AssesmentContinueDialog.css';
 
 /**
  * ContinueModal component - Displays a dialog prompting the user to continue or stop a survey.
