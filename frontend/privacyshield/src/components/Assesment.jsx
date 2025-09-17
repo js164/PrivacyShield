@@ -72,8 +72,6 @@ export default function Assesment() {
   const location = useLocation();
   const { initial_answers } = location.state || { initial_answers: [] }; // fallback if no state
 
-  // console.log(initial_answers)
-
   // Redirect if user opens /assesment directly or has no answers
   useEffect(() => {
     if (!initial_answers || initial_answers.length === 0) {
@@ -104,13 +102,9 @@ export default function Assesment() {
         const fetched_data = await res.json();
         const randomised_data = [...fetched_data].sort(() => Math.random() - 0.5);
         const data = sortData(randomised_data, initial_answers);
-        // console.log({currentQuestion})
         setAPIData(data)
-        // console.log({api_data})
 
         setQuestions(data[currentQuestion].text); // Assuming `data` is an array of questions
-
-        // console.log(data[currentQuestion].category)
 
         const newOptions = [];
 
@@ -125,8 +119,6 @@ export default function Assesment() {
         const newSuggestions = [];
 
         for (let i = 0; i < data[currentQuestion].options.length; i++) {
-
-          //newSuggestions.push(data[currentQuestion].options[i].suggestion)
 
           newSuggestions.push({
             suggestion: data[currentQuestion].options[i].suggestion,
@@ -151,11 +143,6 @@ export default function Assesment() {
 
   const handleNext = (selectedIndex) => {
 
-    // console.log(api_data.length)
-    // console.log(selectedIndex)
-    // console.log(api_data)
-    //console.log(privacyScores)
-
     setSelectedOption(selectedIndex);
     setAnswers({ ...answers, [currentQuestion]: selectedIndex });
     setShowToast(true); // Show toast
@@ -179,8 +166,6 @@ export default function Assesment() {
 
     for (let i = 0; i < api_data[currentQuestion].options.length; i++) {
 
-      //newSuggestions.push(api_data[currentQuestion].options[i].suggestion)
-
       newSuggestions.push({
         suggestion: api_data[currentQuestion].options[i].suggestion,
         category: api_data[currentQuestion].options[i].suggestion_category
@@ -190,19 +175,13 @@ export default function Assesment() {
 
     setSuggestions(newSuggestions);
 
-    //console.log(api_data)
-
     api_data[currentQuestion].options[selectedIndex].scores.forEach(s => {
       if (s.score !== -1) {
         privacyScores.scores[s.code] += s.score;
       }
     });
 
-    //privacyScores.scores[api_data.options[selectedIndex].scores.code] += api_data.options[selectedIndex].scores.score;
-    // console.log(api_data[currentQuestion].category)
-
     setCurrentQuestion(question_no);
-    // console.log(privacyScores);
 
     if (currentQuestion + 1 === INITIAL_SURVEY_LENGTH) {
       setContinueSurvey(true)
@@ -232,8 +211,6 @@ export default function Assesment() {
 
     for (let i = 0; i < api_data[currentQuestion].options.length; i++) {
 
-      //newSuggestions.push(api_data[currentQuestion].options[i].suggestion)
-
       newSuggestions.push({
         suggestion: api_data[currentQuestion].options[i].suggestion,
         category: api_data[currentQuestion].options[i].suggestion_category
@@ -255,7 +232,7 @@ export default function Assesment() {
 
   const handleFinish = (selectedIndex) => {
     try {
-      // console.log(currentQuestion)
+
       setShowModal(false);
       var time_delay = 500;
       if (typeof selectedIndex == 'number') {
@@ -265,26 +242,12 @@ export default function Assesment() {
         time_delay = 3000;
       }
 
-      // Loop through data and sum scores
-      /*
-      api_data.forEach(item => {
-        item.maxScore.forEach(s => {
-          privacyScores.maxScores[s.categoryCode] += s.max;
-        });
-      });
-      */
-
       // Loop through data from 0 till currentQuestion and sum scores
       for (let i = 0; i <= currentQuestion; i++) {
         api_data[i].maxScore.forEach(s => {
           privacyScores.maxScores[s.categoryCode] += s.max;
         });
       }
-
-      // console.log({privacyScores})
-
-      // console.log({api_data})
-      // console.log({answers})
 
       setTimeout(() => {
         navigate('/report', { state: { scores: privacyScores, questions: api_data, answers: answers } });
@@ -351,10 +314,8 @@ export default function Assesment() {
 
       <SurveyQuestion
         title="Privacy Tools Survey"
-        //progress={(currentQuestion + 1) / api_data.length * 100}
         progress={(currentQuestion + 1) / (continueSurvey ? api_data.length : INITIAL_SURVEY_LENGTH) * 100}
         questionNumber={currentQuestion + 1}
-        //totalQuestions={api_data.length}
         totalQuestions={continueSurvey ? api_data.length : INITIAL_SURVEY_LENGTH}
         questionText={questions}
         options={options}
