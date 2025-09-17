@@ -1,5 +1,5 @@
 import { CircleQuestionMark } from 'lucide-react';
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { QUESTION_CATEGORIES } from '../config/QuestionCategory';
 import { INITIAL_QUESTION } from '../config/InitialQuestion';
 

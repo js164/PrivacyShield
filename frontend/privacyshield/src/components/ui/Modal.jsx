@@ -1,5 +1,3 @@
-import React from 'react'
-
 export default function Modal({ isOpen, onClose, children, size = 'md' }) {
     if (!isOpen) return null;
     const sizeClasses = { md: 'max-w-md', lg: 'max-w-2xl', xl: 'max-w-4xl', '2xl': 'max-w-6xl' };

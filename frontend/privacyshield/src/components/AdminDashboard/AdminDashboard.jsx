@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useCallback } from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import { DndProvider } from "react-dnd";
 import QuestionCard from "./QuestionCard";
@@ -11,9 +10,7 @@ import getAllQuestions from "../ui/getAllQuestions";
 import {
   BarChart3,
   MessageCircleQuestionMark,
-  Settings,
-  Shield,
-  Users,
+  Shield
 } from "lucide-react";
 import StatsCard from "../StatsCard";
 import InitialQuestionCard from "./InitialQuestionCard";
@@ -172,6 +169,7 @@ export default function AdminDashboard() {
                   questions.forEach((q) => {
                     q.options.forEach((opt) => {
                       if (opt.scores) {
+                        // eslint-disable-next-line no-unused-vars
                         Object.entries(opt.scores).forEach(([key, value]) => {
                           if (value) {
                             covered.add(value.code);

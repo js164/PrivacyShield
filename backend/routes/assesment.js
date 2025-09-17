@@ -31,7 +31,7 @@ const suggestionMapping = {
 const fetchSuggestions = async () => {
     try {
         const suggestionsArray = await category.find({});
-        
+
         return suggestionsArray.reduce((acc, suggestion) => {
             acc[suggestion.code] = {
                 positive: suggestion.positive_suggestion,
@@ -62,7 +62,7 @@ async function fetchMisconceptions() {
 }
 
 route.post('/report', async function (req, res, next) {
-     const [suggestionsDB, misconceptionsDB] = await Promise.all([
+    const [suggestionsDB, misconceptionsDB] = await Promise.all([
         fetchSuggestions(),
         fetchMisconceptions()
     ]);
@@ -134,7 +134,7 @@ route.post('/report', async function (req, res, next) {
                 }
             }
         }
-        
+
         const categoryMisconceptions = misconceptionsDB[categoryName] || [];
 
         report[categoryName] = {
@@ -149,29 +149,27 @@ route.post('/report', async function (req, res, next) {
 
 
 route.post("/schedule", async (req, res) => {
-  const { to, subject, assessmentLink, date, frequency } = req.body;
+    const { to, subject, assessmentLink, date, frequency } = req.body;
 
     try {
-    await sendEmail(to, subject, emailInitialTemplate(frequency , to));
-    console.log(`✅ Immediate email sent to ${to}`);
-  } catch (err) {
-    console.error(`❌ Failed to send immediate email to ${to}:`, err);
-  }
-
-  const jobDate = new Date(date);
-  if (jobDate < new Date()) return res.status(400).json({ error: "Date is in the past" });
-
-  // Schedule the email
-  schedule.scheduleJob(jobDate, async () => {
-    try {
-      await sendEmail(to, subject, emailTemplate(assessmentLink));
-      console.log(`✅ Email sent to ${to} at ${jobDate}`);
+        await sendEmail(to, subject, emailInitialTemplate(frequency, to));
     } catch (err) {
-      console.error(`❌ Failed to send email to ${to}:`, err);
+        console.error(`❌ Failed to send immediate email to ${to}:`, err);
     }
-  });
 
-  res.json({ success: true, scheduledFor: jobDate });
+    const jobDate = new Date(date);
+    if (jobDate < new Date()) return res.status(400).json({ error: "Date is in the past" });
+
+    // Schedule the email
+    schedule.scheduleJob(jobDate, async () => {
+        try {
+            await sendEmail(to, subject, emailTemplate(assessmentLink));
+        } catch (err) {
+            console.error(`❌ Failed to send email to ${to}:`, err);
+        }
+    });
+
+    res.json({ success: true, scheduledFor: jobDate });
 });
 
 module.exports = route;
