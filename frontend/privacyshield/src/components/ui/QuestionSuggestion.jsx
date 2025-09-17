@@ -1,5 +1,15 @@
 import React, { useEffect } from "react";
 
+/**
+ * A Toast component that displays a message with a specific color category.
+ * 
+ * @param {Object} props
+ * @param {string} props.message - The message to be displayed in the toast.
+ * @param {string} [props.color_category='strong_practice'] - The color category of the toast (strong_practice, room_for_improvement, area_of_concern).
+ * @param {boolean} props.show - Whether the toast is visible or not.
+ * @param {number} [props.duration=2000] - The duration in milliseconds before the toast closes automatically.
+ * @param {function} props.onClose - Callback function to close the toast.
+ */
 export default function Toast({ message, color_category = "strong_practice", show, duration = 2000, onClose }) {
   useEffect(() => {
     if (show) {
