@@ -1,4 +1,3 @@
-import React from 'react'
 import { useEffect } from 'react';
 import { useState } from 'react';
 import Modal from '../ui/Modal';
@@ -17,9 +16,8 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
     useEffect(() => { if (isOpen) { setQuestionData({ text: '', category: 'DIA', options: [{ text: '', scores: getInitialScores(), suggestion: '', suggestion_category: 'area_of_concern' }] }); setError(''); } }, [isOpen]);
 
     const handleTextChange = (e) => setQuestionData({ ...questionData, text: e.target.value });
-    const handleTypeChange = (e) => setQuestionData({ ...questionData, type: e.target.value });
     const handleOptionChange = (index, updatedOption) => { const newOptions = [...questionData.options]; newOptions[index] = updatedOption; setQuestionData({ ...questionData, options: newOptions }); };
-    const handleAddOption = () => setQuestionData({ ...questionData, options: [...questionData.options, { text: '', scores: getInitialScores(), suggestion: '',  suggestion_category: 'area_of_concern' }] });
+    const handleAddOption = () => setQuestionData({ ...questionData, options: [...questionData.options, { text: '', scores: getInitialScores(), suggestion: '', suggestion_category: 'area_of_concern' }] });
     const handleRemoveOption = (index) => setQuestionData({ ...questionData, options: questionData.options.filter((_, i) => i !== index) });
     const handleCategoryChange = (e) => setQuestionData({ ...questionData, category: e.target.value });
 
@@ -32,6 +30,7 @@ export default function AddQuestionModal({ isOpen, onClose, onConfirm }) {
                 suggestion: option.suggestion,
                 suggestion_category: option.suggestion_category,
                 scores: Object.entries(option.scores)
+                    // eslint-disable-next-line no-unused-vars
                     .filter(([_, score]) => score !== 0) // Optional: remove zero-score entries
                     .map(([code, score]) => ({ code, score }))
             }))

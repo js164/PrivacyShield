@@ -1,8 +1,7 @@
-import React from 'react'
 import Modal from './Modal'
 
 export default function ConfirmationDialog({ isOpen, onClose, onConfirm, title, message }) {
-  return (
+    return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <div className="p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">{title}</h3>
@@ -13,5 +12,5 @@ export default function ConfirmationDialog({ isOpen, onClose, onConfirm, title, 
                 </div>
             </div>
         </Modal>
-  )
+    )
 }

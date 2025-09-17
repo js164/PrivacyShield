@@ -5,13 +5,13 @@ const getMyUniversityList = async () => {
         const response = await axios.get('/question/questions');
         if (response.status == 200) {
             return response.data;
-        }else{
+        } else {
             return null
         }
-        
+
     } catch (err) {
         console.error(err);
-        throw err; 
+        throw err;
     }
 };
 

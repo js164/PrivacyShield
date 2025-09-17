@@ -45,7 +45,7 @@ const addOptionsForQuestion = async (questionId, optionsData, session = null) =>
             throw new Error("Invalid option data. Each option must have 'text' , 'suggestion', 'suggestion_category'  and a 'scores' array.");
         }
 
-        const newOption = new optionsSchema({ questionId, text: opt.text , suggestion: opt.suggestion , suggestion_category: opt.suggestion_category });
+        const newOption = new optionsSchema({ questionId, text: opt.text, suggestion: opt.suggestion, suggestion_category: opt.suggestion_category });
         const savedOption = await newOption.save({ session });
 
         // Use the upsert function to add the scores for the new option.
@@ -172,8 +172,7 @@ router.get('/questions', async (req, res) => {
 });
 
 router.post('/add', adminAuth, async (req, res) => {
-    console.log(req.body.options[0].scores);
-    const { text, options , category } = req.body;
+    const { text, options, category } = req.body;
 
     if (!text || !options || !Array.isArray(options) || options.length === 0) {
         return res.status(400).json({ message: 'Request body must include text and a non-empty options array.' });

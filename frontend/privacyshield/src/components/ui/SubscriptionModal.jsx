@@ -47,7 +47,6 @@ export default function SubscriptionModal(props) {
         setIsSubscribing(true);
         setMessage('');
 
-        console.log(`Subscribing ${email} to the ${selectedPlan.label} plan.`);
 
         const scheduleDate = new Date();
         scheduleDate.setMonth(scheduleDate.getMonth() + selectedPlan.months);
@@ -62,7 +61,6 @@ export default function SubscriptionModal(props) {
                 frequency: selectedPlan.months
             }
         ).then(response => {
-            console.log(response);
             if (response.status === 200) {
                 setMessage(`Success! A confirmation email has been sent to ${email}. You will receive a reminder to take the assessment ${selectedPlan.label.toLowerCase()}.`);
                 setIsSubscribing(false);
@@ -92,8 +90,8 @@ export default function SubscriptionModal(props) {
                                         type="button"
                                         onClick={() => handleSelectPlan(plan)}
                                         className={`p-3 border rounded-lg text-center cursor-pointer text-sm font-medium transition ${isSelected
-                                                ? 'bg-purple-100 border-purple-600 text-purple-700 font-bold'
-                                                : 'bg-gray-50 border-gray-300 hover:bg-gray-100 hover:border-gray-400'
+                                            ? 'bg-purple-100 border-purple-600 text-purple-700 font-bold'
+                                            : 'bg-gray-50 border-gray-300 hover:bg-gray-100 hover:border-gray-400'
                                             }`}
                                     >
                                         {plan.label}

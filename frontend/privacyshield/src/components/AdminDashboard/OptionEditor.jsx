@@ -1,4 +1,3 @@
-import React from 'react'
 import { useState } from 'react';
 import { CATEGORIES } from '../config/Categories';
 
@@ -10,9 +9,8 @@ const SUGGESTION_CATEGORIES = {
     'room_for_improvement': 'Room for Improvement'
 };
 
-export default function OptionEditor({ option, optionIndex, onDelete }) {
+export default function OptionEditor({ option, optionIndex }) {
     const [isScoresVisible, setIsScoresVisible] = useState(false);
-    const scores = Object.entries(option.scores).filter(([key, value]) => value > 0);
     const suggestionCategoryColor = {
         area_of_concern: 'bg-red-100 text-red-800',
         strong_practice: 'bg-green-100 text-green-800',
