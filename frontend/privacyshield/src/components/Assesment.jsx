@@ -259,12 +259,27 @@ export default function Assesment() {
       setShowModal(false);
       var time_delay = 500;
 
+      // Existing answers
+      let updatedAnswers = answers;
+
       // If an answer was selected on the final question, process it
       if (typeof selectedIndex == 'number') {
+
+        // Store the last selected option in local state
         setSelectedOption(selectedIndex);
+
+        // Create a new object that includes the final answer
+        updatedAnswers = { ...answers, [currentQuestion]: selectedIndex };
+
+        // Update React state with the new answers
+        setAnswers(updatedAnswers);
+
+        // Show feedback suggestion to the user
         setShowToast(true);
+
         setIsChecking(true);
         time_delay = 3000;
+
       }
 
       // Loop through data from 0 till currentQuestion and sum scores
@@ -277,7 +292,7 @@ export default function Assesment() {
 
       // Redirect to report page with results
       setTimeout(() => {
-        navigate('/report', { state: { scores: privacyScores, questions: api_data, answers: answers } });
+        navigate('/report', { state: { scores: privacyScores, questions: api_data, answers: updatedAnswers } });
       }, time_delay); // delay in milliseconds (2000 = 2s)
     } catch (err) {
       console.error("Error submitting survey:", err);
