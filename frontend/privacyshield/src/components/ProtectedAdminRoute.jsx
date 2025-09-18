@@ -4,7 +4,7 @@ import { useAdminAuth } from "../context/AdminAuthContext";
 
 const ProtectedAdminRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAdminAuth();
-
+  //loading state
   if (loading) {
     return (
       <div
