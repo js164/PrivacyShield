@@ -104,27 +104,32 @@ export default function Assesment() {
     const fetchQuestions = async () => {
       try {
 
+        // Fetch questions from backend API
         const res = await fetch(backend_url + "/question/questions");
         if (!res.ok) throw new Error("Failed to fetch questions");
         const fetched_data = await res.json();
+
+        // Randomize and then sort the data based on initial user preferences
         const randomised_data = [...fetched_data].sort(() => Math.random() - 0.5);
         const data = sortData(randomised_data, initial_answers);
+
+        // Store the sorted data
         setAPIData(data)
 
-        setQuestions(data[currentQuestion].text); // Assuming `data` is an array of questions
+        // Set up the first question
+        setQuestions(data[currentQuestion].text);
 
+        // Set up options for the first question
         const newOptions = [];
-
         for (let i = 0; i < data[currentQuestion].options.length; i++) {
 
           newOptions.push(data[currentQuestion].options[i].text)
 
         }
-
         setOptions(newOptions);
 
+        // Set up suggestions (suggestion text + suggestion category) for the first question
         const newSuggestions = [];
-
         for (let i = 0; i < data[currentQuestion].options.length; i++) {
 
           newSuggestions.push({
@@ -133,23 +138,29 @@ export default function Assesment() {
           });
 
         }
-
         setSuggestions(newSuggestions);
 
       } catch (err) {
         console.error("Error fetching questions:", err);
       } finally {
+
+        // End the loading states after fetching is complete
         setLoading(false);
+        
+        // Brief delay for smoother UI transition
         await new Promise(res => setTimeout(res, 1000));
         setIsChecking(false);
+
       }
     };
 
     fetchQuestions();
   }, []);
 
+  // Handles logic for moving to the next question
   const handleNext = (selectedIndex) => {
 
+    // Update selected option and answers
     setSelectedOption(selectedIndex);
     setAnswers({ ...answers, [currentQuestion]: selectedIndex });
     setShowToast(true); // Show toast
@@ -157,20 +168,20 @@ export default function Assesment() {
 
     const question_no = currentQuestion + 1
 
-    setQuestions(api_data[question_no].text); // Assuming `data` is an array of questions
+    // Update question text for next question
+    setQuestions(api_data[question_no].text);
 
+    // Update options for next question
     const newOptions = [];
-
     for (let i = 0; i < api_data[question_no].options.length; i++) {
 
       newOptions.push(api_data[question_no].options[i].text)
 
     }
-
     setOptions(newOptions);
 
+    // Update suggestions (suggestion text + suggestion category) for next question
     const newSuggestions = [];
-
     for (let i = 0; i < api_data[currentQuestion].options.length; i++) {
 
       newSuggestions.push({
@@ -179,17 +190,19 @@ export default function Assesment() {
       });
 
     }
-
     setSuggestions(newSuggestions);
 
+    // Update privacy scores based on selected option
     api_data[currentQuestion].options[selectedIndex].scores.forEach(s => {
       if (s.score !== -1) {
         privacyScores.scores[s.code] += s.score;
       }
     });
 
+    // Move to the next question index
     setCurrentQuestion(question_no);
 
+    // Check if the initial survey length has been reached to trigger the "continue" state
     if (currentQuestion + 1 === INITIAL_SURVEY_LENGTH) {
       setContinueSurvey(true)
     }
@@ -215,7 +228,7 @@ export default function Assesment() {
     }
     setOptions(newOptions);
 
-    // Update suggestions for previous question
+    // Update suggestions (suggestion text + suggestion category) for previous question
     const newSuggestions = [];
     for (let i = 0; i < api_data[currentQuestion].options.length; i++) {
 
