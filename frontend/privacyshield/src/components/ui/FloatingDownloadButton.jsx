@@ -66,7 +66,7 @@ export function FloatingDownloadButton() {
         />
         {isHovered && (
           <span className="whitespace-nowrap text-sm animate-fade-in">
-            Download Information
+            Download User Guide
           </span>
         )}
       </button>
