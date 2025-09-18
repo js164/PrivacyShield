@@ -10,9 +10,7 @@ A full-stack web application designed to provide privacy protection and secure d
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Support](#support)
+
 
 ## About
 
@@ -40,7 +38,7 @@ Privacy Shield is a comprehensive privacy protection platform that helps users m
 
 - Node.js
 - Express.js
-- Database integration
+- Database integration with MongoDB
 - RESTful API architecture
 
 ## Prerequisites
@@ -66,7 +64,7 @@ Follow these steps to set up the project locally:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/privacy-shield.git
+git clone https://github.com/js164/PrivacyShield.git
 cd privacy-shield
 ```
 
@@ -95,8 +93,8 @@ Create environment files for both frontend and backend:
 **Frontend (.env):**
 
 ```env
-VITE_BACKEND_URI = "http://localhost:8000"
-VITE_WEB_URI = "https://privacy-shield-go.vercel.app/"
+VITE_BACKEND_URI = "http://localhost:8000" //Backend URL
+VITE_WEB_URI = "http://localhost:5173" //Frontend URL
 ```
 
 **Backend (.env):**
