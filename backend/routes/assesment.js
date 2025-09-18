@@ -154,8 +154,8 @@ route.post('/report', async function (req, res, next) {
             const maxScore = maxScores[concernCode] || 0;
 
             if (suggestionsDB[concernCode] && maxScore > 0) {
-                // If user scored more than 25% of max, they need improvement (negative suggestion)
-                if (userScore > (maxScore / 4)) {
+                // If user scored more than 30% of max, they need improvement (negative suggestion)
+                if (userScore > (maxScore / 3.3)) {
                     categorySuggestions.push({
                         concernCode: concernCode,
                         type: 'negative',
