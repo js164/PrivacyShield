@@ -1,5 +1,5 @@
 function emailTemplate(assessmentLink) {
-    return `
+  return `
 <!DOCTYPE html>
 <html>
 <head>

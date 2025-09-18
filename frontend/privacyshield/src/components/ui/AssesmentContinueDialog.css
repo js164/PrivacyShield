@@ -1,0 +1,98 @@
+/* Backdrop that covers the entire screen and dims the background */
+.modal-backdrop {
+  position: fixed; /* Stays fixed in viewport */
+  top: 0; /* Aligns to top */
+  left: 0; /* Aligns to left */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background: rgba(0, 0, 0, 0.6); /* Semi-transparent dark overlay */
+  display: flex; /* Use flexbox for centering modal */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  z-index: 999; /* Place above most elements */
+  animation: fadeIn 0.3s ease-out; /* Fade in animation */
+}
+
+/* Container for the modal content */
+.modal-container {
+  background: #fff; /* White background */
+  padding: 3rem; /* Increased padding */
+  border-radius: 20px; /* Slightly rounder corners */
+  max-width: 800px; /* Bigger max width */
+  width: 95%; /* Slightly wider */
+  text-align: center; /* Center text */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+  animation: slideIn 0.3s ease-out; /* Slide-in animation */
+}
+
+/* Modal title styling */
+.modal-container h2 {
+  margin-bottom: 1.5rem; /* More spacing */
+  font-size: 1.8rem; /* Bigger title */
+  color: #333; /* Dark gray text */
+}
+
+/* Modal paragraph text styling */
+.modal-container p {
+  margin-bottom: 2.5rem; /* More spacing */
+  color: #555; /* Medium gray */
+  font-size: 1.1rem; /* Slightly bigger text */
+}
+
+/* Container for action buttons */
+.modal-buttons {
+  display: flex; /* Arrange buttons in row */
+  justify-content: center; /* Center them */
+  gap: 1rem; /* Spacing between buttons */
+}
+
+/* Base button styling */
+.modal-buttons button {
+  flex: 1; /* Make both buttons take equal width */
+  padding: 0.8rem 1rem; /* Button padding */
+  border-radius: 10px; /* Rounded button corners */
+  border: none; /* Remove default border */
+  font-weight: bold; /* Bold text */
+  font-size: 1rem; /* Medium font size */
+  cursor: pointer; /* Pointer cursor */
+  transition: all 0.2s; /* Smooth hover transition */
+  text-align: center; /* Center text inside button */
+}
+
+/* Message text styling */
+.modal-message {
+  font-size: 16px; /* Standard font size */
+  color: #555; /* Medium gray */
+}
+
+/* Continue/Confirm ("Yes") button styling */
+.btn-continue {
+  background-color: #4caf50; /* Green color */
+  color: white; /* White text */
+}
+
+.btn-continue:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+/* Stop/Cancel ("No") button styling */
+.btn-stop {
+  background-color: #f44336; /* Red color */
+  color: white; /* White text */
+}
+
+.btn-stop:hover {
+  background-color: #e53935; /* Darker red on hover */
+}
+
+/* Animation for sliding in the modal */
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; } /* Start above and invisible */
+  to { transform: translateY(0); opacity: 1; } /* End at normal position and visible */
+}
+
+/* Animation for fading in the backdrop */
+@keyframes fadeIn {
+  from { opacity: 0; } /* Start invisible */
+  to { opacity: 1; } /* End fully visible */
+}
