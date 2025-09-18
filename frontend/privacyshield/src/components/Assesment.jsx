@@ -1,3 +1,22 @@
+/**
+ * Assessment Component
+ *
+ * This module implements the main survey questions flow. It handles:
+ * - Fetching questions from the backend API.
+ * - Sorting and randomizing questions based on initial user preferences.
+ * - Displaying questions and their options to the user.
+ * - Tracking user answers and selected options.
+ * - Calculating and updating privacy scores dynamically.
+ * - Managing UI states including toast suggestions, and modals.
+ * - Navigation between questions and redirecting to the report page on completion.
+ *
+ * Features:
+ * - Updates privacyScores object to track scores and maximum possible scores.
+ * - Provides feedback suggestions for each option selected via a Toast component.
+ * - Uses a modal (ContinueModal) to allow users to continue or stop the survey midway.
+ * - Implements next/back navigation with dynamic state updates for questions, options, and suggestions.
+ */
+
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import SurveyQuestion from "./ui/QuestionDisplay";
