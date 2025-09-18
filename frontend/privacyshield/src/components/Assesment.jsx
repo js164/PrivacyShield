@@ -337,7 +337,7 @@ export default function Assesment() {
 
       {/* Mid-survey continue/stop modal */}
       <ContinueModal
-        show={(currentQuestion === Math.floor(api_data.length / 2)) && showModal}
+        show={(currentQuestion === INITIAL_SURVEY_LENGTH) && showModal}
         onContinue={() => setShowModal(false)}
         onStop={handleFinish}
       />
