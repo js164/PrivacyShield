@@ -2,10 +2,27 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import './animations.css';
 
+/**
+ * HeroSection
+ *
+ * Top-level landing hero used on the homepage. It contains:
+ * - A decorative 'shield' composed of 4 background slices (visual only)
+ * - A headline, short description, and a CTA link
+ * - Subtle scroll-based parallax and opacity effects
+ *
+ * Notes for maintainers:
+ * - Visual background pieces use the public `/logo.png` file and are pointer-events: none.
+ * - The component measures `window.scrollY` for simple transform effects. This is lightweight and
+ *   acceptable for this small project; if you add many listeners, debounce or use requestAnimationFrame.
+ */
 export default function HeroSection() {
+    // Tracks whether the CTA is hovered (used to subtly change background slice opacity)
     const [isHovered, setIsHovered] = useState(false);
+
+    // Tracks vertical scroll to drive small parallax and fade effects
     const [scrollY, setScrollY] = useState(0);
 
+    // Set up a single scroll listener when mounted and clean up on unmount
     useEffect(() => {
         const handleScroll = () => setScrollY(window.scrollY);
         window.addEventListener('scroll', handleScroll);
@@ -14,13 +31,12 @@ export default function HeroSection() {
 
     return (
         <section className="bg-light-blue relative overflow-hidden min-h-screen flex items-center">
-            {/* Shield Background */}
+            {/* Decorative shield split into 4 slices. These are visual only and should not capture pointer events. */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="relative w-96 h-[480px]">
-                    {/* Top Left Quarter */}
+                    {/* Top-left slice */}
                     <div
-                        className={`absolute w-48 h-60 transition-all duration-1000 ease-in-out ${isHovered ? 'opacity-20 transform-none' : 'opacity-10 -translate-x-96 -translate-y-32 rotate-12'
-                            }`}
+                        className={`absolute w-48 h-60 transition-all duration-1000 ease-in-out ${isHovered ? 'opacity-20 transform-none' : 'opacity-10 -translate-x-96 -translate-y-32 rotate-12'}`}
                         style={{
                             backgroundImage: `url('/logo.png')`,
                             backgroundSize: '384px 480px',
@@ -29,10 +45,9 @@ export default function HeroSection() {
                         }}
                     />
 
-                    {/* Top Right Quarter */}
+                    {/* Top-right slice */}
                     <div
-                        className={`absolute top-0 right-0 w-48 h-60 transition-all duration-1000 ease-in-out ${isHovered ? 'opacity-20 transform-none' : 'opacity-10 translate-x-96 -translate-y-32 -rotate-12'
-                            }`}
+                        className={`absolute top-0 right-0 w-48 h-60 transition-all duration-1000 ease-in-out ${isHovered ? 'opacity-20 transform-none' : 'opacity-10 translate-x-96 -translate-y-32 -rotate-12'}`}
                         style={{
                             backgroundImage: `url('/logo.png')`,
                             backgroundSize: '384px 480px',
@@ -41,10 +56,9 @@ export default function HeroSection() {
                         }}
                     />
 
-                    {/* Bottom Left Quarter */}
+                    {/* Bottom-left slice */}
                     <div
-                        className={`absolute bottom-0 left-0 w-48 h-60 transition-all duration-1000 ease-in-out ${isHovered ? 'opacity-20 transform-none' : 'opacity-10 -translate-x-96 translate-y-32 -rotate-12'
-                            }`}
+                        className={`absolute bottom-0 left-0 w-48 h-60 transition-all duration-1000 ease-in-out ${isHovered ? 'opacity-20 transform-none' : 'opacity-10 -translate-x-96 translate-y-32 -rotate-12'}`}
                         style={{
                             backgroundImage: `url('/logo.png')`,
                             backgroundSize: '384px 480px',
@@ -53,10 +67,9 @@ export default function HeroSection() {
                         }}
                     />
 
-                    {/* Bottom Right Quarter */}
+                    {/* Bottom-right slice */}
                     <div
-                        className={`absolute bottom-0 right-0 w-48 h-60 transition-all duration-1000 ease-in-out ${isHovered ? 'opacity-20 transform-none' : 'opacity-10 translate-x-96 translate-y-32 rotate-12'
-                            }`}
+                        className={`absolute bottom-0 right-0 w-48 h-60 transition-all duration-1000 ease-in-out ${isHovered ? 'opacity-20 transform-none' : 'opacity-10 translate-x-96 translate-y-32 rotate-12'}`}
                         style={{
                             backgroundImage: `url('/logo.png')`,
                             backgroundSize: '384px 480px',
@@ -67,7 +80,7 @@ export default function HeroSection() {
                 </div>
             </div>
 
-            {/* Animated Content */}
+            {/* Main content container: headline, paragraph, CTA. Parallax transforms depend on scrollY. */}
             <div
                 className="max-w-4xl mx-auto text-center px-4 relative z-10 w-full"
                 style={{
@@ -75,7 +88,7 @@ export default function HeroSection() {
                     opacity: Math.max(0, 1 - scrollY / 500)
                 }}
             >
-                {/* Animated Heading */}
+                {/* Headline with subtle scale & translate driven by scroll */}
                 <h1
                     className="text-4xl font-display font-extrabold text-dark-blue sm:text-5xl md:text-6xl animate-fade-in-up"
                     style={{
@@ -86,7 +99,7 @@ export default function HeroSection() {
                     Understand and Control Your Digital Privacy
                 </h1>
 
-                {/* Animated Paragraph */}
+                {/* Short description under the headline */}
                 <p
                     className="mt-6 max-w-2xl mx-auto text-lg text-neutral-gray font-sans animate-fade-in-up"
                     style={{
@@ -97,7 +110,7 @@ export default function HeroSection() {
                     Take our quick assessment to get a personalized privacy score and actionable recommendations to protect your digital life.
                 </p>
 
-                {/* Animated Button */}
+                {/* Call-to-action. Hover state toggles the decorative shield opacity. */}
                 <div
                     className="mt-8 animate-fade-in-up"
                     style={{
@@ -116,9 +129,8 @@ export default function HeroSection() {
                 </div>
             </div>
 
-            {/* Floating Elements */}
+            {/* Floating decorative dots. Kept pointer-events: none by container to avoid intercepting clicks. */}
             <div className="absolute inset-0 pointer-events-none">
-                {/* Floating Dots */}
                 <div
                     className="absolute top-20 left-10 w-2 h-2 bg-primary-blue rounded-full opacity-30 animate-bounce"
                     style={{ animationDelay: '0s', animationDuration: '3s' }}
