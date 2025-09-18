@@ -9,9 +9,13 @@ import TrendingArticles from './ui/TrendingArticles';
 export default function HomePage() {
   return (
     <>
+      {/* Site-wide navigation bar */}
       <Navbar />
+      {/* Hero section with animated shield background */}
       <HeroSection />
+      {/* Info cards explaining how the assessment works */}
       <InfoCards />
+      {/* Section showcasing trending articles on digital privacy and security */}
       <TrendingArticles />
     </>
   )

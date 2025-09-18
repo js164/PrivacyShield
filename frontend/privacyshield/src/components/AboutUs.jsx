@@ -1,8 +1,8 @@
 import React from 'react';
-import { ShieldCheck, Target, Users } from 'lucide-react';
-import { Navbar } from './ui/Navbar'; 
+import { ShieldCheck, Target, Users } from 'lucide-react'; // Icons
+import { Navbar } from './ui/Navbar';  
 
-// Team members data
+// Team members data to display
 
 const teamMembers = [
   { name: 'Brijesh Sukhadiya' },
@@ -66,6 +66,8 @@ export default function AboutUs() {
               It represents our commitment to creating practical tools that solve real-world privacy challenges. 
               The team behind this project includes:
             </p>
+            
+            {/* To Display team members in styled badges */}
             <div className="flex flex-wrap justify-center gap-4">
               {teamMembers.map((member) => (
                 <span 

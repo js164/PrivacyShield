@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import './animations.css';
 
+// HeroSection component: Renders the top section of the homepage with an animated shield background, heading, paragraph, and call-to-action button.
+
 export default function HeroSection() {
     const [isHovered, setIsHovered] = useState(false);
     const [scrollY, setScrollY] = useState(0);

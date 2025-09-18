@@ -29,6 +29,7 @@ export default function InfoCards() {
         <div className="text-center mb-12">
             <h2 className="text-3xl font-display font-extrabold text-dark-blue">How It Works</h2>
         </div>
+        {/* Cards Grid */}
         <div className="grid md:grid-cols-3 gap-8">
           {cards.map((card, index) => (
             <div

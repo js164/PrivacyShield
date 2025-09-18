@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'; // Import Link for navigation
 
  // Global footer displayed at the bottom of every page and Shows copyright info and a link to the admin dashboard.
 
