@@ -186,7 +186,6 @@ const TrendingUpIcon = () => (
   </svg>
 );
 
-// New Tab Icons
 const ClipboardListIcon = () => (
   <svg
     className="w-5 h-5 mr-2"
@@ -299,7 +298,6 @@ const PrivacyReport = () => {
       }
 
       const apiResponse = await response.json();
-      console.log(apiResponse);
 
       // Transform API response to match our component structure
       const transformedCategories = Object.entries(apiResponse).map(
@@ -351,9 +349,6 @@ const PrivacyReport = () => {
     const privacyScores = location.state?.scores;
     const { questions: questionsData, answers: answersData } =
       location.state || {};
-
-    console.log("Questions:", questionsData);
-    console.log("Answers:", answersData);
 
     // Set questions and answers state
     if (questionsData) {
