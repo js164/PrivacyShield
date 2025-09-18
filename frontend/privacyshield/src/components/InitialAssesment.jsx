@@ -1,3 +1,18 @@
+/**
+ * QuestionPage Component
+ *
+ * This component renders the initial screening question for the user to answer 
+ * as part of the assessment flow. Users can select one or more options, which 
+ * are then mapped to their respective categories and passed to the Assessment page.
+ *
+ * Features:
+ * - Displays a question with multiple selectable options.
+ * - Tracks user selections using local state.
+ * - Highlights selected options visually.
+ * - Includes a "Next" button that navigates to the assessment page, passing selected categories as state.
+ * - Utilizes a Navbar component.
+ */
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { INITIAL_QUESTION } from "./config/InitialQuestion";
