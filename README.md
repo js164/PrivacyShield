@@ -65,7 +65,7 @@ Follow these steps to set up the project locally:
 
 ```bash
 git clone https://github.com/js164/PrivacyShield.git
-cd privacy-shield
+cd PrivacyShield
 ```
 
 ### 2. Frontend Setup
@@ -73,7 +73,7 @@ cd privacy-shield
 Navigate to the frontend directory and install dependencies:
 
 ```bash
-cd frontend/privacy-shield
+cd frontend/privacyshield
 npm install
 ```
 
