@@ -102,8 +102,8 @@ VITE_WEB_URI = "http://localhost:5173" //Frontend URL
 ```env
 DATABASE_URL=your_database_connection_string
 JWT_SECRET=your_jwt_secret_key
-EMAIL_USER=your email here
-EMAIL_PASS=your email password
+EMAIL_USER=your_email_here
+EMAIL_PASS=your_email_app_password
 ```
 
 ## Usage
