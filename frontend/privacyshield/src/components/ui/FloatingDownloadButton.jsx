@@ -6,12 +6,12 @@ export function FloatingDownloadButton() {
 
   const handleDownload = () => {
     // Correct path for files in public folder
-    const pdfUrl = "/pdf/CSP_documentation.pdf";
+    const pdfUrl = "/pdf/PrivacyShield_User_Manual.pdf";
 
     // Create a temporary link element and trigger download
     const link = document.createElement("a");
     link.href = pdfUrl;
-    link.download = "CSP_documentation.pdf"; // Keep original filename or customize
+    link.download = "PrivacyShield_User_Manual.pdf"; // Keep original filename or customize
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
