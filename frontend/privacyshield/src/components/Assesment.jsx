@@ -196,26 +196,27 @@ export default function Assesment() {
 
   };
 
+  // Handles logic for moving to the previous question
   const handleBack = (selectedIndex) => {
 
     setShowToast(false); // Hide toast
 
     const question_no = currentQuestion - 1
 
-    setQuestions(api_data[question_no].text); // Assuming `data` is an array of questions
+    // Update question text for previous question
+    setQuestions(api_data[question_no].text);
 
+    // Update options for previous question
     const newOptions = [];
-
     for (let i = 0; i < api_data[question_no].options.length; i++) {
 
       newOptions.push(api_data[question_no].options[i].text)
 
     }
-
     setOptions(newOptions);
 
+    // Update suggestions for previous question
     const newSuggestions = [];
-
     for (let i = 0; i < api_data[currentQuestion].options.length; i++) {
 
       newSuggestions.push({
@@ -224,15 +225,16 @@ export default function Assesment() {
       });
 
     }
-
     setSuggestions(newSuggestions);
 
+    // Remove scores from the current question since we're going back
     api_data[question_no].options[answers[question_no]].scores.forEach(s => {
       if (s.score !== -1) {
         privacyScores.scores[s.code] -= s.score;
       }
     });
 
+    // Move to the previous question index
     setCurrentQuestion(question_no);
 
   };
