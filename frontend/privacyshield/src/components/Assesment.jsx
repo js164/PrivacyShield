@@ -237,11 +237,14 @@ export default function Assesment() {
 
   };
 
+  // Handles the logic for finishing the survey
   const handleFinish = (selectedIndex) => {
     try {
 
       setShowModal(false);
       var time_delay = 500;
+
+      // If an answer was selected on the final question, process it
       if (typeof selectedIndex == 'number') {
         setSelectedOption(selectedIndex);
         setShowToast(true);
@@ -250,12 +253,14 @@ export default function Assesment() {
       }
 
       // Loop through data from 0 till currentQuestion and sum scores
+      // Calculate the maximum possible score for the questions that were answered
       for (let i = 0; i <= currentQuestion; i++) {
         api_data[i].maxScore.forEach(s => {
           privacyScores.maxScores[s.categoryCode] += s.max;
         });
       }
 
+      // Redirect to report page with results
       setTimeout(() => {
         navigate('/report', { state: { scores: privacyScores, questions: api_data, answers: answers } });
       }, time_delay); // delay in milliseconds (2000 = 2s)
@@ -264,6 +269,7 @@ export default function Assesment() {
     }
   };
 
+  // Loader screen (Show a loading spinner while fetching data or generating the report)
   if (isChecking) {
     return (
       <>
@@ -302,6 +308,7 @@ export default function Assesment() {
     );
   }
 
+  // Main assessment UI
   return (
     <>
       <Navbar_Questions isChecking={isChecking} />
@@ -313,12 +320,14 @@ export default function Assesment() {
         onClose={() => setShowToast(false)}
       />
 
+      {/* Mid-survey continue/stop modal */}
       <ContinueModal
         show={(currentQuestion === Math.floor(api_data.length / 2)) && showModal}
         onContinue={() => setShowModal(false)}
         onStop={handleFinish}
       />
 
+      {/* Main question component */}
       <SurveyQuestion
         title="Privacy Tools Survey"
         progress={(currentQuestion + 1) / (continueSurvey ? api_data.length : INITIAL_SURVEY_LENGTH) * 100}
