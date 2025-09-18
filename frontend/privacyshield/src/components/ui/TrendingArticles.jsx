@@ -1,7 +1,8 @@
-// frontend/privacyshield/src/components/ui/TrendingArticles.jsx
-
 import React from 'react';
 import { trendingArticles } from '../../data/articles'; // Import the data
+
+// Displays a grid of trending digital privacy & security articles.
+// Each card shows an icon, headline, short summary, and an external link.
 
 export default function TrendingArticles() {
   return (

@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../../public/Images/log.jpg"; // Your logo path
+import logo from "../../public/Images/log.jpg"; // logo path
+
+ // Main navigation bar shown on all pages except the assessment questions.
 
 export function Navbar() {
   return (
@@ -37,6 +39,8 @@ export function Navbar() {
     </header>
   );
 }
+
+// Navigation bar used on the assessment question pages.
 
 export function Navbar_Questions({ isChecking }) {
   return (

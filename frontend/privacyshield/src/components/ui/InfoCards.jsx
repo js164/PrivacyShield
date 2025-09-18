@@ -1,5 +1,7 @@
 import React from "react";
 
+// Card data describing the main features of the assessment.
+
 const cards = [
   {
     title: "Comprehensive Assessment",
@@ -17,6 +19,8 @@ const cards = [
     icon: "🎯",
   },
 ];
+
+ // Renders a three-column section highlighting how the privacy assessment works.
 
 export default function InfoCards() {
   return (

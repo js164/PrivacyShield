@@ -1,8 +1,8 @@
-// frontend/privacyshield/src/components/AboutUs.jsx
-
 import React from 'react';
 import { ShieldCheck, Target, Users } from 'lucide-react';
 import { Navbar } from './ui/Navbar'; 
+
+// Team members data
 
 const teamMembers = [
   { name: 'Brijesh Sukhadiya' },
@@ -10,6 +10,8 @@ const teamMembers = [
   { name: 'Nirish Samant' },
   { name: 'Sunil Kumar' },
 ];
+
+//* AboutUs page: Presents the mission, approach, and team behind the PrivacyShield project.
 
 export default function AboutUs() {
   return (

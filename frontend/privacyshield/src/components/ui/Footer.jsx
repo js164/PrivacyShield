@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+ // Global footer displayed at the bottom of every page and Shows copyright info and a link to the admin dashboard.
+
 export default function Footer() {
   return (
     <footer className="bg-white border-t border-gray-200">
