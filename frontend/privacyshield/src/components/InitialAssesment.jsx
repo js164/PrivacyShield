@@ -4,6 +4,7 @@ import { INITIAL_QUESTION } from "./config/InitialQuestion";
 import { Navbar_Questions } from './ui/Navbar';
 import { QUESTION_CATEGORIES } from './config/QuestionCategory';
 
+// QuestionPage component renders the initial question for the user to answer
 export default function QuestionPage() {
   
   // Hook to programmatically navigate between routes
@@ -37,6 +38,7 @@ export default function QuestionPage() {
 
       // Navigate to assessment page, passing selected categories as state
       navigate("/assesment", { state: { initial_answers: categories } });
+
     }
   };
 
@@ -48,6 +50,8 @@ export default function QuestionPage() {
       
       {/* Main container */}
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6 animate-fade-in-up">
+
+        {/* Question card container with white background and shadow */}
         <div className="w-full max-w-6xl bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
           
           {/* Question text */}
@@ -57,6 +61,8 @@ export default function QuestionPage() {
 
           {/* Options grid */}
           <div className="grid gap-4">
+
+            {/* Map over the options array to render each option */}
             {options.map((opt) => (
               <div
                 key={opt.id}
@@ -90,7 +96,7 @@ export default function QuestionPage() {
             ))}
           </div>
 
-          {/* Next button */}
+          {/* Next button (disabled until at least one option selected) */}
           <div className="mt-8 flex justify-center">
             <button
               disabled={selected.length === 0}
