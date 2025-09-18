@@ -1,76 +1,158 @@
-# 🛡️ PrivacyShield
+# Privacy Shield
 
-A project developed as part of the **Lab in Computer Security and Privacy (SoSe 2025)**, focused on building a privacy assistant in the form of a web or mobile application.
+A full-stack web application designed to provide privacy protection and secure data management solutions.
 
-## 📌 Project Overview
+## Table of Contents
 
-The **Privacy Assistance Tool** aims to empower users to better understand and manage their digital privacy. It offers both backend logic and a user-friendly frontend interface to analyze personal privacy practices and provide recommendations or alerts.
+- [About](#about)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Support](#support)
 
-## 🎯 Goals
+## About
 
-- ✅ Analyze user needs and privacy concerns
-- ✅ Design and implement a secure backend service
-- ✅ Create an intuitive and accessible frontend interface
-- ✅ Deliver a functional privacy assistant as a web or mobile app
+Privacy Shield is a comprehensive privacy protection platform that helps users manage their digital footprint and secure their personal data. The application provides tools for data encryption, privacy analytics, and secure communication channels.
 
-## 🔧 Development Phases
+## Features
 
-1. **Requirement Analysis**
-   - Identify user expectations and privacy threat models
-   - Define system specifications and data flow
+- 🔒 **Data Encryption**: End-to-end encryption for sensitive information
+- 🛡️ **Privacy Dashboard**: Real-time privacy analytics and monitoring
+- 🔐 **Secure Authentication**: Multi-factor authentication system
+- 📊 **Data Management**: Comprehensive data tracking and control
+- 🌐 **Cross-Platform**: Web-based solution accessible from any device
+- ⚡ **Real-time Updates**: Live notifications and status updates
 
-2. **Back-End Development**
-   - Develop RESTful APIs or services
-   - Ensure secure data handling, processing, and storage
+## Tech Stack
 
-3. **Front-End Development**
-   - Create a responsive and engaging user interface
-   - Integrate backend with interactive components
+### Frontend
 
-## 📱 Features (Planned/Expected)
+- React.js
+- HTML5/CSS3
+- JavaScript (ES6+)
+- Modern UI/UX libraries
 
-- Privacy awareness questionnaire
-- Personalized privacy scores and feedback
-- Real-time suggestions for improving digital privacy
-- Transparency dashboard for data usage
-- Legal rights & compliance information (e.g., GDPR)
-- Improve user awareness of digital security and privacy practices
+### Backend
 
-## 🛠️ Technologies (Tentative)
+- Node.js
+- Express.js
+- Database integration
+- RESTful API architecture
 
-- **Frontend**: React / HTML + CSS + JS
-- **Backend**: Python (Flask/Django) / Node.js
-- **Database**: MongoDB
-- **APIs**: REST / GraphQL
+## Prerequisites
 
-## 📅 Timeline
+Before you begin, ensure you have the following installed on your system:
 
-| Phase                 | Timeline       |
-|-----------------------|----------------|
-| Requirement Analysis  |                |
-| Backend Development   |                |
-| Frontend Development  |                |
-| Integration & Testing |                |
+- **Node.js** (version 14.0 or higher)
+- **npm** (version 6.0 or higher)
+- **Git** (for cloning the repository)
 
-## 👥 Team Members
-
-- Brijesh Sukhadiya
-- Jay Solanki
-- Nirish Samant
-- Sunil Kumar
-
-## 📂 Repository Structure
+You can verify your installations by running:
 
 ```bash
-.
-├── backend/              # Backend codebase (APIs, logic)
-├── frontend/             # Frontend source files (UI)
-├── docs/                 # Documentation & reports
-├── tests/                # Unit and integration tests
-├── .gitignore
-└── README.md             # Project overview
+node --version
+npm --version
+git --version
 ```
 
-## 📄 License
+## Installation
 
-This project is licensed under the MIT License.
+Follow these steps to set up the project locally:
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/privacy-shield.git
+cd privacy-shield
+```
+
+### 2. Frontend Setup
+
+Navigate to the frontend directory and install dependencies:
+
+```bash
+cd frontend/privacy-shield
+npm install
+```
+
+### 3. Backend Setup
+
+Open a new terminal window/tab and navigate to the backend directory:
+
+```bash
+cd backend
+npm install
+```
+
+### 4. Environment Configuration
+
+Create environment files for both frontend and backend:
+
+**Frontend (.env):**
+
+```env
+VITE_BACKEND_URI = "http://localhost:8000"
+VITE_WEB_URI = "https://privacy-shield-go.vercel.app/"
+```
+
+**Backend (.env):**
+
+```env
+DATABASE_URL=your_database_connection_string
+JWT_SECRET=your_jwt_secret_key
+EMAIL_USER=your email here
+EMAIL_PASS=your email password
+```
+
+## Usage
+
+### Starting the Application
+
+You'll need to run both the frontend and backend servers simultaneously.
+
+#### 1. Start the Backend Server
+
+In your backend directory terminal:
+
+```bash
+node index.js
+```
+
+The backend server will start on `http://localhost:8000`
+
+#### 2. Start the Frontend Development Server
+
+In your frontend directory terminal:
+
+```bash
+npm run dev
+```
+
+The frontend application will start on `http://localhost:5173`
+
+### Accessing the Application
+
+1. Open your web browser
+2. Navigate to `http://localhost:5173`
+3. The Privacy Shield application should now be running locally
+
+### Available Scripts
+
+#### Frontend Scripts
+
+- `npm run dev` - Starts the development server
+- `npm run build` - Creates a production build
+- `npm run test` - Runs the test suite
+- `npm run lint` - Runs ESLint for code quality
+
+#### Backend Scripts
+
+- `node index.js` - Starts the production server
+- `npm run dev` - Starts the development server with nodemon (if configured)
+- `npm test` - Runs backend tests
+
+**Made with ❤️ for a more private internet**
