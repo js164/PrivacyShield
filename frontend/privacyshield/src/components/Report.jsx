@@ -14,6 +14,7 @@ import {
   PieController,
 } from "chart.js";
 
+// Register Chart.js components and plugins
 Chart.register(
   CategoryScale,
   LinearScale,
@@ -34,6 +35,8 @@ import SubscriptionModal from "./ui/SubscriptionModal";
 const backend_url = import.meta.env.VITE_BACKEND_URI;
 
 // Icon components
+
+// Security/Protection Icon
 const ShieldIcon = () => (
   <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
     <path
@@ -44,6 +47,7 @@ const ShieldIcon = () => (
   </svg>
 );
 
+// Success/Checkmark Icon
 const CheckIcon = () => (
   <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
     <path
@@ -54,6 +58,7 @@ const CheckIcon = () => (
   </svg>
 );
 
+// Warning/Alert Icon
 const WarningIcon = () => (
   <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
     <path
@@ -64,6 +69,7 @@ const WarningIcon = () => (
   </svg>
 );
 
+// Error/Close Icon
 const XIcon = () => (
   <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
     <path
@@ -112,6 +118,7 @@ const HomeIcon = () => (
   </svg>
 );
 
+// Dropdown chevron with rotation animation
 const ChevronDownIcon = () => (
   <svg
     className="w-5 h-5 transition-transform duration-200"
@@ -945,15 +952,6 @@ const PrivacyReport = () => {
     }
   };
 
-  const handleSubscribeForUpdates = () => {
-    // You can implement your subscription logic here
-    // For now, this could open a modal, redirect to a subscription page, etc.
-    alert(
-      "Subscription feature coming soon! We'll notify you about privacy updates."
-    );
-    // Example: navigate("/subscribe") or open a modal
-  };
-
   // Loading state
   if (loading) {
     return (
@@ -1498,7 +1496,7 @@ const PrivacyReport = () => {
                           className="bg-white border border-blue-200 rounded-xl p-6 shadow-md"
                         >
                           <div className="mb-4">
-                            {/* ✅ Now using question.text from your schema */}
+                            {/*  Now using question.text from your schema */}
                             <h4 className="text-lg font-bold text-blue-900 mb-3">
                               Question {index + 1}: {question.text}
                             </h4>

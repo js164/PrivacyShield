@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // ⬅️ Import this
+import { useNavigate } from "react-router-dom";
 import { Home, FileX } from "lucide-react";
 
 export default function NoteNotFound() {
   const [countdown, setCountdown] = useState(10);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const navigate = useNavigate(); // ⬅️ Hook for navigation
+  const navigate = useNavigate(); // Hook for navigation
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
           setIsRedirecting(true);
-          navigate("/"); // ⬅️ Works now
+          navigate("/"); // Redirect to home page
           clearInterval(timer);
           return 0;
         }
