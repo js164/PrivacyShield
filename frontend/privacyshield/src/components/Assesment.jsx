@@ -6,7 +6,7 @@ import Toast from "./ui/QuestionSuggestion";
 import ContinueModal from './ui/AssesmentContinueDialog';
 const backend_url = import.meta.env.VITE_BACKEND_URI;
 
-// Initial Survey Length"
+// Initial Survey Length
 const INITIAL_SURVEY_LENGTH = 10;
 
 // Global scores object initialized with 0
@@ -23,6 +23,7 @@ export const privacyScores = {
   }
 };
 
+// Function to reset privacy scores
 const initPrivacyScores = () => ({
   scores: {
     DC: 0, LC: 0, UDU: 0, ST: 0, DR: 0, ESH: 0, MIC: 0, SB: 0, RD: 0,
@@ -36,6 +37,7 @@ const initPrivacyScores = () => ({
   }
 });
 
+// Function to sort questions based on initial question's answer and selected categories
 function sortData(data, initial_answers) {
   const seen = new Set();
   const first = [];
@@ -61,8 +63,10 @@ function sortData(data, initial_answers) {
   return [...first, ...randomised_selected, ...randomised_notSelected];
 };
 
+// Main Assessment component
 export default function Assesment() {
 
+  // Reset privacy scores when component mounts
   useEffect(() => {
     // reset on component mount
     Object.assign(privacyScores, initPrivacyScores());
@@ -70,6 +74,8 @@ export default function Assesment() {
 
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Get initial answers from navigation state or use empty array as fallback
   const { initial_answers } = location.state || { initial_answers: [] }; // fallback if no state
 
   // Redirect if user opens /assesment directly or has no answers
@@ -79,18 +85,19 @@ export default function Assesment() {
     }
   }, [initial_answers, navigate]);
 
-  const [api_data, setAPIData] = useState([]);
-  const [questions, setQuestions] = useState([]);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState([]);
-  const [options, setOptions] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
-  const [user_selected_option, setSelectedOption] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showToast, setShowToast] = useState(false);
-  const [showModal, setShowModal] = useState(true);
-  const [isChecking, setIsChecking] = useState(true);
-  const [continueSurvey, setContinueSurvey] = useState(false);
+  // State management
+  const [api_data, setAPIData] = useState([]); // raw data from API
+  const [questions, setQuestions] = useState([]); // current question text
+  const [currentQuestion, setCurrentQuestion] = useState(0); // current question index
+  const [answers, setAnswers] = useState([]); // stores user answers
+  const [options, setOptions] = useState([]); // options for current question
+  const [suggestions, setSuggestions] = useState([]); // suggestions for each option
+  const [user_selected_option, setSelectedOption] = useState([]); // currently selected option
+  const [loading, setLoading] = useState(true); // loading state
+  const [showToast, setShowToast] = useState(false); // Toast visibility
+  const [showModal, setShowModal] = useState(true); // Modal visibility
+  const [isChecking, setIsChecking] = useState(true); // Checking/loading state for UI
+  const [continueSurvey, setContinueSurvey] = useState(false); // full vs partial survey
 
   // Fetch questions from API
   useEffect(() => {
