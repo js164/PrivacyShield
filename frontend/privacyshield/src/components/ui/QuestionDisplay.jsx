@@ -72,7 +72,10 @@ export default function SurveyQuestion({
         {/* Main content card for the question and options */}
         <div className="bg-white rounded-xl shadow p-6">
           <h2 className="text-lg font-semibold mb-6">{questionText}</h2>
+
+          {/* Container for the list of answer options. */}
           <div className="space-y-4">
+            {/* Map over the 'options' array to render each one. */}
             {options.map((option, index) => (
               <label
                 key={index}
@@ -82,6 +85,8 @@ export default function SurveyQuestion({
                     : "border-gray-300 bg-white"
                 }`}
               >
+
+                {/* The radio button input. */}
                 <input
                   type="radio"
                   name="surveyOption"
@@ -96,45 +101,41 @@ export default function SurveyQuestion({
 
           {/* Buttons */}
           <div className="flex justify-between mt-8">
-            {/*
-            <button
-              className="px-4 py-2 bg-gray-200 rounded-lg text-gray-600 hover:bg-gray-300"
-              disabled={questionNumber === 1}
-              onClick={onBack}
-            >
-              Back
-            </button>
-            */}
+
+            {/* Conditionally render the 'Back' button */}
             {questionNumber > 1 ? (
             <button
               className="px-4 py-2 bg-gray-200 rounded-lg text-gray-600 hover:bg-gray-300"
-              onClick={onBack}
+              onClick={onBack} // Call the parent's onBack function when clicked
             >
               Back
             </button>
             ) : (
               <div />
             )}
+
+            {/* The 'Next' or 'Finish' button */}
             <button
               className="px-6 py-2 bg-blue-400 text-white rounded-lg hover:bg-primary-blue disabled:opacity-50"
               disabled={selected === null}
-              //onClick={() => onNext(selected)}
               onClick={() => {
-      if (isLastQuestion) {
-        onFinish(selected);
-      } else {
-        onNext(selected);
-      }
-    }}
+                if (isLastQuestion) {
+                  onFinish(selected); // Call onFinish if it's the last question
+                } else {
+                  onNext(selected); // Otherwise, call onNext
+                }
+              }}
             >
               {isLastQuestion ? "Finish" : "Next"}
             </button>
           </div>
         </div>
+
         {/* Footer Note */}
         <p className="text-sm text-gray-500 text-center mt-6">
           Your responses are anonymous.
         </p>
+
       </div>
     </div>
   );
