@@ -80,6 +80,7 @@ const XIcon = () => (
   </svg>
 );
 
+// Bell Icon
 const BellIcon = () => (
   <svg
     className="w-5 h-5 mr-2"
@@ -96,6 +97,7 @@ const BellIcon = () => (
   </svg>
 );
 
+// Rotate Icon
 const RotateIcon = () => (
   <svg
     className="w-5 h-5 mr-2"
@@ -112,6 +114,7 @@ const RotateIcon = () => (
   </svg>
 );
 
+// Home Icon for navigation to the main dashboard
 const HomeIcon = () => (
   <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
     <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
@@ -135,6 +138,7 @@ const ChevronDownIcon = () => (
   </svg>
 );
 
+// Lightbulb Icon
 const LightBulbIcon = () => (
   <svg
     className="w-5 h-5 text-blue-500"
@@ -145,6 +149,7 @@ const LightBulbIcon = () => (
   </svg>
 );
 
+// Download Icon for the PDF download button
 const DownloadIcon = () => (
   <svg
     className="w-5 h-5 mr-2"
@@ -161,6 +166,7 @@ const DownloadIcon = () => (
   </svg>
 );
 
+// Calendar Icon
 const CalendarIcon = () => (
   <svg
     className="w-4 h-4"
@@ -177,6 +183,7 @@ const CalendarIcon = () => (
   </svg>
 );
 
+// Trending Up Icon
 const TrendingUpIcon = () => (
   <svg
     className="w-4 h-4"
@@ -193,6 +200,7 @@ const TrendingUpIcon = () => (
   </svg>
 );
 
+// Clipboard List Icon
 const ClipboardListIcon = () => (
   <svg
     className="w-5 h-5 mr-2"
@@ -209,6 +217,7 @@ const ClipboardListIcon = () => (
   </svg>
 );
 
+// Question Mark Icon
 const QuestionMarkCircleIcon = () => (
   <svg
     className="w-5 h-5 mr-2"
@@ -225,6 +234,7 @@ const QuestionMarkCircleIcon = () => (
   </svg>
 );
 
+// --- Main PrivacyReport Component ---
 const PrivacyReport = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -952,7 +962,7 @@ const PrivacyReport = () => {
     }
   };
 
-  // Loading state
+  // Loading state (Display a loading spinner while data is being fetched)
   if (loading) {
     return (
       <>
@@ -969,7 +979,7 @@ const PrivacyReport = () => {
     );
   }
 
-  // Error state
+  // Error state (Display an error message if the data fetch fails)
   if (error) {
     return (
       <>
@@ -1152,7 +1162,7 @@ const PrivacyReport = () => {
               </div>
             </div>
 
-            {/* Tab Content */}
+            {/* Recommendations Tab Content */}
             {activeTab === "recommendations" && (
               <div className="mb-8">
                 <h3 className="text-2xl sm:text-3xl font-bold text-blue-900 mb-8 text-center">
@@ -1475,6 +1485,7 @@ const PrivacyReport = () => {
               </div>
             )}
 
+            {/* Answers Tab Content */}
             {activeTab === "answers" && (
               <div>
                 <h3 className="text-2xl sm:text-3xl font-bold text-blue-900 mb-8 text-center">
@@ -1550,6 +1561,7 @@ const PrivacyReport = () => {
             )}
           </div>
 
+          {/* Stay Privacy-Protected Section */}
           <div className="bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 rounded-xl p-6 sm:p-8 border-2 border-blue-200 mb-8 shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
